@@ -1,0 +1,12 @@
+{
+	"Service":{
+		"Host": "lisa.schibsted.cl",
+		"Port": 34702
+	},
+	"Logger":{
+		"SyslogEnabled": false,
+		"SyslogIdentity": "goms",
+		"StdlogEnabled": true,
+		"LogLevel": 0
+	}
+}

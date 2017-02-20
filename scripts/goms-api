@@ -1,0 +1,67 @@
+#|/bin/bash
+
+. /etc/rc.d/init.d/functions
+SERVICEPATH="/opt/goms"
+EXEC="goms-api"
+PORT=7171
+
+start() {
+	PID=$(netstat -anp --tcp | grep "LISTEN" | grep ":$PORT" | awk -F'[/ ]+' '{ print $7 }')
+	if [ "$PID" ]; then
+		echo -n "ERROR: service is already running (PID: $PID)"; \
+		failure
+	else if [ ! -x "$SERVICEPATH/$EXEC" ]; then
+		echo -n "service $EXEC not found"
+		failure
+	else
+		cd $SERVICEPATH
+		nohup $SERVICEPATH/$EXEC >> /tmp/goms.log 2>&1 &
+		echo -n "starting goms api"
+		success
+	fi
+	fi
+	echo
+}
+
+stop() {
+	PID=$(netstat -anp --tcp | grep "LISTEN" | grep ":$PORT" | awk -F'[/ ]+' '{ print $7 }')
+	echo -n "stopping goms api"
+	if [ "$PID" ]; then
+		kill -15 $PID
+		sleep 3
+		PID=$(netstat -anp --tcp | grep "LISTEN" | grep ":$PORT" | awk -F'[/ ]+' '{ print $7 }')
+		if [ "$PID" ]; then
+			failure
+		else
+			success
+		fi
+	else
+		success
+	fi
+	echo
+}
+
+status() {
+	PID=$(netstat -anp --tcp | grep "LISTEN" | grep ":$PORT" | awk -F'[/ ]+' '{ print $7 }')
+	if [ "$PID" ]; then
+		echo "STATUS: RUNNING    PID $PID";
+	else
+		echo "STATUS: STOPPED"
+	fi
+}
+
+case "$1" in
+	start)
+		start
+		;;
+	stop)
+		stop
+		;;
+	restart)
+		stop
+		start
+		;;
+	status)
+		status
+		;;
+esac
