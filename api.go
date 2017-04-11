@@ -11,7 +11,7 @@ var setup *sources.Config
 
 func main() {
 
-	sources.Load("conf/conf.json")
+	sources.LoadConf("conf/conf.json")
 	setup = sources.GetConfig()
 
 	loggerConf := logger.LogConfig{

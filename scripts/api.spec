@@ -17,7 +17,7 @@ BuildRequires:	golang >= 1.3
 %define _sysconfdir /etc/sysconfig
 
 %description
-MS escrito en Goland como una API JSON.
+MS written in Golang as an JSON API.
 
 %pre
 if ! id goms &>/dev/null; then useradd %{name} ; fi

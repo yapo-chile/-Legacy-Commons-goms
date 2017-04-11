@@ -42,7 +42,7 @@ type Config struct {
 	Logger  LoggerConfig
 }
 
-func Load(path string) {
+func LoadConf(path string) {
 	fmt.Printf("Loading config from %s\n", path)
 
 	file, err := os.Open(path)
