@@ -1,12 +1,12 @@
 {
 	"Service":{
-		"Host": "lisa.schibsted.cl",
-		"Port": 34702
+		"Host": "__SERVER_NAME__",
+		"Port": __SERVICE_PORT__
 	},
 	"Logger":{
-		"SyslogEnabled": false,
-		"SyslogIdentity": "goms",
-		"StdlogEnabled": true,
-		"LogLevel": 0
+		"SyslogEnabled": __SYSLOG_ENABLED__,
+		"SyslogIdentity": "__SYSLOG_IDENTITY__",
+		"StdlogEnabled": __STDLOG_ENABLED__,
+		"LogLevel": __LOG_LEVEL__
 	}
 }
