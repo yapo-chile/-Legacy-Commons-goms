@@ -12,6 +12,13 @@
   $ cd ~/go/src/github.schibsted.io/Yapo
   $ git clone git@github.schibsted.io:Yapo/goms.git
   ```
+* You will need to modify this files and you should change every reference to goms on the imported packages with the name of your service/api
+	- api.go
+	- Makefile: same as above
+	- scripts/api.spec
+* You should need to change, add or replace the example endpoint and any of its routes, these can be found in these files
+	- sources/handlers.go
+	- sources/router.go
 
 * On the top dir execute the make instruction to clean and start:
 
