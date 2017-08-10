@@ -7,20 +7,15 @@ GOLINT=$$GOPATH/bin/golint
 GENPORTOFF?=0
 genport = $(shell expr ${GENPORTOFF} + \( $(shell id -u) - \( $(shell id -u) / 100 \) \* 100 \) \* 200 + 30100 + $(1))
 
-ifndef ENVIRONMENT
-	ENVIRONMENT=Develop
-	YO=`whoami`
-	LISTEN_PORT=$(call genport,2)
-	SERVER_ROOT=${PWD}
-	DOCUMENT_ROOT=${PWD}/src/public
-	SERVERNAME=`hostname`
-	BASE_URL="http://"${SERVERNAME}":"${LISTEN_PORT}
-endif
+YO=`whoami`
+LISTEN_PORT=$(call genport,2)
+SERVER_ROOT=${PWD}
+SERVERNAME=`hostname`
+BASE_URL="http://"${SERVERNAME}":"${LISTEN_PORT}
 
 info:
 	@echo "YO           : "${YO}
 	@echo "ServerRoot   : "${SERVER_ROOT}
-	@echo "DocumentRoot : "${DOCUMENT_ROOT}
 	@echo "API Base URL : ${BASE_URL}"
 
 build:
@@ -70,7 +65,7 @@ update_config:
 	@sed -i "s/__LOG_LEVEL__/0/g" conf/conf.json
 
 demonize:
-	@nohup ${EXEC} >> ${EXEC}.log 2>&1 &
+	@nohup ${EXEC} >> logs/${EXEC}.log 2>&1 &
 
 rpm-clean:
 	PID=$(call get_pid); \
@@ -83,7 +78,7 @@ rpm-clean:
 
 rpm-build: rpm-clean rpm-setuptree build
 	cp conf/conf.json.in conf/conf.json
-	rpmbuild -bb goms.spec
+	rpmbuild -bb scripts/api.spec
 	mv build/RPMS/x86_64/goms*.rpm ./
 	rm -Rf build
 
@@ -139,7 +134,6 @@ fix-format:
 	done;
 
 test:
-	#@${MAKE} db-load-test
 	ERRORS=0; \
 	for test in tests/*_test.go ; do \
 		echo -n "==> Running $$test: "; \
