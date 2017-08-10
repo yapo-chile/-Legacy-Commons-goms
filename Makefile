@@ -18,8 +18,7 @@ info:
 	@echo "ServerRoot   : "${SERVER_ROOT}
 	@echo "API Base URL : ${BASE_URL}"
 
-build:
-	@${MAKE} stop
+build: stop
 	go get
 	go build
 
@@ -50,9 +49,17 @@ stop:
 		kill -15 $$PID; \
 	fi
 
-restart:
-	${MAKE} stop
-	${MAKE} start
+restart: stop start
+
+status: service-status
+
+service-status:
+	@PID=$(call get_pid); \
+	if [ "$$PID" ]; then \
+		echo "SERVICE RUNNING (PID: $$PID)"; \
+		else \
+		echo "SERVICE NOT RUNNING"; \
+	fi
 
 update_config:
 	@rm -f conf/conf.json
@@ -85,10 +92,7 @@ rpm-build: rpm-clean rpm-setuptree build
 rpm-setuptree:
 	mkdir -p build/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 
-check:
-	${MAKE} check-format
-	${MAKE} check-vet
-	${MAKE} check-lint
+check: check-format check-vet check-lint
 
 check-format:
 	echo "==> Checking format with gofmt:"
