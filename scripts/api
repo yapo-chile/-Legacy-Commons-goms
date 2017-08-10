@@ -1,10 +1,10 @@
-#|/bin/bash
+#!/bin/bash
 
 . /etc/rc.d/init.d/functions
 API_NAME="__API_NAME__"
 SERVICEPATH="/opt/$API_NAME"
 EXEC="$API_NAME-api"
-PORT=7171
+PORT=__SERVICE_PORT__
 
 start() {
 	PID=$(netstat -anp --tcp | grep "LISTEN" | grep ":$PORT" | awk -F'[/ ]+' '{ print $7 }')

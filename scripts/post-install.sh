@@ -3,7 +3,9 @@
 HOSTNAME=$(hostname --short)
 FULLHOSTNAME=$(hostname)
 FILE='/opt/__API_NAME__/conf/conf.json'
+API_FILE='/etc/init.d/__API_NAME__'
 
+sed -i "s/__SERVICE_PORT__/6969/g" $API_FILE
 sed -i "s/__SERVER_NAME__/$FULLHOSTNAME/g" $FILE
 sed -i "s/__SERVICE_PORT__/6969/g" $FILE
 sed -i "s/__DB_NAME__/goms-db/g" $FILE
