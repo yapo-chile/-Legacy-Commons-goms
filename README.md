@@ -24,7 +24,7 @@
 
   ```
   $ cd goms
-  $ make clean_start
+  $ make start
   ```
 
 * How to check the service?
@@ -32,10 +32,6 @@
   ```
   $ make status
   SERVICE RUNNING (PID: 7568)
-  make db-status
-  make[1]: Entering directory   `/home/user/go/src/github.schibsted.io/Yapo/goms'
-  DATABASE RUNNING
-  make[1]: Leaving directory `/home/user/go/src/github.schibsted.io/Yapo/goms'
   ```
 
 * How to get more info?
@@ -46,7 +42,6 @@
   ServerRoot   : /home/user/go/src/github.schibsted.io/Yapo/goms
   DocumentRoot : /home/user/go/src/github.schibsted.io/Yapo/goms/src/public
   API Base URL : http://SERVER:PORT
-  DB connect   : psql -h localhost -p PORT goms-db
   ```
 
 * If you change the code:
