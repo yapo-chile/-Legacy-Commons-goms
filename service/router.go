@@ -1,4 +1,4 @@
-package sources
+package service
 
 import (
 	"gopkg.in/gorilla/mux.v1"
@@ -23,7 +23,7 @@ type routes []routeGroups
 var Routes = routes{
 	{
 		//this is the base path, all routes will start with this
-		"/api/v1",
+		"/api/v{version:[1-9][0-9]*}",
 		[]route{
 			{
 				"theendpoint",

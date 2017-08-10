@@ -1,4 +1,4 @@
-package sources
+package service
 
 // THIS FILE IS FOR THE SPECIFIC API ERRORS
 //Here goes the error codes

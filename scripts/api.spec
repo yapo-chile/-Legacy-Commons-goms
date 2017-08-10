@@ -17,10 +17,10 @@ BuildRequires:	golang >= 1.3
 %define _sysconfdir /etc/sysconfig
 
 %description
-MS written in Golang as an JSON API.
+MS written in Golang as a JSON API.
 
 %pre
-if ! id goms &>/dev/null; then useradd %{name} ; fi
+if ! id %{name} &>/dev/null; then useradd %{name} ; fi
 %(sed -i 's/__API_NAME__/%{name}/g' %{codesrc}/scripts/api)
 
 %post
