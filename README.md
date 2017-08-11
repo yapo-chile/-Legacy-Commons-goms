@@ -12,7 +12,7 @@
   $ cd ~/go/src/github.schibsted.io/Yapo
   $ git clone git@github.schibsted.io:Yapo/goms.git
   ```
-* You will need to modify this files and you should change every reference to goms on the imported packages with the name of your service/api
+* You will need to modify these files and you should change every reference to goms on the imported packages with the name of your service/api
 	- api.go
 	- Makefile: same as above
 	- scripts/api.spec
