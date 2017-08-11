@@ -1,0 +1,5 @@
+*.swp
+*.swo
+*.rpm
+conf/conf.json
+logs/*
