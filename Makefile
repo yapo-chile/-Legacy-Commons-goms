@@ -1,4 +1,4 @@
-.PHONY : clean build rpm-clean rpm-build
+.PHONY : status build rpm-clean rpm-build
 get_pid=$$(ps ux | grep -v grep | grep -E "\./goms" | awk '{ print $$2 }')
 
 EXEC="./goms"
@@ -23,42 +23,38 @@ build: stop
 	go build
 
 run:
-	PID=$(call get_pid); \
+	@PID=$(call get_pid); \
 	if [ "$$PID" ]; then \
 		echo "ERROR: service is already running (PID: $$PID)"; \
 	else if [ ! -x "${EXEC}" ]; then \
 		echo "service ${EXEC} not found"; \
 	else \
-		${MAKE} update_config; \
-		${MAKE} demonize; \
+		${MAKE} -s update_config demonize; \
 	fi; \
 	fi
 
-start:
-	PID=$(call get_pid); \
-	if [ "$$PID" ]; then \
-		echo "ERROR: service is already running (PID: $$PID)"; \
-	else \
-		${MAKE} build; \
-		${MAKE} run; \
-	fi
-
-stop:
+kill:
 	@PID=$(call get_pid); \
 	if [ "$$PID" ]; then \
 		kill -15 $$PID; \
 	fi
 
-restart: stop start
+start: build run
+	@${MAKE} -s status
+
+stop: kill
+	@${MAKE} -s status
+
+restart: start
 
 status: service-status
 
 service-status:
 	@PID=$(call get_pid); \
 	if [ "$$PID" ]; then \
-		echo "SERVICE RUNNING (PID: $$PID)"; \
-		else \
-		echo "SERVICE NOT RUNNING"; \
+		echo -e "\e[32mSERVICE RUNNING (PID: $$PID)\e[0m"; \
+	else \
+		echo -e "\e[31mSERVICE NOT RUNNING\e[0m"; \
 	fi
 
 update_config:
@@ -75,7 +71,7 @@ demonize:
 	@nohup ${EXEC} >> logs/${EXEC}.log 2>&1 &
 
 rpm-clean:
-	PID=$(call get_pid); \
+	@PID=$(call get_pid); \
 	if [ "$$PID" ]; then \
 		echo "ERROR: service is running (PID: $$PID)"; \
 		exit -1; \
@@ -95,8 +91,8 @@ rpm-setuptree:
 check: check-format check-vet check-lint
 
 check-format:
-	echo "==> Checking format with gofmt:"
-	ERRORS=0; \
+	@echo "==> Checking format with gofmt:"
+	@ERRORS=0; \
 	for file in $$(find ./ -iname "*.go"); do \
 		echo -n "checking $${file:2}" ; \
 		errors=$$(gofmt -d -e -s $$file | grep -c -E "^\+[^\+]"); \
@@ -113,20 +109,20 @@ check-format:
 	fi
 
 check-vet:
-	echo "==> Checking code issues with go vet:"
+	@echo "==> Checking code issues with go vet:"
 	go vet -v ./ 2>&1
-	OUTPUT=$$?; \
+	@OUTPUT=$$?; \
 	if [ $$OUTPUT -eq 0 ]; then \
 		echo "No errors found!"; \
 	fi \
 
 check-lint:
-	echo "==> Checking code issues with golint"
-	${GOLINT} 2>&1
+	@echo "==> Checking code issues with golint"
+	@${GOLINT} 2>&1
 
 fix-format:
-	echo "==> Fixing format with gofmt:"
-	for file in $$(find ./ -iname "*.go"); do \
+	@echo "==> Fixing format with gofmt:"
+	@for file in $$(find ./ -iname "*.go"); do \
 		echo -n "checking $${file:2}" ; \
 		errors=$$(gofmt -d -e -s $$file | grep -c -E "^\+"); \
 		if [ "$$errors" -gt 0 ]; then \
@@ -138,8 +134,10 @@ fix-format:
 	done;
 
 test:
-	ERRORS=0; \
-	for test in tests/*_test.go ; do \
+	@ERRORS=0; \
+	COUNT=$$(ls tests/*_test.go 2> /dev/null | wc -l); \
+	echo -e "\e[32m$$COUNT suites found\e[0m"; \
+	for test in $$(ls tests/*_test.go 2> /dev/null) ; do \
 		echo -n "==> Running $$test: "; \
 		go test $$test; \
 		if [ $$? -ne 0 ]; then \
@@ -150,7 +148,7 @@ test:
 		echo -e "\e[31m$$ERRORS suites failing\e[0m"; \
 		exit 1; \
 	else \
-		echo "No errors found!"; \
+		echo -e "\e[32mNo errors found!\e[0m"; \
 	fi; \
 
 setup:
