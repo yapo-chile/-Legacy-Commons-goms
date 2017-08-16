@@ -3,8 +3,10 @@ package main
 import (
 	"fmt"
 	"github.com/Yapo/logger"
+	"github.com/facebookgo/inject"
 	"github.schibsted.io/Yapo/goms/service"
 	"net/http"
+	"os"
 )
 
 var setup *service.Config
@@ -27,6 +29,21 @@ func main() {
 	logger.SetLogLevel(setup.Logger.LogLevel)
 	fmt.Printf("LogLevel: %d\n", setup.Logger.LogLevel)
 
+	logger.Info("Setting up Dependency Injection")
+
+	/*
+		Setup all the *injectable* resources below.
+		Reference: https://godoc.org/github.com/facebookgo/inject
+	*/
+	err := service.SetupInject(
+		&inject.Object{Value: &service.Resource{Name: "A Resource", Usage: "Being injected"}},
+	)
+	if err != nil {
+		logger.Crit("%s\n", err)
+		os.Exit(1)
+	}
+
+	logger.Info("Starting request serving")
 	logger.Crit("%s\n", http.ListenAndServe(fmt.Sprintf("%s:%d", setup.Service.Host, setup.Service.Port), service.NewRouter()))
 	logger.CloseSyslog()
 }
