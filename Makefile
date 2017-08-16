@@ -134,6 +134,7 @@ fix-format:
 	done;
 
 test:
+	@cd tests; go get
 	@ERRORS=0; \
 	COUNT=$$(ls tests/*_test.go 2> /dev/null | wc -l); \
 	echo -e "\e[32m$$COUNT suites found\e[0m"; \

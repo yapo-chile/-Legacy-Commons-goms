@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"time"
 )
 
 var (
@@ -15,11 +14,6 @@ var (
 type ServiceConfig struct {
 	Host string
 	Port int
-}
-
-type DefaultsConfig struct {
-	TTL           time.Duration
-	AllowedParams []string
 }
 
 /*
