@@ -14,6 +14,7 @@ var (
 type ServiceConfig struct {
 	Host string
 	Port int
+	Pid  string
 }
 
 /*

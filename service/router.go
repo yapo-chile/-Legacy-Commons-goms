@@ -26,10 +26,10 @@ var Routes = routes{
 		"/api/v{version:[1-9][0-9]*}",
 		[]route{
 			{
-				"theendpoint",
+				"Check service health",
 				"GET",
-				"/theendpoint",
-				MyGOMSHandler,
+				"/healthcheck",
+				HealthHandler,
 			},
 			{
 				"injecttest",
