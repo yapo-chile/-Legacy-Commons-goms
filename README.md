@@ -17,8 +17,8 @@
 	- Makefile: same as above
 	- scripts/api.spec
 * You should need to change, add or replace the example endpoint and any of its routes, these can be found in these files
-	- sources/handlers.go
-	- sources/router.go
+	- service/handlers.go
+	- service/router.go
 
 * On the top dir execute the make instruction to clean and start:
 
