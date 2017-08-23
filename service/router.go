@@ -31,6 +31,12 @@ var Routes = routes{
 				"/theendpoint",
 				MyGOMSHandler,
 			},
+			{
+				"injecttest",
+				"GET",
+				"/inject",
+				MyInjectHandler,
+			},
 		},
 	},
 }
