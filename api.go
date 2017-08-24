@@ -30,9 +30,9 @@ func main() {
 	logger.SetLogLevel(setup.Logger.LogLevel)
 	fmt.Printf("LogLevel: %d\n", setup.Logger.LogLevel)
 
-	logger.Info("Saving PID file to %s", setup.Service.Pid)
+	logger.Info("Saving PID file to %s", setup.Service.PidFile)
 
-	pidfile.SetPidfilePath(setup.Service.Pid)
+	pidfile.SetPidfilePath(setup.Service.PidFile)
 	if err := pidfile.Write(); err != nil {
 		logger.Crit("Could not save pid file: %s", err)
 		os.Exit(1)

@@ -4,7 +4,7 @@ HOSTNAME=$(hostname --short)
 FULLHOSTNAME=$(hostname)
 CONF_FILE='/opt/__API_NAME__/conf/conf.json'
 INIT_SCRIPT='/etc/init.d/__API_NAME__-api'
-SERVICE_PORT=7070
+SERVICE_PORT=16969
 
 sed -i "s/__SERVICE_PORT__/${SERVICE_PORT}/g" $INIT_SCRIPT
 sed -i "s/__SERVER_NAME__/$FULLHOSTNAME/g" $CONF_FILE

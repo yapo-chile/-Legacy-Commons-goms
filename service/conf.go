@@ -12,9 +12,9 @@ var (
 )
 
 type ServiceConfig struct {
-	Host string
-	Port int
-	Pid  string
+	Host    string
+	Port    int
+	PidFile string
 }
 
 /*

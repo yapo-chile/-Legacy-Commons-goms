@@ -2,7 +2,7 @@
   "Service":{
     "Host": "__SERVER_NAME__",
     "Port": __SERVICE_PORT__,
-    "Pid": "__SERVICE_PID__"
+    "PidFile": "__SERVICE_PID__"
   },
   "Logger":{
     "SyslogEnabled": __SYSLOG_ENABLED__,
