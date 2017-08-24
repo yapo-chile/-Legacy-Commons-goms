@@ -12,7 +12,7 @@
 
 # Global variables
 api_name=$(grep "Name:" scripts/api.spec | cut -d ":" -f 2 | sed "s/ //g")
-packages_path="build/RPMS/x86_64"
+packages_path="."
 api_version=$(grep "Version:" scripts/api.spec | cut -d ":" -f 2 | sed "s/ //g")
 repo_path="/opt/repo/yapo"
 exec_path="/etc/init.d/${api_name}-api"
