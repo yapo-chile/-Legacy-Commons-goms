@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 	"github.com/Yapo/logger"
-	"github.com/facebookgo/inject"
-	"github.com/facebookgo/pidfile"
 	"github.schibsted.io/Yapo/goms/service"
+	"gopkg.in/facebookgo/inject.v0"
+	"gopkg.in/facebookgo/pidfile.v0"
 	"net/http"
 	"os"
 )

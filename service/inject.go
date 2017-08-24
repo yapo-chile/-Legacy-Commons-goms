@@ -1,7 +1,7 @@
 package service
 
 import (
-	"github.com/facebookgo/inject"
+	"gopkg.in/facebookgo/inject.v0"
 	"reflect"
 )
 
