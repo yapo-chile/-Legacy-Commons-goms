@@ -9,6 +9,7 @@ SERVICE_PORT=7070
 sed -i "s/__SERVICE_PORT__/${SERVICE_PORT}/g" $INIT_SCRIPT
 sed -i "s/__SERVER_NAME__/$FULLHOSTNAME/g" $CONF_FILE
 sed -i "s/__SERVICE_PORT__/${SERVICE_PORT}/g" $CONF_FILE
+sed -i "s/__SERVICE_PID__/.pid/g" $CONF_FILE
 sed -i "s/__DB_NAME__/goms-db/g" $CONF_FILE
 sed -i "s/__DB_SERVER_PORT__/5432/g" $CONF_FILE
 sed -i "s/__DB_USER__/gomsms/g" $CONF_FILE
