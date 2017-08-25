@@ -11,10 +11,26 @@ import (
 func TestResource(t *testing.T) {
 	name := "yo"
 	usage := "no fui"
+
 	service.SetupInject(
 		&inject.Object{Value: &service.Resource{Name: name, Usage: usage}},
 	)
 	resource := service.Inject("Resource").(*service.Resource)
 
 	assert.Equal(t, resource.SumLength(), len(name)+len(usage))
+}
+
+func TestConf(t *testing.T) {
+	svc := service.ServiceConfig{
+		Host:    "http://juana.la/iguana",
+		Port:    123123,
+		PidFile: "Woopsie",
+	}
+
+	service.SetConf(&service.Config{
+		Service: svc,
+	})
+
+	conf := service.GetConfig()
+	assert.Equal(t, conf.Service, svc)
 }
