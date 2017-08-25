@@ -53,6 +53,10 @@ func LoadConf(path string) {
 	if err := decoder.Decode(&c); err != nil {
 		fmt.Printf("Error decoding conf file: %s, error: %s\n", configPath, err)
 	}
+	SetConf(c)
+}
+
+func SetConf(c *Config) {
 	config = c
 }
 
