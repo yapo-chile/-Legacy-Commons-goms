@@ -1,6 +1,11 @@
 .PHONY : status build rpm-clean rpm-build
-get_pid=$$(ps ux | grep -v grep | grep -E "\./goms" | awk '{ print $$2 }')
 
+# Retrieve process pid from ${PID} file
+get_pid=$$(cat ${PID} 2> /dev/null)
+# Determine whether a process with ${EXEC} name is running with ${PID} file pid
+is_running=$$(ps --no-headers -o cmd -p $(call get_pid) 2> /dev/null | grep ${EXEC} && echo $$?)
+
+PID=.pid
 EXEC="./goms"
 GOLINT=$$GOPATH/bin/golint
 
@@ -12,32 +17,35 @@ LISTEN_PORT=$(call genport,2)
 SERVER_ROOT=${PWD}
 SERVERNAME=`hostname`
 BASE_URL="http://"${SERVERNAME}":"${LISTEN_PORT}
+HEALTH_CHECK_URL=http:%2F%2F${SERVERNAME}:${LISTEN_PORT}%2Fapi%2Fv1%2Fhealthcheck
 
 info:
 	@echo "YO           : "${YO}
 	@echo "ServerRoot   : "${SERVER_ROOT}
-	@echo "API Base URL : ${BASE_URL}"
+	@echo "API Base URL : "${BASE_URL}
 
 build: stop
 	go get
 	go build
 
+# Check that given url returns a 200 status code
+# The url must not contain the '/' character. Use url encoding.
+wait-start-%:
+	echo Waiting for service to start
+	# URL decode the wildcard part of the target and test http status code
+	URL=$$(printf "%b" $$(echo $* | sed 's/+/ /g; s/%\([0-9a-fA-F][0-9a-fA-F]\)/\\x\1/g;')); \
+	test "$$(curl --retry 10 -m 1 -o /dev/null -s --write-out "%{http_code}" $$URL)" = 200
+
 run:
-	@PID=$(call get_pid); \
-	if [ "$$PID" ]; then \
-		echo "ERROR: service is already running (PID: $$PID)"; \
-	else if [ ! -x "${EXEC}" ]; then \
-		echo "service ${EXEC} not found"; \
+	@RUNNING=$(call is_running); \
+	if [ "$$RUNNING" ]; then \
+		echo "ERROR: service is already running (PID: $(call get_pid))"; \
 	else \
-		${MAKE} -s update_config demonize; \
-	fi; \
+		${MAKE} -s update_config daemonize wait-start-${HEALTH_CHECK_URL}; \
 	fi
 
 kill:
-	@PID=$(call get_pid); \
-	if [ "$$PID" ]; then \
-		kill -15 $$PID; \
-	fi
+	@kill $(call get_pid) &> /dev/null && rm -f ${PID} 2> /dev/null || true
 
 start: build run
 	@${MAKE} -s status
@@ -50,9 +58,9 @@ restart: start
 status: service-status
 
 service-status:
-	@PID=$(call get_pid); \
-	if [ "$$PID" ]; then \
-		echo -e "\e[32mSERVICE RUNNING (PID: $$PID)\e[0m"; \
+	@RUNNING=$(call is_running); \
+	if [ "$$RUNNING" ]; then \
+		echo -e "\e[32mSERVICE RUNNING (PID: $(call get_pid))\e[0m"; \
 	else \
 		echo -e "\e[31mSERVICE NOT RUNNING\e[0m"; \
 	fi
@@ -62,18 +70,19 @@ update_config:
 	@cp conf/conf.json.in conf/conf.json
 	@sed -i "s/__SERVER_NAME__/${SERVERNAME}/g" conf/conf.json
 	@sed -i "s/__SERVICE_PORT__/${LISTEN_PORT}/g" conf/conf.json
+	@sed -i "s/__SERVICE_PID__/${PID}/g" conf/conf.json
 	@sed -i "s/__SYSLOG_ENABLED__/false/g" conf/conf.json
 	@sed -i "s/__SYSLOG_IDENTITY__/goms/g" conf/conf.json
 	@sed -i "s/__STDLOG_ENABLED__/true/g" conf/conf.json
 	@sed -i "s/__LOG_LEVEL__/0/g" conf/conf.json
 
-demonize:
+daemonize:
 	@nohup ${EXEC} >> logs/${EXEC}.log 2>&1 &
 
 rpm-clean:
-	@PID=$(call get_pid); \
-	if [ "$$PID" ]; then \
-		echo "ERROR: service is running (PID: $$PID)"; \
+	@RUNNING=$(call is_running); \
+	if [ "$$RUNNING" ]; then \
+		echo "ERROR: service is running (PID: $(call get_pid))"; \
 		exit -1; \
 	else \
 		rm -Rf build; \
@@ -82,7 +91,7 @@ rpm-clean:
 rpm-build: rpm-clean rpm-setuptree build
 	cp conf/conf.json.in conf/conf.json
 	rpmbuild -bb scripts/api.spec
-	mv build/RPMS/x86_64/goms*.rpm ./
+	mv build/RPMS/x86_64/goms*.rpm .
 	rm -Rf build
 
 rpm-setuptree:

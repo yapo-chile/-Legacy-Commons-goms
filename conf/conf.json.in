@@ -1,12 +1,13 @@
 {
-	"Service":{
-		"Host": "__SERVER_NAME__",
-		"Port": __SERVICE_PORT__
-	},
-	"Logger":{
-		"SyslogEnabled": __SYSLOG_ENABLED__,
-		"SyslogIdentity": "__SYSLOG_IDENTITY__",
-		"StdlogEnabled": __STDLOG_ENABLED__,
-		"LogLevel": __LOG_LEVEL__
-	}
+  "Service":{
+    "Host": "__SERVER_NAME__",
+    "Port": __SERVICE_PORT__,
+    "PidFile": "__SERVICE_PID__"
+  },
+  "Logger":{
+    "SyslogEnabled": __SYSLOG_ENABLED__,
+    "SyslogIdentity": "__SYSLOG_IDENTITY__",
+    "StdlogEnabled": __STDLOG_ENABLED__,
+    "LogLevel": __LOG_LEVEL__
+  }
 }

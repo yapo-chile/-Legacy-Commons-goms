@@ -1,7 +1,7 @@
 Name:       goms
-Version:    0.00.0
+Version:    0.00.1
 Release:    %(expr `date +%s`)
-Summary:    Service in go
+Summary:    Service template in go
 
 License:    Copyright Schibsted Classified Media 2017
 URL:        https://github.schibsted.io/Yapo/goms
@@ -17,7 +17,7 @@ BuildRequires:	golang >= 1.3
 %define _sysconfdir /etc/sysconfig
 
 %description
-MS written in Golang as a JSON API.
+Micro Service template to serve JSON APIs in Golang
 
 %pre
 if ! id %{name} &>/dev/null; then useradd %{name} ; fi

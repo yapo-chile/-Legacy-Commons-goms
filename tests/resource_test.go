@@ -1,9 +1,9 @@
 package tests
 
 import (
-	"github.com/facebookgo/inject"
-	"github.com/stretchr/testify/assert"
 	"github.schibsted.io/Yapo/goms/service"
+	"gopkg.in/facebookgo/inject.v0"
+	"gopkg.in/stretchr/testify.v1/assert"
 	"testing"
 )
 

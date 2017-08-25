@@ -2,60 +2,70 @@
 
 HOSTNAME=$(hostname --short)
 FULLHOSTNAME=$(hostname)
-FILE='/opt/__API_NAME__/conf/conf.json'
-API_FILE='/etc/init.d/__API_NAME__'
+CONF_FILE='/opt/__API_NAME__/conf/conf.json'
+INIT_SCRIPT='/etc/init.d/__API_NAME__-api'
+SERVICE_PORT=16969
 
-sed -i "s/__SERVICE_PORT__/6969/g" $API_FILE
-sed -i "s/__SERVER_NAME__/$FULLHOSTNAME/g" $FILE
-sed -i "s/__SERVICE_PORT__/6969/g" $FILE
-sed -i "s/__DB_NAME__/goms-db/g" $FILE
-sed -i "s/__DB_SERVER_PORT__/5432/g" $FILE
-sed -i "s/__DB_USER__/gomsms/g" $FILE
-sed -i "s/__DB_PASSWD__/XgG5M_Qe3/g" $FILE
-
-sed -i "s/__CACHE_ENABLED__/true/g" $FILE
-sed -i "s/__CACHE_PASSWORD__//g" $FILE
-sed -i "s/__CACHE_PORT__/6399/g" $FILE
-sed -i "s/__CACHE_DATABASE_NUMBER__/0/g" $FILE
-sed -i "s/__CACHE_MAX_IDLE__/10/g" $FILE
-sed -i "s/__CACHE_TIMEOUT__/60/g" $FILE
-sed -i "s/__CACHE_MAX_ACTIVE__/100/g" $FILE
-sed -i "s/__CACHE_WAIT__/false/g" $FILE
-
-sed -i "s/__SYSLOG_ENABLED__/true/g" $FILE
-sed -i "s/__SYSLOG_IDENTITY__/goms/g" $FILE
-sed -i "s/__STDLOG_ENABLED__/false/g" $FILE
-sed -i "s/__LOG_LEVEL__/1/g" $FILE
-
-case "$HOSTNAME" in
+case "${HOSTNAME}" in
 	"lvdev-payment01") # poya1
-		sed -i "s/__DB_HOSTNAME__/lvdev-db01.schibsted.cl/g" $FILE
-		sed -i "s/__CACHE_DB_HOSTNAME__/lvdev-dav01/g" $FILE
-		sed -i "s/__CACHE_EXPIRATION__/600/g" $FILE
+		DB_HOSTNAME="lvdev-db01.schibsted.cl"
+		CACHE_DB_HOSTNAME="lvdev-dav01"
+		CACHE_EXPIRATION=600
 	;;
 	"lvdev-payment02") # poya2
-		sed -i "s/__DB_HOSTNAME__/lvdev-db02.schibsted.cl/g" $FILE
-		sed -i "s/__CACHE_DB_HOSTNAME__/lvdev-dav02/g" $FILE
-		sed -i "s/__CACHE_EXPIRATION__/600/g" $FILE
+		DB_HOSTNAME="lvdev-db02.schibsted.cl"
+		CACHE_DB_HOSTNAME="lvdev-dav02"
+		CACHE_EXPIRATION=600
 	;;
 	"lvdev-payment03") # poya3
-		sed -i "s/__DB_HOSTNAME__/lvdev-db03.schibsted.cl/g" $FILE
-		sed -i "s/__CACHE_DB_HOSTNAME__/lvdev-dav03/g" $FILE
-		sed -i "s/__CACHE_EXPIRATION__/600/g" $FILE
+		DB_HOSTNAME="lvdev-db03.schibsted.cl"
+		CACHE_DB_HOSTNAME="lvdev-dav03"
+		CACHE_EXPIRATION=600
 	;;
 	"lvdev-payment04") # poya4
-		sed -i "s/__DB_HOSTNAME__/lvdev-db04.schibsted.cl/g" $FILE
-		sed -i "s/__CACHE_DB_HOSTNAME__/lvdev-dav04/g" $FILE
-		sed -i "s/__CACHE_EXPIRATION__/600/g" $FILE
+		DB_HOSTNAME="lvdev-db04.schibsted.cl"
+		CACHE_DB_HOSTNAME="lvdev-dav04"
+		CACHE_EXPIRATION=600
 	;;
 	"ch32stg") # STG
-		sed -i "s/__DB_HOSTNAME__/ch6stg/g" $FILE
-		sed -i "s/__CACHE_DB_HOSTNAME__/ch36stg/g" $FILE
-		sed -i "s/__CACHE_EXPIRATION__/3600/g" $FILE
+		DB_HOSTNAME="ch6stg"
+		CACHE_DB_HOSTNAME="ch36stg"
+		CACHE_EXPIRATION=3600
 	;;
 	"ch42") # prod
-		sed -i "s/__DB_HOSTNAME__/ch6/g" $FILE
-		sed -i "s/__CACHE_DB_HOSTNAME__/ch36/g" $FILE
-		sed -i "s/__CACHE_EXPIRATION__/3600/g" $FILE
+		DB_HOSTNAME="ch6"
+		CACHE_DB_HOSTNAME="ch36"
+		CACHE_EXPIRATION=3600
 	;;
 esac
+
+sed -i "s/__SERVICE_PORT__/${SERVICE_PORT}/g" $INIT_SCRIPT
+sed -e "s/__SERVER_NAME__/$FULLHOSTNAME/g" \
+    -e "s/__SERVICE_PORT__/${SERVICE_PORT}/g" \
+    -e "s/__SERVICE_PID__/.pid/g" \
+    -e "s/__DB_NAME__/goms-db/g" \
+    -e "s/__DB_SERVER_PORT__/5432/g" \
+    -e "s/__DB_USER__/gomsms/g" \
+    -e "s/__DB_PASSWD__/XgG5M_Qe3/g" \
+    -i ${CONF_FILE}
+
+sed -e "s/__CACHE_ENABLED__/true/g" \
+    -e "s/__CACHE_PASSWORD__//g" \
+    -e "s/__CACHE_PORT__/6399/g" \
+    -e "s/__CACHE_DATABASE_NUMBER__/0/g" \
+    -e "s/__CACHE_MAX_IDLE__/10/g" \
+    -e "s/__CACHE_TIMEOUT__/60/g" \
+    -e "s/__CACHE_MAX_ACTIVE__/100/g" \
+    -e "s/__CACHE_WAIT__/false/g" \
+    -i ${CONF_FILE}
+
+sed -e "s/__SYSLOG_ENABLED__/true/g" \
+    -e "s/__SYSLOG_IDENTITY__/goms/g" \
+    -e "s/__STDLOG_ENABLED__/false/g" \
+    -e "s/__LOG_LEVEL__/1/g" \
+    -i ${CONF_FILE}
+
+sed -e "s/__DB_HOSTNAME__/${DB_HOSTNAME}/g" \
+    -e "s/__CACHE_DB_HOSTNAME__/${CACHE_DB_HOSTNAME}/g" \
+    -e "s/__CACHE_EXPIRATION__/${CACHE_EXPIRATION}/g" \
+    -i ${CONF_FILE}

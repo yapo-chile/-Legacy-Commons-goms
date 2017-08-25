@@ -3,8 +3,9 @@ package main
 import (
 	"fmt"
 	"github.com/Yapo/logger"
-	"github.com/facebookgo/inject"
 	"github.schibsted.io/Yapo/goms/service"
+	"gopkg.in/facebookgo/inject.v0"
+	"gopkg.in/facebookgo/pidfile.v0"
 	"net/http"
 	"os"
 )
@@ -28,6 +29,14 @@ func main() {
 	logger.Init(loggerConf)
 	logger.SetLogLevel(setup.Logger.LogLevel)
 	fmt.Printf("LogLevel: %d\n", setup.Logger.LogLevel)
+
+	logger.Info("Saving PID file to %s", setup.Service.PidFile)
+
+	pidfile.SetPidfilePath(setup.Service.PidFile)
+	if err := pidfile.Write(); err != nil {
+		logger.Crit("Could not save pid file: %s", err)
+		os.Exit(1)
+	}
 
 	logger.Info("Setting up Dependency Injection")
 

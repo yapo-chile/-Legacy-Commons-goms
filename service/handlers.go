@@ -6,20 +6,20 @@ import (
 	"net/http"
 )
 
-//  MyGOMSHandler is an example handler
-func MyGOMSHandler(w http.ResponseWriter, r *http.Request) {
+/* Retrieve service health status */
+func HealthHandler(w http.ResponseWriter, r *http.Request) {
 	logger.Info("Request: [%s] %s from: %s", r.Method, r.URL, r.RemoteAddr)
 	var response goutils.Response
 	defer goutils.WriteJSONResponse(w, &response)
 	defer goutils.CreateJSON(&response)
 
 	response.Body = struct {
-		Response string
-	}{Response: "HOLA MUNDO!"}
+		Status string
+	}{Status: "OK"}
 	response.Code = http.StatusOK
 }
 
-// MyInjectHandler is a Dependency Injection powered handler
+/*MyInjectHandler is a Dependency Injection powered handler */
 func MyInjectHandler(w http.ResponseWriter, r *http.Request) {
 	logger.Info("Request: [%s] %s from: %s", r.Method, r.URL, r.RemoteAddr)
 	var response goutils.Response
