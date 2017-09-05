@@ -14,14 +14,14 @@
 # Example GO projects
 
 ## 1. run tests and checks
-make -s check build update_config test;
+make -C .. -s check build update_config test;
 if [ "$?" != "0" ]; then
     echo "[Error] tests and checks. For More details check scripts/jenkins_build.step.sh" 1>&2
     exit 1
 fi
 
 ## 2. create pacotes
-make stop rpm-build;
+make -C .. stop rpm-build;
 if [ "$?" != "0" ]; then
     echo "[Error] Create Packets. For More details check scripts/jenkins_build.step.sh" 1>&2
     exit 1
