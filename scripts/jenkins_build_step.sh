@@ -24,5 +24,5 @@ fi
 make stop rpm-build;
 if [ "$?" != "0" ]; then
     echo "[Error] Create Packets. For More details check scripts/jenkins_build.step.sh" 1>&2
-    exit 2
+    exit 1
 fi
