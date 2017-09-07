@@ -91,7 +91,7 @@ rpm-clean:
 rpm-build: rpm-clean rpm-setuptree build
 	cp conf/conf.json.in conf/conf.json
 	rpmbuild -bb scripts/api.spec
-	mv build/RPMS/x86_64/goms*.rpm .
+	mv build/RPMS/x86_64/yapo-*.rpm .
 	rm -Rf build
 
 rpm-setuptree:
