@@ -119,9 +119,9 @@ No request parameters
 Please update this table with the error codes you use.
 Keep it as http standard compliant as possible.
 
-      **ERROR**         |     **HTTP Code**    	|      **MESSAGE**
------------------------ | --------------------- | ---------------------
-Unprocessable Entity    |         422           |  JSON motherflower, do you speak it?
+|      **ERROR**         |     **HTTP Code**    	|      **MESSAGE**
+|----------------------- | --------------------- | ---------------------
+|Unprocessable Entity    |         422           |  JSON motherflower, do you speak it?
 
 ### Contact
 dev@schibsted.cl
