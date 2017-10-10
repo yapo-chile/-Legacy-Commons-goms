@@ -7,7 +7,7 @@ is_running=$$(ps --no-headers -o cmd -p $(call get_pid) 2> /dev/null | grep ${EX
 
 PID=.pid
 EXEC="./goms"
-GOLINT=$$GOPATH/bin/golint
+GOLINT?=$$GOPATH/bin/golint
 
 GENPORTOFF?=0
 genport = $(shell expr ${GENPORTOFF} + \( $(shell id -u) - \( $(shell id -u) / 100 \) \* 100 \) \* 200 + 30100 + $(1))
