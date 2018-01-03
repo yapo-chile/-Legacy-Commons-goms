@@ -21,16 +21,16 @@ func TestResource(t *testing.T) {
 }
 
 func TestConf(t *testing.T) {
-	svc := service.ServiceConfig{
+	svc := service.RuntimeConfig{
 		Host:    "http://juana.la/iguana",
 		Port:    123123,
 		PidFile: "Woopsie",
 	}
 
 	service.SetConf(&service.Config{
-		Service: svc,
+		Runtime: svc,
 	})
 
 	conf := service.GetConfig()
-	assert.Equal(t, conf.Service, svc)
+	assert.Equal(t, conf.Runtime, svc)
 }

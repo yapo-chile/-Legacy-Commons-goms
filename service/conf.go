@@ -11,20 +11,20 @@ var (
 	config     *Config
 )
 
-type ServiceConfig struct {
+// RuntimeConfig allows magic parsing of the Runtime directive on conf.json
+type RuntimeConfig struct {
 	Host    string
 	Port    int
 	PidFile string
 }
 
-/*
-	LogLevel definition:
-	a0 - Debug
-	1 - Info
-	2 - Warning
-	3 - Error
-	4 - Critic
-*/
+// LoggerConfig allows magic parsing of the Logger directive on conf.json
+// LogLevel definition:
+// 0 - Debug
+// 1 - Info
+// 2 - Warning
+// 3 - Error
+// 4 - Critic
 type LoggerConfig struct {
 	SyslogEnabled  bool
 	SyslogIdentity string
@@ -32,11 +32,14 @@ type LoggerConfig struct {
 	LogLevel       int
 }
 
+// Config type for parsing configuration on conf.json
 type Config struct {
-	Service ServiceConfig
+	Runtime RuntimeConfig
 	Logger  LoggerConfig
 }
 
+// LoadConf retrieves the configuration from the file specified by path.
+// Sets the global conf to this value.
 func LoadConf(path string) {
 	fmt.Printf("Loading config from %s\n", path)
 
@@ -56,10 +59,12 @@ func LoadConf(path string) {
 	SetConf(c)
 }
 
+// SetConf updates the global configuration to given value.
 func SetConf(c *Config) {
 	config = c
 }
 
+// GetConfig retrieves the global configuration.
 func GetConfig() *Config {
 	return config
 }

@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-/* Retrieve service health status */
+// HealthHandler retrieves service health status.
 func HealthHandler(w http.ResponseWriter, r *http.Request) {
 	logger.Info("Request: [%s] %s from: %s", r.Method, r.URL, r.RemoteAddr)
 	var response goutils.Response
@@ -19,7 +19,7 @@ func HealthHandler(w http.ResponseWriter, r *http.Request) {
 	response.Code = http.StatusOK
 }
 
-/*MyInjectHandler is a Dependency Injection powered handler */
+// MyInjectHandler is a Dependency Injection powered handler.
 func MyInjectHandler(w http.ResponseWriter, r *http.Request) {
 	logger.Info("Request: [%s] %s from: %s", r.Method, r.URL, r.RemoteAddr)
 	var response goutils.Response

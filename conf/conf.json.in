@@ -1,5 +1,5 @@
 {
-  "Service":{
+  "Runtime":{
     "Host": "__SERVER_NAME__",
     "Port": __SERVICE_PORT__,
     "PidFile": "__SERVICE_PID__"
