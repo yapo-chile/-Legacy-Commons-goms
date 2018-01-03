@@ -32,6 +32,7 @@ before_script:
   - go get github.com/Yapo/logger
   - go get gopkg.in/facebookgo/inject.v0
   - go get gopkg.in/facebookgo/pidfile.v0
+  - go get gopkg.in/facebookgo/atomicfile.v0
   - go get gopkg.in/gorilla/mux.v1
   - go get gopkg.in/stretchr/testify.v1/assert
 
