@@ -8,6 +8,3 @@ package tests
 import (
 	_ "gopkg.in/stretchr/testify.v1/assert"
 )
-
-func main() {
-}
