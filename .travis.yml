@@ -3,4 +3,4 @@ language: go
 go:
   - 1.7
 
-script: make build test
+script: make check-vet check-lint build test
