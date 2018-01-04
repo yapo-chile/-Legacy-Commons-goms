@@ -1,5 +1,11 @@
 # goms
 
+Goms is the official template microservice on golang for Yapo.
+
+<!-- Badger start badges -->
+[![Status of the build](https://badger.spt-engprod-pro.schibsted.io/badge/travis/Yapo/goms)](https://travis.schibsted.io/Yapo/goms)
+<!-- Badger end badges -->
+
 ## How to run the service
 
 * Create the dir: `~/go/src/github.schibsted.io/Yapo`
@@ -12,14 +18,6 @@
   $ cd ~/go/src/github.schibsted.io/Yapo
   $ git clone git@github.schibsted.io:Yapo/goms.git
   ```
-
-* You will need to modify these files and you should change every reference to goms on the imported packages with the name of your service/api
-	- api.go
-	- Makefile: same as above
-	- scripts/api.spec
-* You should need to change, add or replace the example endpoint and any of its routes, these can be found in these files
-	- service/handlers.go
-	- service/router.go
 
 * On the top dir execute the make instruction to clean and start:
 
@@ -63,17 +61,35 @@
   $ make check -s
   ```
 
-* Update to your own service:
-  - Create a repo for your new service on: https://github.schibsted.io/Yapo
-  - Rename your goms dir to your service name:
+## Creating a new service
+
+* Create a repo for your new service on: https://github.schibsted.io/Yapo
+* Rename your goms dir to your service name:
   ```
-    $ mv goms YourService
+  $ mv goms YourService
   ```
-  - Update origin: 
+* Update origin: 
   ```
   # https://help.github.com/articles/changing-a-remote-s-url/
   $ git remote set-url origin git@github.schibsted.io:Yapo/YourService.git
   ```
+
+* You will need to modify these files and you should change every reference to goms on the imported packages with the name of your service/api
+  - api.go
+  - Makefile
+  - scripts/api.spec
+
+* You should need to change, add or replace the example endpoint and any of its routes, these can be found in these files
+  - service/handlers.go
+  - service/router.go
+
+* Enable TravisCI
+  - Go to your service's github settings -> Hooks & Services -> Add Service -> Travis CI
+  - Fill in the form with the credentials you obtain from https://travis.schibsted.io/profile/
+  - Sync your repos and organizations on Travis
+  - Make a push on your service
+  - The push should trigger a build. If it didn't ensure that it is enabled on the travis service list
+  - Enjoy!
 
 ## Endpoints
 ### GET  /api/v1/healthcheck
