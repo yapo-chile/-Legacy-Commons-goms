@@ -30,9 +30,9 @@ func main() {
 	logger.SetLogLevel(setup.Logger.LogLevel)
 	fmt.Printf("LogLevel: %d\n", setup.Logger.LogLevel)
 
-	logger.Info("Saving PID file to %s", setup.Service.PidFile)
+	logger.Info("Saving PID file to %s", setup.Runtime.PidFile)
 
-	pidfile.SetPidfilePath(setup.Service.PidFile)
+	pidfile.SetPidfilePath(setup.Runtime.PidFile)
 	if err := pidfile.Write(); err != nil {
 		logger.Crit("Could not save pid file: %s", err)
 		os.Exit(1)
@@ -53,6 +53,6 @@ func main() {
 	}
 
 	logger.Info("Starting request serving")
-	logger.Crit("%s\n", http.ListenAndServe(fmt.Sprintf("%s:%d", setup.Service.Host, setup.Service.Port), service.NewRouter()))
+	logger.Crit("%s\n", http.ListenAndServe(fmt.Sprintf("%s:%d", setup.Runtime.Host, setup.Runtime.Port), service.NewRouter()))
 	logger.CloseSyslog()
 }

@@ -47,9 +47,7 @@ func NewRouter() *mux.Router {
 	for _, routeGroup := range Routes {
 		subRouter := router.PathPrefix(routeGroup.Prefix).Subrouter()
 		for _, route := range routeGroup.Groups {
-			var handler http.Handler
-
-			handler = route.HandlerFunc
+			handler := route.HandlerFunc
 			subRouter.
 				Methods(route.Method).
 				Path(route.Pattern).
