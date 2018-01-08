@@ -1,4 +1,4 @@
-package service
+package conf
 
 import (
 	"encoding/json"
@@ -40,31 +40,29 @@ type Config struct {
 
 // LoadConf retrieves the configuration from the file specified by path.
 // Sets the global conf to this value.
-func LoadConf(path string) {
-	fmt.Printf("Loading config from %s\n", path)
+func LoadConf(path string) (*Config, error) {
 
 	file, err := os.Open(path)
 	if err != nil {
-		fmt.Printf("Error loading file %s, error: %s\n", path, err)
+		return nil, fmt.Errorf("conf: Error loading file %s, error: %s\n", path, err)
 	}
 	defer file.Close()
 
-	fmt.Printf("Decoding conf file\n")
 	decoder := json.NewDecoder(file)
 	c := &Config{}
 
-	if err := decoder.Decode(&c); err != nil {
-		fmt.Printf("Error decoding conf file: %s, error: %s\n", configPath, err)
+	if err := decoder.Decode(c); err != nil {
+		return nil, fmt.Errorf("conf: Error decoding conf file: %s, error: %s\n", configPath, err)
 	}
-	SetConf(c)
+	return c, nil
 }
 
 // SetConf updates the global configuration to given value.
-func SetConf(c *Config) {
+func Set(c *Config) {
 	config = c
 }
 
 // GetConfig retrieves the global configuration.
-func GetConfig() *Config {
+func Get() *Config {
 	return config
 }

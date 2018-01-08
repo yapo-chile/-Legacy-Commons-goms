@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/Yapo/logger"
-	"github.schibsted.io/Yapo/goms/service"
+	"github.schibsted.io/Yapo/goms/conf"
 	"gopkg.in/facebookgo/inject.v0"
 	"gopkg.in/facebookgo/pidfile.v0"
 	"net/http"
@@ -14,8 +14,14 @@ var setup *service.Config
 
 func main() {
 
-	service.LoadConf("conf/conf.json")
-	setup = service.GetConfig()
+	confPath := "conf/conf.json"
+	fmt.Printf("Loading config from %s\n", confPath)
+	setup, err := conf.LoadConf(confPath)
+	if err != nil {
+		fmt.Printf(err)
+		os.Exit(1)
+	}
+	conf.Set(setup)
 
 	loggerConf := logger.LogConfig{
 		Syslog: logger.SyslogConfig{
