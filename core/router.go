@@ -5,6 +5,7 @@ import (
 	"net/http"
 )
 
+// Route stands for an http endpoint description
 type Route struct {
 	Name        string
 	Method      string
@@ -17,10 +18,10 @@ type routeGroups struct {
 	Groups []Route
 }
 
+// Routes is an array of routes with a common prefix
 type Routes []routeGroups
 
-// Routes var contains the NAME, VERB, PATH and Handler function for each route
-// NewRouter creates a new instance of a mux route and load rules in config
+// NewRouter setups a Router based on the provided routes.
 func NewRouter(routes []routeGroups) *mux.Router {
 	router := mux.NewRouter()
 	for _, routeGroup := range routes {

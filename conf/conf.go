@@ -44,7 +44,7 @@ func Load(path string) (*Config, error) {
 
 	file, err := os.Open(path)
 	if err != nil {
-		return nil, fmt.Errorf("conf: Error loading file %s, error: %s\n", path, err)
+		return nil, fmt.Errorf("conf: Error loading file %s, error: %s", path, err)
 	}
 	defer file.Close()
 
@@ -52,7 +52,7 @@ func Load(path string) (*Config, error) {
 	c := &Config{}
 
 	if err := decoder.Decode(c); err != nil {
-		return nil, fmt.Errorf("conf: Error decoding conf file: %s, error: %s\n", configPath, err)
+		return nil, fmt.Errorf("conf: Error decoding conf file: %s, error: %s", configPath, err)
 	}
 	return c, nil
 }
