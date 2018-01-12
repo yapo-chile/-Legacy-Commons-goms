@@ -38,9 +38,9 @@ type Config struct {
 	Logger  LoggerConfig
 }
 
-// LoadConf retrieves the configuration from the file specified by path.
+// Load retrieves the configuration from the file specified by path.
 // Sets the global conf to this value.
-func LoadConf(path string) (*Config, error) {
+func Load(path string) (*Config, error) {
 
 	file, err := os.Open(path)
 	if err != nil {
@@ -57,12 +57,12 @@ func LoadConf(path string) (*Config, error) {
 	return c, nil
 }
 
-// SetConf updates the global configuration to given value.
+// Set updates the global configuration to given value.
 func Set(c *Config) {
 	config = c
 }
 
-// GetConfig retrieves the global configuration.
+// Get retrieves the global configuration.
 func Get() *Config {
 	return config
 }

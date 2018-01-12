@@ -5,20 +5,20 @@ import (
 	"testing"
 )
 
-func TestLoadConfNoFile(t *testing.T) {
-	conf, err := LoadConf("testdata/nosuchfile.json")
+func TestLoadNoFile(t *testing.T) {
+	conf, err := Load("testdata/nosuchfile.json")
 	assert.Nil(t, conf)
 	assert.Error(t, err)
 }
 
-func TestLoadConfBadFormat(t *testing.T) {
-	conf, err := LoadConf("testdata/badformat.json")
+func TestLoadBadFormat(t *testing.T) {
+	conf, err := Load("testdata/badformat.json")
 	assert.Nil(t, conf)
 	assert.Error(t, err)
 }
 
-func TestLoadConfOk(t *testing.T) {
-	conf, err := LoadConf("testdata/ok.json")
+func TestLoadOk(t *testing.T) {
+	conf, err := Load("testdata/ok.json")
 	expected := &Config{
 		Runtime: RuntimeConfig{
 			Host:    "somehost",
