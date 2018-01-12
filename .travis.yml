@@ -35,6 +35,7 @@ before_script:
   - go get gopkg.in/facebookgo/atomicfile.v0
   - go get gopkg.in/gorilla/mux.v1
   - go get gopkg.in/stretchr/testify.v1/assert
+  - go get gopkg.in/stretchr/testify.v1/mock
 
 
 # script always run to completion (set +e). All of these code checks are must haves
