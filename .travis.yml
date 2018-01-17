@@ -47,3 +47,13 @@ script:
   - gocyclo -over 19 $GO_FILES               # forbid code with huge functions
   - golint -set_exit_status $(go list ./...) # one last linter
   - make build                               # do the harlem shake
+after_failure:
+  - reports-publisher
+
+after_success:
+  - reports-publisher
+
+notifications:
+  webhooks:
+    - https://devhose.spt-engprod-pro.schibsted.io/devhose/travis
+
