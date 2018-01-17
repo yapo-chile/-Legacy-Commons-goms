@@ -4,7 +4,7 @@ set -e
 
  # Probably there's a better way to fetch our dependencies
 
-go get github.com/axw/gocov                         # Coverage reporting tool
+go get github.com/axw/gocov/gocov                   # Coverage reporting tool
 go get github.com/AlekSi/gocov-xml                  # Generate XML output in Cobertura format
 go get github.com/jstemmer/go-junit-report          # Converts go test output to an xml repor
 go get github.com/alecthomas/gometalinter           # Concurrently run Go lint tools and normalise their output
