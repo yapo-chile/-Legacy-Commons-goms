@@ -32,10 +32,15 @@ before_script:
 # script always run to completion (set +e). All of these code checks are must haves
 # in a modern Go project.
 script:
-  - ./scripts/gometalinter.sh                # One linter to rule them all
-  - test -z $(gofmt -s -l $GO_FILES)         # Fail if a .go file hasn't been formatted with gofmt
-  - go test -v -race ./...                   # Run all the tests with the race detector enabled
-  - make build                               # do the harlem shake
+  # One linter to rule them all
+  - ./scripts/gometalinter.sh
+  # Ensure code format is consistent
+  - test -z $(gofmt -s -l $GO_FILES)
+  # Run all the tests with the race condition detector enabled
+  - go test -v -race ./... | tee /dev/tty |  go-junit-report > junit-report.xml; test ${PIPESTATUS[0]} -eq 0
+  # Do the harlem shake
+  - make build
+
 after_failure:
   - reports-publisher
 
@@ -45,4 +50,3 @@ after_success:
 notifications:
   webhooks:
     - https://devhose.spt-engprod-pro.schibsted.io/devhose/travis
-
