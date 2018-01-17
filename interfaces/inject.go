@@ -36,9 +36,9 @@ func (h *InjectHandler) Run(w http.ResponseWriter, r *http.Request) {
 	defer goutils.WriteJSONResponse(w, &response)
 	defer goutils.CreateJSON(&response)
 
-	var t injectRequestBody
+	var body injectRequestBody
 	decoder := json.NewDecoder(r.Body)
-	err := decoder.Decode(&t)
+	err := decoder.Decode(&body)
 	if err != nil {
 		response.Code = http.StatusBadRequest
 		response.Body = struct {
@@ -48,7 +48,7 @@ func (h *InjectHandler) Run(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
-	res, err := h.Calculator.Execute(t.Op, t.A, t.B)
+	res, err := h.Calculator.Execute(body.Op, body.A, body.B)
 
 	if err != nil {
 		response.Code = http.StatusBadRequest
