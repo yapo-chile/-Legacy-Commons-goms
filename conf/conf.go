@@ -26,9 +26,9 @@ type RuntimeConfig struct {
 // 3 - Error
 // 4 - Critic
 type LoggerConfig struct {
+	StdlogEnabled  bool
 	SyslogEnabled  bool
 	SyslogIdentity string
-	StdlogEnabled  bool
 	LogLevel       int
 }
 
@@ -46,7 +46,7 @@ func Load(path string) (*Config, error) {
 	if err != nil {
 		return nil, fmt.Errorf("conf: Error loading file %s, error: %s", path, err)
 	}
-	defer file.Close()
+	defer file.Close() // nolint: errcheck
 
 	decoder := json.NewDecoder(file)
 	c := &Config{}

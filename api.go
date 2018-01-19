@@ -25,6 +25,7 @@ func main() {
 	}
 	conf.Set(setup)
 
+	fmt.Printf("Setting up logger\n")
 	loggerConf := logger.LogConfig{
 		Syslog: logger.SyslogConfig{
 			Enabled:  setup.Logger.SyslogEnabled,
@@ -34,14 +35,18 @@ func main() {
 			Enabled: setup.Logger.StdlogEnabled,
 		},
 	}
-	logger.Init(loggerConf)
+	if err = logger.Init(loggerConf); err != nil {
+		fmt.Println(err)
+		os.Exit(2)
+	}
+
 	logger.SetLogLevel(setup.Logger.LogLevel)
 	fmt.Printf("LogLevel: %d\n", setup.Logger.LogLevel)
 
 	logger.Info("Saving PID file to %s", setup.Runtime.PidFile)
 
 	pidfile.SetPidfilePath(setup.Runtime.PidFile)
-	if err := pidfile.Write(); err != nil {
+	if err = pidfile.Write(); err != nil {
 		logger.Crit("Could not save pid file: %s", err)
 		os.Exit(1)
 	}
@@ -70,19 +75,19 @@ func main() {
 	var routes = core.Routes{
 		{
 			//this is the base path, all routes will start with this
-			"/api/v{version:[1-9][0-9]*}",
-			[]core.Route{
+			Prefix: "/api/v{version:[1-9][0-9]*}",
+			Groups: []core.Route{
 				{
-					"Check service health",
-					"GET",
-					"/healthcheck",
-					healthHandler.Run,
+					Name:        "Check service health",
+					Method:      "GET",
+					Pattern:     "/healthcheck",
+					HandlerFunc: healthHandler.Run,
 				},
 				{
-					"injecttest",
-					"GET",
-					"/inject",
-					injectHandler.Run,
+					Name:        "injecttest",
+					Method:      "GET",
+					Pattern:     "/inject",
+					HandlerFunc: injectHandler.Run,
 				},
 			},
 		},
@@ -90,5 +95,5 @@ func main() {
 
 	logger.Info("Starting request serving")
 	logger.Crit("%s\n", http.ListenAndServe(fmt.Sprintf("%s:%d", setup.Runtime.Host, setup.Runtime.Port), core.NewRouter(routes)))
-	logger.CloseSyslog()
+	logger.CloseSyslog() // nolint
 }

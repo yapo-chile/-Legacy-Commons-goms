@@ -46,7 +46,7 @@ func (h *InjectHandler) Run(w http.ResponseWriter, r *http.Request) {
 		}{Error: err.Error()}
 		return
 	}
-	defer r.Body.Close()
+	defer r.Body.Close() // nolint: errcheck
 
 	res, err := h.Calculator.Execute(body.Op, body.A, body.B)
 

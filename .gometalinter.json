@@ -1,3 +1,4 @@
 {
+    "Disable": ["gotype"],
     "Cyclo": 20
 }
