@@ -1,0 +1,7 @@
+{
+  "Runtime": {
+    "Host": "somehost",
+    "Port": 12312,
+    "PidFile": "lepid"
+  }
+}
