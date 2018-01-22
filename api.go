@@ -84,7 +84,7 @@ func main() {
 					HandlerFunc: healthHandler.Run,
 				},
 				{
-					Name:        "injecttest",
+					Name:        "Demonstrate dependency injection with simple math operations",
 					Method:      "GET",
 					Pattern:     "/inject",
 					HandlerFunc: injectHandler.Run,
