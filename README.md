@@ -1,10 +1,10 @@
 # goms
 
-Goms is the official template microservice on golang for Yapo.
-
 <!-- Badger start badges -->
-[![Status of the build](https://badger.spt-engprod-pro.schibsted.io/badge/travis/Yapo/goms)](https://travis.schibsted.io/Yapo/goms)
+[![Status of the build](https://badger.spt-engprod-pro.schibsted.io/badge/travis/Yapo/goms)](https://travis.schibsted.io/Yapo/goms) [![Testing Coverage](https://badger.spt-engprod-pro.schibsted.io/badge/coverage/Yapo/goms)](https://reports.spt-engprod-pro.schibsted.io/#/Yapo/goms?branch=master&type=push&daterange&daterange) [![Style/Linting issues](https://badger.spt-engprod-pro.schibsted.io/badge/issues/Yapo/goms)](https://reports.spt-engprod-pro.schibsted.io/#/Yapo/goms?branch=master&type=push&daterange&daterange) [![Badger](https://badger.spt-engprod-pro.schibsted.io/badge/flaky_tests/Yapo/goms)](https://databulous.spt-engprod-pro.schibsted.io/test/flaky/Yapo/goms) [![Badger](https://badger.spt-engprod-pro.schibsted.io/badge/quality_index/Yapo/goms)](https://databulous.spt-engprod-pro.schibsted.io/quality/repo/Yapo/goms) [![Badger](https://badger.spt-engprod-pro.schibsted.io/badge/engprod/Yapo/goms)](https://github.schibsted.io/spt-engprod/badger)
 <!-- Badger end badges -->
+
+Goms is the official template microservice on golang for Yapo.
 
 ## How to run the service
 
