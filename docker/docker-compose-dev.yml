@@ -1,0 +1,6 @@
+version: '3'
+services:
+  goms:
+    image: ${DOCKER_IMAGE}:${GIT_BRANCH_LOWERCASE}
+    ports:
+     - "${DOCKER_PORT_DEV}:${DOCKER_PORT}"
