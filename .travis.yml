@@ -37,9 +37,6 @@ script:
     # Create the docker image
   - make docker-build
 
-after_failure:
-  - reports-publisher
-
 after_success:
   - reports-publisher
   - make docker-publish
