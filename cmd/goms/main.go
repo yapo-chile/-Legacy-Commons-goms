@@ -2,54 +2,43 @@ package main
 
 import (
 	"fmt"
-	"github.com/Yapo/logger"
-	"github.schibsted.io/Yapo/goms/conf"
-	"github.schibsted.io/Yapo/goms/core"
-	"github.schibsted.io/Yapo/goms/interfaces"
-	"github.schibsted.io/Yapo/goms/repository"
-	"github.schibsted.io/Yapo/goms/usecases"
-	"gopkg.in/facebookgo/inject.v0"
-	"gopkg.in/facebookgo/pidfile.v0"
 	"net/http"
 	"os"
+
+	"github.com/Yapo/logger"
+	"github.schibsted.io/Yapo/goms/pkg/core"
+	"github.schibsted.io/Yapo/goms/pkg/interfaces"
+	"github.schibsted.io/Yapo/goms/pkg/repository"
+	"github.schibsted.io/Yapo/goms/pkg/usecases"
+	"gopkg.in/facebookgo/inject.v0"
 )
 
 func main() {
 
-	confPath := "conf/conf.json"
-	fmt.Printf("Loading config from %s\n", confPath)
-	setup, err := conf.Load(confPath)
+	fmt.Printf("Loading config")
+	conf, err := core.Load()
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		fmt.Printf("Error: %+v\n", err)
+		os.Exit(2)
 	}
-	conf.Set(setup)
-
+	fmt.Printf("Loaded config %v\n", conf)
 	fmt.Printf("Setting up logger\n")
 	loggerConf := logger.LogConfig{
 		Syslog: logger.SyslogConfig{
-			Enabled:  setup.Logger.SyslogEnabled,
-			Identity: setup.Logger.SyslogIdentity,
+			Enabled:  conf.LoggerConf.SyslogEnabled,
+			Identity: conf.LoggerConf.SyslogIdentity,
 		},
 		Stdlog: logger.StdlogConfig{
-			Enabled: setup.Logger.StdlogEnabled,
+			Enabled: conf.LoggerConf.StdlogEnabled,
 		},
 	}
-	if err = logger.Init(loggerConf); err != nil {
+	if err := logger.Init(loggerConf); err != nil {
 		fmt.Println(err)
 		os.Exit(2)
 	}
 
-	logger.SetLogLevel(setup.Logger.LogLevel)
-	fmt.Printf("LogLevel: %d\n", setup.Logger.LogLevel)
-
-	logger.Info("Saving PID file to %s", setup.Runtime.PidFile)
-
-	pidfile.SetPidfilePath(setup.Runtime.PidFile)
-	if err = pidfile.Write(); err != nil {
-		logger.Crit("Could not save pid file: %s", err)
-		os.Exit(1)
-	}
+	logger.SetLogLevel(conf.LoggerConf.LogLevel)
+	fmt.Printf("LogLevel: %d\n", conf.LoggerConf.LogLevel)
 
 	logger.Info("Setting up Dependency Injection")
 
@@ -94,6 +83,6 @@ func main() {
 	}
 
 	logger.Info("Starting request serving")
-	logger.Crit("%s\n", http.ListenAndServe(fmt.Sprintf("%s:%d", setup.Runtime.Host, setup.Runtime.Port), core.NewRouter(routes)))
+	logger.Crit("%s\n", http.ListenAndServe(fmt.Sprintf("%s:%d", conf.AppConf.Host, conf.AppConf.Port), core.NewRouter(routes)))
 	logger.CloseSyslog() // nolint
 }

@@ -2,10 +2,11 @@ package interfaces
 
 import (
 	"encoding/json"
+	"net/http"
+
 	"github.com/Yapo/goutils"
 	"github.com/Yapo/logger"
-	"github.schibsted.io/Yapo/goms/usecases"
-	"net/http"
+	"github.schibsted.io/Yapo/goms/pkg/usecases"
 )
 
 // InjectHandler implements the handler interface and responds to /inject

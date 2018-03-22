@@ -1,0 +1,15 @@
+package: github.schibsted.io/Yapo/goms
+import:
+- package: github.com/Yapo/goutils
+  version: ^1.0.0
+- package: github.com/Yapo/logger
+- package: gopkg.in/facebookgo/atomicfile.v0
+- package: gopkg.in/facebookgo/inject.v0
+- package: gopkg.in/gorilla/mux.v1
+  version: ^1.6.1
+testImport:
+- package: gopkg.in/stretchr/testify.v1
+  version: ^1.2.1
+  subpackages:
+  - assert
+  - mock

@@ -18,35 +18,28 @@ matrix:
   # tests pass on the stable versions of Go.
   fast_finish: true
 
-install:
-  - bash -x ./scripts/dependencies.sh
-  - gometalinter --install
-
 # Anything in before_script that returns a nonzero exit code will
 # flunk the build and immediately stop. It's sorta like having
 # set -e enabled in bash.
 before_script:
-  - GO_FILES=$(find . -iname '*.go' -type f | grep -v /vendor/) # All the .go files, excluding vendor/
+  # run the initial setup
+  - make setup
+  # Export the current branch according to travis (including pr builds) 
+  - export BUILD_BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
 
 # script always run to completion (set +e). All of these code checks are must haves
 # in a modern Go project.
 script:
-  # One linter to rule them all
-  - ./scripts/gometalinter.sh
-  # Ensure code format is consistent
-  - test -z $(gofmt -s -l $GO_FILES)
-  # Run all the tests with the race condition detector enabled
-  - go test -v -race ./... | tee /dev/tty |  go-junit-report > junit-report.xml; test ${PIPESTATUS[0]} -eq 0
-  # Calculate test coverage
-  - ./scripts/testcoverage.sh
-  # Do the harlem shake
-  - make build
-
-after_failure:
-  - reports-publisher
+  # Validate the code
+  - make validate  
+    # Run all the tests and generate the coverage report
+  - make tests
+    # Create the docker image
+  - make docker-build
 
 after_success:
   - reports-publisher
+  - make docker-publish
 
 notifications:
   webhooks:
