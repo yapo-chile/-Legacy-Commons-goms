@@ -4,7 +4,6 @@ import:
   version: ^1.0.0
 - package: github.com/Yapo/logger
 - package: gopkg.in/facebookgo/atomicfile.v0
-- package: gopkg.in/facebookgo/inject.v0
 - package: gopkg.in/gorilla/mux.v1
   version: ^1.6.1
 testImport:

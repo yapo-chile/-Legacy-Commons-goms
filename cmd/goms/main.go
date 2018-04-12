@@ -10,7 +10,6 @@ import (
 	"github.schibsted.io/Yapo/goms/pkg/interfaces"
 	"github.schibsted.io/Yapo/goms/pkg/repository"
 	"github.schibsted.io/Yapo/goms/pkg/usecases"
-	"gopkg.in/facebookgo/inject.v0"
 )
 
 func main() {
@@ -42,19 +41,14 @@ func main() {
 
 	logger.Info("Setting up Dependency Injection")
 
-	/*
-		Setup all the *injectable* resources below.
-		Reference: https://godoc.org/github.com/facebookgo/inject
-	*/
-
 	var healthHandler interfaces.HealthHandler
-	var injectHandler interfaces.InjectHandler
 
-	err = inject.Populate(
-		&injectHandler,
-		&usecases.ModularCalculator{},
-		&repository.ModuloAdder{M: 7},
-	)
+	fibonacciRepository := repository.NewMapFibonacciRepository()
+	fibonacciHandler := interfaces.FibonacciHandler{
+		Interactor: usecases.FibonacciInteractor{
+			Repository: &fibonacciRepository,
+		},
+	}
 
 	if err != nil {
 		logger.Crit("%s\n", err)
@@ -73,10 +67,10 @@ func main() {
 					HandlerFunc: healthHandler.Run,
 				},
 				{
-					Name:        "Demonstrate dependency injection with simple math operations",
+					Name:        "Add two integers with clean architecture",
 					Method:      "GET",
-					Pattern:     "/inject",
-					HandlerFunc: injectHandler.Run,
+					Pattern:     "/fibonacci",
+					HandlerFunc: fibonacciHandler.Run,
 				},
 			},
 		},
