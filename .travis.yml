@@ -7,7 +7,9 @@ language: go
 # in the next version of Go. Don't worry! Later we declare that test runs
 # are allowed to fail on Go tip.
 go:
-  - 1.8
+  - "1.8"
+  - "1.9"
+  - "1.10"
   - master
 
 matrix:
@@ -33,7 +35,7 @@ script:
   # Validate the code
   - make validate  
     # Run all the tests and generate the coverage report
-  - make tests
+  - make test
     # Create the docker image
   - make docker-build
 

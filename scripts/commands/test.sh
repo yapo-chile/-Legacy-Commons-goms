@@ -32,8 +32,8 @@ function run_tests {
     return ${status:-0}
 }
 
-# Generate tests report
-echoTitle "Generating tests report"
+# Generate test report
+echoTitle "Generating test report"
 run_tests | tee /dev/tty | go-junit-report > ${JUNIT_REPORT}; test ${PIPESTATUS[0]} -eq 0 || status=${PIPESTATUS[0]}
 
 # Print code coverage details
