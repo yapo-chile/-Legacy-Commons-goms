@@ -54,7 +54,7 @@ func main() {
 		Repository: &fibonacciRepository,
 	}
 	fibonacciHandler := interfaces.FibonacciHandler{
-		Interactor: fibonacciInteractor,
+		Interactor: &fibonacciInteractor,
 	}
 	fibonacciRoute := core.Route{
 		Name:    "Retrieve the Nth Fibonacci with Clean Architecture",

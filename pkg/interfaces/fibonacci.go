@@ -11,7 +11,7 @@ import (
 // /fibonacci requests using an interactor. It's purpose is just to
 // demonstrate Clean Architecture with a practical scenario
 type FibonacciHandler struct {
-	Interactor usecases.FibonacciInteractor
+	Interactor usecases.GetNthFibonacciUsecase
 }
 
 type fibonacciRequestInput struct {

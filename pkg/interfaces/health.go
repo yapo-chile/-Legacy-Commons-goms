@@ -10,18 +10,22 @@ import (
 // { Status: string - Always set to OK }
 type HealthHandler struct{}
 
+type healthHandlerInput struct{}
+type healthRequestOutput struct {
+	Status string `json:status`
+}
+
 // Input
 func (*HealthHandler) Input() HandlerInput {
-	var input HandlerInput
-	return &input
+	return &healthHandlerInput{}
 }
 
 // Run retrieves service health status.
 func (*HealthHandler) Execute(input HandlerInput) *goutils.Response {
 	return &goutils.Response{
 		Code: http.StatusOK,
-		Body: struct {
-			Status string
-		}{Status: "OK"},
+		Body: healthRequestOutput{
+			Status: "OK",
+		},
 	}
 }

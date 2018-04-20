@@ -5,6 +5,10 @@ import (
 	"github.schibsted.io/Yapo/goms/pkg/domain"
 )
 
+type GetNthFibonacciUsecase interface {
+	GetNth(n int) (domain.Fibonacci, error)
+}
+
 type FibonacciInteractor struct {
 	Repository domain.FibonacciRepository
 }
