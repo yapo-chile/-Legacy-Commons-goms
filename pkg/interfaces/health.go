@@ -2,7 +2,6 @@ package interfaces
 
 import (
 	"github.com/Yapo/goutils"
-	"github.com/Yapo/logger"
 	"net/http"
 )
 
@@ -11,16 +10,18 @@ import (
 // { Status: string - Always set to OK }
 type HealthHandler struct{}
 
+// Input
+func (*HealthHandler) Input() HandlerInput {
+	var input HandlerInput
+	return &input
+}
+
 // Run retrieves service health status.
-func (*HealthHandler) Run(w http.ResponseWriter, r *http.Request) {
-	logger.Info("Health Request: [%s] %s from: %s", r.Method, r.URL, r.RemoteAddr)
-	var response goutils.Response
-	defer goutils.WriteJSONResponse(w, &response)
-	defer goutils.CreateJSON(&response)
-
-	response.Body = struct {
-		Status string
-	}{Status: "OK"}
-
-	response.Code = http.StatusOK
+func (*HealthHandler) Execute(input HandlerInput) *goutils.Response {
+	return &goutils.Response{
+		Code: http.StatusOK,
+		Body: struct {
+			Status string
+		}{Status: "OK"},
+	}
 }

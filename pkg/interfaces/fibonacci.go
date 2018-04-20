@@ -1,9 +1,7 @@
 package interfaces
 
 import (
-	"encoding/json"
 	"github.com/Yapo/goutils"
-	"github.com/Yapo/logger"
 	"github.schibsted.io/Yapo/goms/pkg/domain"
 	"github.schibsted.io/Yapo/goms/pkg/usecases"
 	"net/http"
@@ -20,6 +18,16 @@ type fibonacciRequestInput struct {
 	N int `json:n`
 }
 
+type fibonacciRequestOutput struct {
+	Result domain.Fibonacci `json:result`
+}
+
+type fibonacciRequestError goutils.GenericError
+
+func (h *FibonacciHandler) Input() HandlerInput {
+	return &fibonacciRequestInput{}
+}
+
 // Run executes an /fibonacci request. Uses the given interactor to carry out
 // the operation and get the desired value. Expected body format:
 //	{
@@ -29,37 +37,21 @@ type fibonacciRequestInput struct {
 //   { Result: int - Operation result }
 // Expected error format:
 //   { Error: string - Error detail }
-func (h *FibonacciHandler) Run(w http.ResponseWriter, r *http.Request) {
-	logger.Info("Fibonacci Request: [%s] %s from: %s", r.Method, r.URL, r.RemoteAddr)
-	var response goutils.Response
-	defer goutils.WriteJSONResponse(w, &response)
-	defer goutils.CreateJSON(&response)
-
-	var input fibonacciRequestInput
-	decoder := json.NewDecoder(r.Body)
-	err := decoder.Decode(&input)
+func (h *FibonacciHandler) Execute(input HandlerInput) *goutils.Response {
+	in := input.(*fibonacciRequestInput)
+	f, err := h.Interactor.GetNth(in.N)
 	if err != nil {
-		response.Code = http.StatusBadRequest
-		response.Body = struct {
-			Error string
-		}{Error: err.Error()}
-		return
+		return &goutils.Response{
+			Code: http.StatusBadRequest,
+			Body: fibonacciRequestError{
+				err.Error(),
+			},
+		}
 	}
-	defer r.Body.Close() // nolint: errcheck
-
-	f, err := h.Interactor.GetNth(input.N)
-
-	if err != nil {
-		response.Code = http.StatusBadRequest
-		response.Body = struct {
-			Error string
-		}{Error: err.Error()}
-		return
+	return &goutils.Response{
+		Code: http.StatusOK,
+		Body: fibonacciRequestOutput{
+			Result: f,
+		},
 	}
-
-	response.Body = struct {
-		Result domain.Fibonacci
-	}{Result: f}
-
-	response.Code = http.StatusOK
 }

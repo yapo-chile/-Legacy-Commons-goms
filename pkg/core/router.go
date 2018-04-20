@@ -1,16 +1,16 @@
 package core
 
 import (
+	"github.schibsted.io/Yapo/goms/pkg/interfaces"
 	"gopkg.in/gorilla/mux.v1"
-	"net/http"
 )
 
 // Route stands for an http endpoint description
 type Route struct {
-	Name        string
-	Method      string
-	Pattern     string
-	HandlerFunc http.HandlerFunc
+	Name    string
+	Method  string
+	Pattern string
+	Handler interfaces.Handler
 }
 
 type routeGroups struct {
@@ -31,7 +31,7 @@ func NewRouter(routes []routeGroups) *mux.Router {
 				Methods(route.Method).
 				Path(route.Pattern).
 				Name(route.Name).
-				Handler(route.HandlerFunc)
+				Handler(interfaces.MakeJsonHandlerFunc(route.Handler))
 		}
 	}
 	return router
