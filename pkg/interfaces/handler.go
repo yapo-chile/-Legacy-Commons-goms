@@ -20,14 +20,14 @@ type Handler interface {
 // MakeJsonHandlerFunc wraps a handler on a json over http context.
 func MakeJsonHandlerFunc(h Handler) http.HandlerFunc {
 	jh := jsonHandler{Handler: h}
-	return jh.Run
+	return jh.run
 }
 
 type jsonHandler struct {
 	Handler Handler
 }
 
-func (jh *jsonHandler) Run(w http.ResponseWriter, r *http.Request) {
+func (jh *jsonHandler) run(w http.ResponseWriter, r *http.Request) {
 	logger.Info("< %s %s %s", r.RemoteAddr, r.Method, r.URL)
 	input := jh.Handler.Input()
 	response := goutils.ParseJSONBody(r, input)
