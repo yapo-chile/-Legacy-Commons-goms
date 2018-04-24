@@ -1,6 +1,6 @@
 {
     "Disable": ["gotype"],
     "Cyclo": 20,
-    "Deadline": "600s",
+    "Deadline": "300s",
     "Vendor": true
 }
