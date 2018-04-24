@@ -12,7 +12,7 @@ type HealthHandler struct{}
 
 type healthHandlerInput struct{}
 type healthRequestOutput struct {
-	Status string `json:status`
+	Status string `json:"status"`
 }
 
 // Input

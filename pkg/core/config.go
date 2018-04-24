@@ -14,10 +14,10 @@ import (
 // 3 - Error
 // 4 - Critic
 type LoggerConf struct {
-	SyslogEnabled  bool
 	SyslogIdentity string
-	StdlogEnabled  bool
 	LogLevel       int
+	SyslogEnabled  bool
+	StdlogEnabled  bool
 }
 
 //ServiceConf struct representing the config of a service (redis, postgresql, etc)

@@ -39,8 +39,21 @@ func TestConfigLoad(t *testing.T) {
 		os.Setenv(variable, storedValues[index])
 	}
 	//Validate the load
-	assert.Equal(t, err, nil)
-	assert.Equal(t, fmt.Sprintf("%+v", c), `&{AppConf:{Host:localhost Port:8081 Version:test_version} LoggerConf:{SyslogEnabled:true SyslogIdentity:test_log StdlogEnabled:true LogLevel:1}}`)
+	expected := &Config{
+		AppConf: ServiceConf{
+			Host:    "localhost",
+			Port:    8081,
+			Version: "test_version",
+		},
+		LoggerConf: LoggerConf{
+			SyslogEnabled:  true,
+			SyslogIdentity: "test_log",
+			StdlogEnabled:  true,
+			LogLevel:       1,
+		},
+	}
+	assert.NoError(t, err)
+	assert.Equal(t, expected, c)
 }
 
 func TestConfigLoadNoPort(t *testing.T) {
@@ -74,7 +87,7 @@ func TestConfigLoadNoPort(t *testing.T) {
 		os.Setenv(variable, storedValues[index])
 	}
 	//Validate the load
-	assert.Equal(t, fmt.Sprintf("%+v", err), "Error loading config strconv.Atoi: parsing \"\": invalid syntax")
+	assert.Error(t, err)
 }
 
 func TestConfigLoadNoSyslog(t *testing.T) {
@@ -108,7 +121,7 @@ func TestConfigLoadNoSyslog(t *testing.T) {
 		os.Setenv(variable, storedValues[index])
 	}
 	//Validate the load
-	assert.Equal(t, fmt.Sprintf("%+v", err), "Error loading config strconv.ParseBool: parsing \"\": invalid syntax")
+	assert.Error(t, err)
 }
 
 func TestConfigLoadNoStdlog(t *testing.T) {

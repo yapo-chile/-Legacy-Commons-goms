@@ -32,8 +32,8 @@ func (r *MapFibonacciRepository) Save(nth int, x domain.Fibonacci) error {
 		return fmt.Errorf("How do you know the %dth Fibonacci number?", nth)
 	}
 	r.storage[nth] = x
-	r.latest[0] += 1
-	r.latest[1] += 1
+	r.latest[0]++
+	r.latest[1]++
 	return nil
 }
 

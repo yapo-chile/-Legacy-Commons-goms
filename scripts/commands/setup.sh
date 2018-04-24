@@ -10,12 +10,7 @@ echoHeader "Running dependencies script"
 set -e
 # List of tools used for testing, validation, and report generation
 tools=(
-	github.com/golang/lint/golint
-    github.com/axw/gocov/gocov
-	github.com/AlekSi/gocov-xml
-    gopkg.in/alecthomas/gometalinter.v1
-    github.com/jstemmer/go-junit-report
-    github.com/fzipp/gocyclo                             # Function cyclomatic complexity analyzer
+	gopkg.in/alecthomas/gometalinter.v2
 )
 
 echoTitle "Installing missing tools"
@@ -26,7 +21,7 @@ done
 
 echoTitle "Installing linters"
 # Install all available linters
-gometalinter.v1 --install
+gometalinter.v2 --install
 
 echoTitle "Installing Glide dependencies"
 glide install

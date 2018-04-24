@@ -15,11 +15,11 @@ type FibonacciHandler struct {
 }
 
 type fibonacciRequestInput struct {
-	N int `json:n`
+	N int `json:"n"`
 }
 
 type fibonacciRequestOutput struct {
-	Result domain.Fibonacci `json:result`
+	Result domain.Fibonacci `json:"result"`
 }
 
 type fibonacciRequestError goutils.GenericError

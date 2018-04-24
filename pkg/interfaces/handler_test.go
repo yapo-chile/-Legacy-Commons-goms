@@ -40,7 +40,7 @@ func TestJsonJandlerFuncOK(t *testing.T) {
 
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest("GET", "/someurl", strings.NewReader("{}"))
-	fn := MakeJsonHandlerFunc(&h)
+	fn := MakeJSONHandlerFunc(&h)
 	fn(w, r)
 
 	assert.Equal(t, 42, w.Code)
@@ -55,7 +55,7 @@ func TestJsonJandlerFuncParseError(t *testing.T) {
 
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest("GET", "/someurl", strings.NewReader("{"))
-	fn := MakeJsonHandlerFunc(&h)
+	fn := MakeJSONHandlerFunc(&h)
 	fn(w, r)
 
 	assert.Equal(t, http.StatusBadRequest, w.Code)
