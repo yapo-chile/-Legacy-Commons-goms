@@ -44,5 +44,11 @@ start: build run
 test:
 	@scripts/commands/test.sh
 
+cover:
+	@scripts/commands/test_cover.sh
+
+checkstyle:
+	@scripts/commands/test_style.sh display
+
 fix-format:
 	@scripts/commands/fix-format.sh
