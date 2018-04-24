@@ -7,5 +7,5 @@ if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
 
 echoHeader "Running Tests"
 
-"$DIR/test_cover.sh"
 "$DIR/test_style.sh"
+"$DIR/test_cover.sh"
