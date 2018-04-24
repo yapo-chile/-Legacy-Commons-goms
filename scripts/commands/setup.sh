@@ -10,6 +10,7 @@ echoHeader "Running dependencies script"
 set -e
 # List of tools used for testing, validation, and report generation
 tools=(
+	github.com/jstemmer/go-junit-report
 	gopkg.in/alecthomas/gometalinter.v2
 )
 

@@ -44,8 +44,5 @@ start: build run
 test:
 	@scripts/commands/test.sh
 
-validate:
-	@scripts/commands/validate.sh
-
 fix-format:
 	@scripts/commands/fix-format.sh
