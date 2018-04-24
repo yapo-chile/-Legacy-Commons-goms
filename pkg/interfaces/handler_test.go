@@ -44,7 +44,7 @@ func TestJsonJandlerFuncOK(t *testing.T) {
 	fn(w, r)
 
 	assert.Equal(t, 42, w.Code)
-	assert.Equal(t, `{"ErrorMessage":"That's some bad hat, Harry"}`, w.Body.String())
+	assert.Equal(t, `{"ErrorMessage":"That's some bad hat, Harry"}`+"\n", w.Body.String())
 	h.AssertExpectations(t)
 }
 
@@ -59,6 +59,6 @@ func TestJsonJandlerFuncParseError(t *testing.T) {
 	fn(w, r)
 
 	assert.Equal(t, http.StatusBadRequest, w.Code)
-	assert.Equal(t, `{"ErrorMessage":"unexpected EOF"}`, w.Body.String())
+	assert.Equal(t, `{"ErrorMessage":"unexpected EOF"}`+"\n", w.Body.String())
 	h.AssertExpectations(t)
 }
