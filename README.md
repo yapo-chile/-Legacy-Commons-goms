@@ -111,26 +111,31 @@ No request parameters
 }
 ```
 
-### GET  /api/v1/inject
-Exhibits dependency injection feature
+### GET  /api/v1/fibo
+Implements the fibonacci numbers with Clean Architecture
 
 #### Request
-No request parameters
+{
+	"n": int - Ask for the nth fibonacci number
+}
 
 #### Response
-* Resource: The resource being injected
-* Resource.Name: Name of the resource
-* Resource.Usage: Intended usage
 
 ```javascript
 200 OK
 {
-	"Resource": {
-		"Name": "A Resource",
-		"Usage": "Being injected"
-	}
+	"Result": int - The nth fibonacci number
 }
 ```
+
+#### Error response
+```javascript
+400 Bad Request
+{
+	"Error": string - Explaining what went wrong
+}
+```
+
 ## Error Codes
 Please update this table with the error codes you use.
 Keep it as http standard compliant as possible.

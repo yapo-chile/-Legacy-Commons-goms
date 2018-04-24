@@ -1,18 +1,28 @@
 package interfaces
 
 import (
+	"github.com/Yapo/goutils"
 	"gopkg.in/stretchr/testify.v1/assert"
 	"net/http"
-	"net/http/httptest"
 	"testing"
 )
 
+func TestHealthHandlerInput(t *testing.T) {
+	var h HealthHandler
+	input := h.Input()
+	var expected *healthHandlerInput
+	assert.IsType(t, expected, input)
+}
+
 func TestHealthHandlerRun(t *testing.T) {
-	h := HealthHandler{}
-	w := httptest.NewRecorder()
-	req := httptest.NewRequest("GET", "/healthcheck", nil)
-	h.Run(w, req)
-	r := w.Result()
-	assert.Equal(t, r.StatusCode, http.StatusOK)
-	assert.Equal(t, w.Body.String(), `{"Status":"OK"}`)
+	var h HealthHandler
+	var input HandlerInput
+	r := h.Execute(input)
+
+	expected := &goutils.Response{
+		Code: http.StatusOK,
+		Body: healthRequestOutput{"OK"},
+	}
+
+	assert.Equal(t, expected, r)
 }

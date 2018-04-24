@@ -1,16 +1,14 @@
-hash: 939f17213acb3d67ddb45cfbe8b9e893942f803d0b15bf1f6a3b5432c2b31291
-updated: 2018-02-28T15:26:15.816575-03:00
+hash: 2aa79c63b6b4c75791cd5ce0d80dafeffaf26bd539b99c66bee6ce14d1150d4b
+updated: 2018-04-20T10:27:02.831961-03:00
 imports:
-- name: github.com/facebookgo/structtag
-  version: 217e25fb96916cc60332e399c9aa63f5c422ceed
 - name: github.com/gorilla/context
   version: 08b5f424b9271eedf6f9f0ce86cb9396ed337a42
 - name: github.com/Yapo/goutils
-  version: 7188fd3b15ad219b4919661a69eb3f955d4a4e8a
+  version: 8d29e3f85fde125933692829955b1504cbf7c637
 - name: github.com/Yapo/logger
   version: 91855e974718b8c68dd00e63817568f1f512a4cc
-- name: gopkg.in/facebookgo/inject.v0
-  version: cc1aa653e50f6a9893bcaef89e673e5b24e1e97b
+- name: gopkg.in/facebookgo/atomicfile.v0
+  version: 2de1f203e7d5e386a6833233882782932729f27e
 - name: gopkg.in/gorilla/mux.v1
   version: 53c1911da2b537f792e7cafcb446b05ffe33b996
 testImports:

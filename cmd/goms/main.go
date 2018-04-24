@@ -10,7 +10,6 @@ import (
 	"github.schibsted.io/Yapo/goms/pkg/interfaces"
 	"github.schibsted.io/Yapo/goms/pkg/repository"
 	"github.schibsted.io/Yapo/goms/pkg/usecases"
-	"gopkg.in/facebookgo/inject.v0"
 )
 
 func main() {
@@ -42,23 +41,16 @@ func main() {
 
 	logger.Info("Setting up Dependency Injection")
 
-	/*
-		Setup all the *injectable* resources below.
-		Reference: https://godoc.org/github.com/facebookgo/inject
-	*/
-
+	// HealthHandler
 	var healthHandler interfaces.HealthHandler
-	var injectHandler interfaces.InjectHandler
 
-	err = inject.Populate(
-		&injectHandler,
-		&usecases.ModularCalculator{},
-		&repository.ModuloAdder{M: 7},
-	)
-
-	if err != nil {
-		logger.Crit("%s\n", err)
-		os.Exit(1)
+	// FibonacciHandler
+	fibonacciRepository := repository.NewMapFibonacciRepository()
+	fibonacciInteractor := usecases.FibonacciInteractor{
+		Repository: &fibonacciRepository,
+	}
+	fibonacciHandler := interfaces.FibonacciHandler{
+		Interactor: &fibonacciInteractor,
 	}
 
 	var routes = core.Routes{
@@ -67,16 +59,16 @@ func main() {
 			Prefix: "/api/v{version:[1-9][0-9]*}",
 			Groups: []core.Route{
 				{
-					Name:        "Check service health",
-					Method:      "GET",
-					Pattern:     "/healthcheck",
-					HandlerFunc: healthHandler.Run,
+					Name:    "Check service health",
+					Method:  "GET",
+					Pattern: "/healthcheck",
+					Handler: &healthHandler,
 				},
 				{
-					Name:        "Demonstrate dependency injection with simple math operations",
-					Method:      "GET",
-					Pattern:     "/inject",
-					HandlerFunc: injectHandler.Run,
+					Name:    "Retrieve the Nth Fibonacci with Clean Architecture",
+					Method:  "GET",
+					Pattern: "/fibonacci",
+					Handler: &fibonacciHandler,
 				},
 			},
 		},

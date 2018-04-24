@@ -41,8 +41,8 @@ run:
 
 start: build run
 
-tests:
-	@scripts/commands/tests.sh
+test:
+	@scripts/commands/test.sh
 
 validate:
 	@scripts/commands/validate.sh
