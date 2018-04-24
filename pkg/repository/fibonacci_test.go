@@ -1,8 +1,8 @@
 package repository
 
 import (
+	"github.com/stretchr/testify/assert"
 	"github.schibsted.io/Yapo/goms/pkg/domain"
-	"gopkg.in/stretchr/testify.v1/assert"
 	"testing"
 )
 

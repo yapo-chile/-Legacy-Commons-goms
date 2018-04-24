@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"gopkg.in/stretchr/testify.v1/assert"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestConfigLoad(t *testing.T) {

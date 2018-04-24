@@ -11,6 +11,8 @@ set -e
 # List of tools used for testing, validation, and report generation
 tools=(
 	github.com/jstemmer/go-junit-report
+	github.com/axw/gocov/gocov
+	github.com/AlekSi/gocov-xml
 	gopkg.in/alecthomas/gometalinter.v2
 )
 

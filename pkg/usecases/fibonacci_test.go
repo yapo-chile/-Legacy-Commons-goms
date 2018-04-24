@@ -2,9 +2,9 @@ package usecases
 
 import (
 	"errors"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 	"github.schibsted.io/Yapo/goms/pkg/domain"
-	"gopkg.in/stretchr/testify.v1/assert"
-	"gopkg.in/stretchr/testify.v1/mock"
 	"testing"
 )
 
