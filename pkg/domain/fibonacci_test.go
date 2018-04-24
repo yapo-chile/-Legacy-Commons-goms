@@ -11,6 +11,6 @@ func TestFibonacciPairNext(t *testing.T) {
 		IB: 6, B: 8,
 	}
 	i, x := p.Next()
-	assert.Equal(t, i, 7)
-	assert.Equal(t, x, Fibonacci(13))
+	assert.Equal(t, 7, i)
+	assert.Equal(t, Fibonacci(13), x)
 }

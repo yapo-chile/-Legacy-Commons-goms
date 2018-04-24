@@ -41,14 +41,10 @@ func main() {
 
 	logger.Info("Setting up Dependency Injection")
 
+	// HealthHandler
 	var healthHandler interfaces.HealthHandler
-	healthRoute := core.Route{
-		Name:    "Check service health",
-		Method:  "GET",
-		Pattern: "/healthcheck",
-		Handler: &healthHandler,
-	}
 
+	// FibonacciHandler
 	fibonacciRepository := repository.NewMapFibonacciRepository()
 	fibonacciInteractor := usecases.FibonacciInteractor{
 		Repository: &fibonacciRepository,
@@ -56,20 +52,24 @@ func main() {
 	fibonacciHandler := interfaces.FibonacciHandler{
 		Interactor: &fibonacciInteractor,
 	}
-	fibonacciRoute := core.Route{
-		Name:    "Retrieve the Nth Fibonacci with Clean Architecture",
-		Method:  "GET",
-		Pattern: "/fibonacci",
-		Handler: &fibonacciHandler,
-	}
 
 	var routes = core.Routes{
 		{
 			//this is the base path, all routes will start with this
 			Prefix: "/api/v{version:[1-9][0-9]*}",
 			Groups: []core.Route{
-				healthRoute,
-				fibonacciRoute,
+				{
+					Name:    "Check service health",
+					Method:  "GET",
+					Pattern: "/healthcheck",
+					Handler: &healthHandler,
+				},
+				{
+					Name:    "Retrieve the Nth Fibonacci with Clean Architecture",
+					Method:  "GET",
+					Pattern: "/fibonacci",
+					Handler: &fibonacciHandler,
+				},
 			},
 		},
 	}

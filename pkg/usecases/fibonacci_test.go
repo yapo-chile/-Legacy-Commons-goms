@@ -45,7 +45,7 @@ func TestFibonacciInteractorGetNthKnown(t *testing.T) {
 	}
 
 	x, err := i.GetNth(1)
-	assert.Equal(t, x, domain.Fibonacci(1))
+	assert.Equal(t, domain.Fibonacci(1), x)
 	assert.NoError(t, err)
 	m.AssertExpectations(t)
 }
@@ -67,7 +67,7 @@ func TestFibonacciInteractorGetNthUnknown(t *testing.T) {
 	}
 
 	x, err := i.GetNth(4)
-	assert.Equal(t, x, domain.Fibonacci(3))
+	assert.Equal(t, domain.Fibonacci(3), x)
 	assert.NoError(t, err)
 	m.AssertExpectations(t)
 }

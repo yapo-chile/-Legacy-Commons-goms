@@ -10,15 +10,15 @@ func TestFibonacciRepositoryCreation(t *testing.T) {
 	r := NewMapFibonacciRepository()
 
 	x, err := r.Get(1)
-	assert.Equal(t, x, domain.Fibonacci(1))
+	assert.Equal(t, domain.Fibonacci(1), x)
 	assert.NoError(t, err)
 
 	x, err = r.Get(2)
-	assert.Equal(t, x, domain.Fibonacci(1))
+	assert.Equal(t, domain.Fibonacci(1), x)
 	assert.NoError(t, err)
 
 	x, err = r.Get(3)
-	assert.Equal(t, x, domain.Fibonacci(-1))
+	assert.Equal(t, domain.Fibonacci(-1), x)
 	assert.Error(t, err)
 
 	p := r.LatestPair()
@@ -27,7 +27,7 @@ func TestFibonacciRepositoryCreation(t *testing.T) {
 		IB: 2, B: domain.Fibonacci(1),
 	}
 
-	assert.Equal(t, p, expected)
+	assert.Equal(t, expected, p)
 }
 
 func TestFibonacciRepositorySaveWildGuess(t *testing.T) {
@@ -56,5 +56,5 @@ func TestFibonacciRepositorySaveNext(t *testing.T) {
 		IB: 3, B: domain.Fibonacci(2),
 	}
 
-	assert.Equal(t, p, expected)
+	assert.Equal(t, expected, p)
 }
