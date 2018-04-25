@@ -35,6 +35,9 @@ script:
   # Generate coverage and checkstyle report
   - make test
 
+after_failure:
+  - reports-publisher
+
 after_success:
   - reports-publisher
   - make docker-build
