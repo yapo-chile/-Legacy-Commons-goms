@@ -1,7 +1,7 @@
 package core
 
 import (
-	"github.schibsted.io/Yapo/goms/pkg/interfaces"
+	"github.schibsted.io/Yapo/goms/pkg/interfaces/handlers"
 	"gopkg.in/gorilla/mux.v1"
 )
 
@@ -10,7 +10,7 @@ type Route struct {
 	Name    string
 	Method  string
 	Pattern string
-	Handler interfaces.Handler
+	Handler handlers.Handler
 }
 
 type routeGroups struct {
@@ -31,7 +31,7 @@ func NewRouter(routes []routeGroups) *mux.Router {
 				Methods(route.Method).
 				Path(route.Pattern).
 				Name(route.Name).
-				Handler(interfaces.MakeJSONHandlerFunc(route.Handler))
+				Handler(handlers.MakeJSONHandlerFunc(route.Handler))
 		}
 	}
 	return router

@@ -7,8 +7,8 @@ import (
 
 	"github.com/Yapo/logger"
 	"github.schibsted.io/Yapo/goms/pkg/core"
-	"github.schibsted.io/Yapo/goms/pkg/interfaces"
-	"github.schibsted.io/Yapo/goms/pkg/repository"
+	"github.schibsted.io/Yapo/goms/pkg/interfaces/handlers"
+	"github.schibsted.io/Yapo/goms/pkg/interfaces/repository"
 	"github.schibsted.io/Yapo/goms/pkg/usecases"
 )
 
@@ -42,14 +42,14 @@ func main() {
 	logger.Info("Setting up Dependency Injection")
 
 	// HealthHandler
-	var healthHandler interfaces.HealthHandler
+	var healthHandler handlers.HealthHandler
 
 	// FibonacciHandler
 	fibonacciRepository := repository.NewMapFibonacciRepository()
 	fibonacciInteractor := usecases.FibonacciInteractor{
 		Repository: fibonacciRepository,
 	}
-	fibonacciHandler := interfaces.FibonacciHandler{
+	fibonacciHandler := handlers.FibonacciHandler{
 		Interactor: &fibonacciInteractor,
 	}
 
