@@ -3,9 +3,9 @@ package interfaces
 import (
 	"errors"
 	"github.com/Yapo/goutils"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 	"github.schibsted.io/Yapo/goms/pkg/domain"
-	"gopkg.in/stretchr/testify.v1/assert"
-	"gopkg.in/stretchr/testify.v1/mock"
 	"net/http"
 	"testing"
 )
@@ -47,13 +47,13 @@ func TestFibonacciHandlerExecuteOK(t *testing.T) {
 
 func TestFibonacciHandlerExecuteError(t *testing.T) {
 	m := MockFibonacciInteractor{}
-	m.On("GetNth", -1).Return(domain.Fibonacci(0), errors.New("Kaboom!")).Once()
+	m.On("GetNth", -1).Return(domain.Fibonacci(0), errors.New("kaboom")).Once()
 	h := FibonacciHandler{Interactor: &m}
 
 	input := fibonacciRequestInput{N: -1}
 	expectedResponse := &goutils.Response{
 		Code: http.StatusBadRequest,
-		Body: fibonacciRequestError{"Kaboom!"},
+		Body: fibonacciRequestError{"kaboom"},
 	}
 
 	r := h.Execute(&input)

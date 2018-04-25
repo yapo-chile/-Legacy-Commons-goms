@@ -1,10 +1,10 @@
-hash: 2aa79c63b6b4c75791cd5ce0d80dafeffaf26bd539b99c66bee6ce14d1150d4b
-updated: 2018-04-20T10:27:02.831961-03:00
+hash: eb15697d3da73a6209cdee42729e365b15b2665ecaefcc44b681f00064f100ed
+updated: 2018-04-24T18:17:52.654388-03:00
 imports:
 - name: github.com/gorilla/context
   version: 08b5f424b9271eedf6f9f0ce86cb9396ed337a42
 - name: github.com/Yapo/goutils
-  version: 8d29e3f85fde125933692829955b1504cbf7c637
+  version: 721ca4146b6a61457bd15254c0fc1d6f6bcbce20
 - name: github.com/Yapo/logger
   version: 91855e974718b8c68dd00e63817568f1f512a4cc
 - name: gopkg.in/facebookgo/atomicfile.v0
@@ -13,7 +13,7 @@ imports:
   version: 53c1911da2b537f792e7cafcb446b05ffe33b996
 testImports:
 - name: github.com/davecgh/go-spew
-  version: db69d09d2c587e9b9677f991dfcab1fc24d9086e
+  version: 04cdfd42973bb9c8589fd6a731800cf222fde1a9
   subpackages:
   - spew
 - name: github.com/pmezard/go-difflib
@@ -23,10 +23,6 @@ testImports:
 - name: github.com/stretchr/objx
   version: 8a3f7159479fbc75b30357fbc48f380b7320f08e
 - name: github.com/stretchr/testify
-  version: f6abca593680b2315d2075e0f5e2a9751e3f431a
-  subpackages:
-  - assert
-- name: gopkg.in/stretchr/testify.v1
   version: 12b6f73e6084dad08a7c6e575284b177ecafbc71
   subpackages:
   - assert

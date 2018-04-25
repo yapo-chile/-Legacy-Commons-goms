@@ -5,21 +5,32 @@ import (
 	"github.schibsted.io/Yapo/goms/pkg/domain"
 )
 
-type MapFibonacciRepository struct {
+// mapFibonacciRepository is an implementation of domain.FibonacciRepository
+// that stores Fibonacci data on a map. It keeps the lastest known pair on a
+// separate array to speed up retrieval. The type is intentionally private.
+// The correct way to instantiate this type is with NewMapFibonacciRepository.
+// This ensures that the required initialization is performed every time.
+type mapFibonacciRepository struct {
 	storage map[int]domain.Fibonacci
 	latest  []int
 }
 
-func NewMapFibonacciRepository() (r MapFibonacciRepository) {
+// NewMapFibonacciRepository instantiates a fresh mapFibonacciRepository,
+// performs the initialization and returns it as a domain.FibonacciRepository.
+// The return type prevents others to directly access data members.
+func NewMapFibonacciRepository() domain.FibonacciRepository {
+	var r mapFibonacciRepository
 	r.storage = map[int]domain.Fibonacci{
 		1: 1,
 		2: 1,
 	}
 	r.latest = []int{1, 2}
-	return
+	return &r
 }
 
-func (r *MapFibonacciRepository) Get(nth int) (domain.Fibonacci, error) {
+// Get returns the nth (1 based) Fibonacci should this instance know it.
+// Otherwise, will return -1 and error message.
+func (r *mapFibonacciRepository) Get(nth int) (domain.Fibonacci, error) {
 	f, found := r.storage[nth]
 	if !found {
 		return -1, fmt.Errorf("Don't know the %dth Fibonacci, do you?", nth)
@@ -27,17 +38,20 @@ func (r *MapFibonacciRepository) Get(nth int) (domain.Fibonacci, error) {
 	return f, nil
 }
 
-func (r *MapFibonacciRepository) Save(nth int, x domain.Fibonacci) error {
+// Save sets the nth Fibonacci to x should the last known pair of values end
+// at nth-1. Otherwise returns an error message.
+func (r *mapFibonacciRepository) Save(nth int, x domain.Fibonacci) error {
 	if nth != r.latest[1]+1 {
 		return fmt.Errorf("How do you know the %dth Fibonacci number?", nth)
 	}
 	r.storage[nth] = x
-	r.latest[0] += 1
-	r.latest[1] += 1
+	r.latest[0]++
+	r.latest[1]++
 	return nil
 }
 
-func (r *MapFibonacciRepository) LatestPair() domain.FibonacciPair {
+// LatestPair retrieves the latest pair (and indexes) of known Fibonacci Numbers
+func (r *mapFibonacciRepository) LatestPair() domain.FibonacciPair {
 	return domain.FibonacciPair{
 		IA: r.latest[0],
 		IB: r.latest[1],

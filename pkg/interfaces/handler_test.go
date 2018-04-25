@@ -2,8 +2,8 @@ package interfaces
 
 import (
 	"github.com/Yapo/goutils"
-	"gopkg.in/stretchr/testify.v1/assert"
-	"gopkg.in/stretchr/testify.v1/mock"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -40,11 +40,11 @@ func TestJsonJandlerFuncOK(t *testing.T) {
 
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest("GET", "/someurl", strings.NewReader("{}"))
-	fn := MakeJsonHandlerFunc(&h)
+	fn := MakeJSONHandlerFunc(&h)
 	fn(w, r)
 
 	assert.Equal(t, 42, w.Code)
-	assert.Equal(t, `{"ErrorMessage":"That's some bad hat, Harry"}`, w.Body.String())
+	assert.Equal(t, `{"ErrorMessage":"That's some bad hat, Harry"}`+"\n", w.Body.String())
 	h.AssertExpectations(t)
 }
 
@@ -55,10 +55,10 @@ func TestJsonJandlerFuncParseError(t *testing.T) {
 
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest("GET", "/someurl", strings.NewReader("{"))
-	fn := MakeJsonHandlerFunc(&h)
+	fn := MakeJSONHandlerFunc(&h)
 	fn(w, r)
 
 	assert.Equal(t, http.StatusBadRequest, w.Code)
-	assert.Equal(t, `{"ErrorMessage":"unexpected EOF"}`, w.Body.String())
+	assert.Equal(t, `{"ErrorMessage":"unexpected EOF"}`+"\n", w.Body.String())
 	h.AssertExpectations(t)
 }

@@ -15,20 +15,21 @@ type FibonacciHandler struct {
 }
 
 type fibonacciRequestInput struct {
-	N int `json:n`
+	N int `json:"n"`
 }
 
 type fibonacciRequestOutput struct {
-	Result domain.Fibonacci `json:result`
+	Result domain.Fibonacci `json:"result"`
 }
 
 type fibonacciRequestError goutils.GenericError
 
+// Input returns a fresh, empty instance of fibonacciRequestInput
 func (h *FibonacciHandler) Input() HandlerInput {
 	return &fibonacciRequestInput{}
 }
 
-// Run executes an /fibonacci request. Uses the given interactor to carry out
+// Execute carries on a /fibonacci request. Uses the given interactor to carry out
 // the operation and get the desired value. Expected body format:
 //	{
 //		n: int - Number of fibonacci to retrieve (1 based)
@@ -36,7 +37,7 @@ func (h *FibonacciHandler) Input() HandlerInput {
 // Expected response format:
 //   { Result: int - Operation result }
 // Expected error format:
-//   { Error: string - Error detail }
+//   { ErrorMessage: string - Error detail }
 func (h *FibonacciHandler) Execute(input HandlerInput) *goutils.Response {
 	in := input.(*fibonacciRequestInput)
 	f, err := h.Interactor.GetNth(in.N)

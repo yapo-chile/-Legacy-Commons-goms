@@ -31,7 +31,7 @@ func NewRouter(routes []routeGroups) *mux.Router {
 				Methods(route.Method).
 				Path(route.Pattern).
 				Name(route.Name).
-				Handler(interfaces.MakeJsonHandlerFunc(route.Handler))
+				Handler(interfaces.MakeJSONHandlerFunc(route.Handler))
 		}
 	}
 	return router

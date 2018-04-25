@@ -47,7 +47,7 @@ func main() {
 	// FibonacciHandler
 	fibonacciRepository := repository.NewMapFibonacciRepository()
 	fibonacciInteractor := usecases.FibonacciInteractor{
-		Repository: &fibonacciRepository,
+		Repository: fibonacciRepository,
 	}
 	fibonacciHandler := interfaces.FibonacciHandler{
 		Interactor: &fibonacciInteractor,

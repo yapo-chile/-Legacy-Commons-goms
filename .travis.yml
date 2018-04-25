@@ -32,15 +32,12 @@ before_script:
 # script always run to completion (set +e). All of these code checks are must haves
 # in a modern Go project.
 script:
-  # Validate the code
-  - make validate  
-    # Run all the tests and generate the coverage report
+  # Generate coverage and checkstyle report
   - make test
-    # Create the docker image
-  - make docker-build
 
 after_success:
   - reports-publisher
+  - make docker-build
   - make docker-publish
 
 notifications:

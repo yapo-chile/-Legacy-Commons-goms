@@ -26,16 +26,7 @@ for network in ${DOCKER_COMPOSE_NETWORKS}; do
     fi
 done
 
-echoTitle "Starting docker compose"
-if [[ $1 == "dev" ]]; then
-    echoTitle "Starting container for development"
-    docker-compose -f docker/docker-compose-dev.yml -p ${APPNAME} up -d
-elif [[ "$1" == "prod" ]]; then
-    echoTitle "Starting container for production"
-    docker-compose -f docker/docker-compose.yml -p ${APPNAME} up -d
-else
-    echoError "Option not supported. Options: dev, prod"
-    exit 1
-fi
+echoTitle "Starting containers"
+docker-compose -f docker/docker-compose-dev.yml -p ${APPNAME} up -d
 
 echoTitle "Done"

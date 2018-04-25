@@ -12,15 +12,17 @@ type HealthHandler struct{}
 
 type healthHandlerInput struct{}
 type healthRequestOutput struct {
-	Status string `json:status`
+	Status string `json:"status"`
 }
 
-// Input
+// Input returns a fresh, empty instance of healthHandlerInput
 func (*HealthHandler) Input() HandlerInput {
 	return &healthHandlerInput{}
 }
 
-// Run retrieves service health status.
+// Execute returns the service health status.
+// Expected response format:
+//   { Status: string - Always "OK" }
 func (*HealthHandler) Execute(input HandlerInput) *goutils.Response {
 	return &goutils.Response{
 		Code: http.StatusOK,

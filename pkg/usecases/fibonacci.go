@@ -5,14 +5,21 @@ import (
 	"github.schibsted.io/Yapo/goms/pkg/domain"
 )
 
+// GetNthFibonacciUsecase states:
+// As a User, I would like to know which the Nth Fibonacci Number is.
+// GetNth should return that number to me, or an appropiate error if not possible.
 type GetNthFibonacciUsecase interface {
 	GetNth(n int) (domain.Fibonacci, error)
 }
 
+// FibonacciInteractor implements GetNthFibonacciUsecase by using Repository
+// to store new Fibonacci as required and to retrieve the final answer.
 type FibonacciInteractor struct {
 	Repository domain.FibonacciRepository
 }
 
+// GetNth finds the nth Fibonacci Number by recursively generating one more
+// from the last know pair. The running time is O(n).
 func (interactor *FibonacciInteractor) GetNth(n int) (domain.Fibonacci, error) {
 	// Ensure correct input
 	if n <= 0 {
@@ -26,7 +33,10 @@ func (interactor *FibonacciInteractor) GetNth(n int) (domain.Fibonacci, error) {
 	// Retrieve the latest pair
 	latest := interactor.Repository.LatestPair()
 	i, x := latest.Next()
-	interactor.Repository.Save(i, x)
+	err = interactor.Repository.Save(i, x)
+	if err != nil {
+		return -1, err
+	}
 	// One step closer. Keep trying
 	return interactor.GetNth(n)
 }

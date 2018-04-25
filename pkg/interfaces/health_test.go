@@ -2,7 +2,7 @@ package interfaces
 
 import (
 	"github.com/Yapo/goutils"
-	"gopkg.in/stretchr/testify.v1/assert"
+	"github.com/stretchr/testify/assert"
 	"net/http"
 	"testing"
 )

@@ -17,8 +17,8 @@ type Handler interface {
 	Execute(input HandlerInput) *goutils.Response
 }
 
-// MakeJsonHandlerFunc wraps a handler on a json over http context.
-func MakeJsonHandlerFunc(h Handler) http.HandlerFunc {
+// MakeJSONHandlerFunc wraps a handler on a json over http context.
+func MakeJSONHandlerFunc(h Handler) http.HandlerFunc {
 	jh := jsonHandler{Handler: h}
 	return jh.run
 }
