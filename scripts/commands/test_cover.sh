@@ -35,21 +35,20 @@ function run_tests {
 echoTitle "Generating test report"
 run_tests | tee /dev/tty | go-junit-report > ${JUNIT_REPORT}; test ${PIPESTATUS[0]} -eq 0 || status=${PIPESTATUS[0]}
 
-
 if [[ $@ == **cli** ]]; then
-	# Print code coverage details
-	echoTitle "Printing code coverage details"
-	go tool cover -func ${COVER_FILE}
+    # Print code coverage details
+    echoTitle "Printing code coverage details"
+    go tool cover -func ${COVER_FILE}
 elif [[ $@ == **html** ]]; then
-	# Open browser with code coverage details
-	echoTitle "Printing code coverage details"
-	go tool cover -func ${COVER_FILE}
-	echoTitle "Displaying coverage on default browser"
-	go tool cover -html ${COVER_FILE}
+    # Open browser with code coverage details
+    echoTitle "Printing code coverage details"
+    go tool cover -func ${COVER_FILE}
+    echoTitle "Displaying coverage on default browser"
+    go tool cover -html ${COVER_FILE}
 else
-	# Generate coverage report
-	echoTitle "Generating coverage report"
-	gocov convert ${COVER_FILE} | gocov-xml  > ${COVERAGE_REPORT}; test ${PIPESTATUS[0]} -eq 0 || status=${PIPESTATUS[0]}
+    # Generate coverage report
+    echoTitle "Generating coverage report"
+    gocov convert ${COVER_FILE} | gocov-xml  > ${COVERAGE_REPORT}; test ${PIPESTATUS[0]} -eq 0 || status=${PIPESTATUS[0]}
 fi
 
 echoTitle "Done"
