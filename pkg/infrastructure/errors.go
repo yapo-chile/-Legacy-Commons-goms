@@ -1,4 +1,4 @@
-package core
+package infrastructure
 
 // THIS FILE IS FOR THE SPECIFIC API ERRORS
 //Here goes the error codes

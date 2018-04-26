@@ -1,45 +1,31 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
 
-	"github.com/Yapo/logger"
-	"github.schibsted.io/Yapo/goms/pkg/core"
+	"github.schibsted.io/Yapo/goms/pkg/infrastructure"
 	"github.schibsted.io/Yapo/goms/pkg/interfaces/handlers"
 	"github.schibsted.io/Yapo/goms/pkg/interfaces/repository"
 	"github.schibsted.io/Yapo/goms/pkg/usecases"
 )
 
 func main() {
+	var conf infrastructure.Config
+	conf.LoadConfig()
+	jconf, _ := json.MarshalIndent(conf, "", "    ")
+	fmt.Printf("Config:\n%s\n", jconf)
 
-	fmt.Printf("Loading config")
-	conf, err := core.Load()
-	if err != nil {
-		fmt.Printf("Error: %+v\n", err)
-		os.Exit(2)
-	}
-	fmt.Printf("Loaded config %v\n", conf)
 	fmt.Printf("Setting up logger\n")
-	loggerConf := logger.LogConfig{
-		Syslog: logger.SyslogConfig{
-			Enabled:  conf.LoggerConf.SyslogEnabled,
-			Identity: conf.LoggerConf.SyslogIdentity,
-		},
-		Stdlog: logger.StdlogConfig{
-			Enabled: conf.LoggerConf.StdlogEnabled,
-		},
-	}
-	if err := logger.Init(loggerConf); err != nil {
+	logger, err := infrastructure.MakeYapoLogger(&conf.LoggerConf)
+	if err != nil {
 		fmt.Println(err)
 		os.Exit(2)
 	}
 
-	logger.SetLogLevel(conf.LoggerConf.LogLevel)
-	fmt.Printf("LogLevel: %d\n", conf.LoggerConf.LogLevel)
-
-	logger.Info("Setting up Dependency Injection")
+	logger.Info("Initializing resources")
 
 	// HealthHandler
 	var healthHandler handlers.HealthHandler
@@ -53,11 +39,11 @@ func main() {
 		Interactor: &fibonacciInteractor,
 	}
 
-	var routes = core.Routes{
+	var routes = infrastructure.Routes{
 		{
 			//this is the base path, all routes will start with this
 			Prefix: "/api/v{version:[1-9][0-9]*}",
-			Groups: []core.Route{
+			Groups: []infrastructure.Route{
 				{
 					Name:    "Check service health",
 					Method:  "GET",
@@ -75,6 +61,5 @@ func main() {
 	}
 
 	logger.Info("Starting request serving")
-	logger.Crit("%s\n", http.ListenAndServe(fmt.Sprintf("%s:%d", conf.AppConf.Host, conf.AppConf.Port), core.NewRouter(routes)))
-	logger.CloseSyslog() // nolint
+	logger.Crit("%s\n", http.ListenAndServe(conf.ServiceConf.Host, infrastructure.NewRouter(routes)))
 }

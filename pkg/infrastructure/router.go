@@ -1,4 +1,4 @@
-package core
+package infrastructure
 
 import (
 	"github.schibsted.io/Yapo/goms/pkg/interfaces/handlers"
