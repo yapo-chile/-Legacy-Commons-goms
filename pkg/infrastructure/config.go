@@ -19,8 +19,8 @@ type ServiceConf struct {
 //   3 - Error
 //   4 - Critic
 type LoggerConf struct {
-	SyslogEnabled  bool   `env:"SYSLOG_ENABLED" envDefault:"false"`
 	SyslogIdentity string `env:"SYSLOG_IDENTITY"`
+	SyslogEnabled  bool   `env:"SYSLOG_ENABLED" envDefault:"false"`
 	StdlogEnabled  bool   `env:"STDLOG_ENABLED" envDefault:"true"`
 	LogLevel       int    `env:"LOG_LEVEL" envDefault:"0"`
 }
@@ -40,8 +40,8 @@ type Config struct {
 }
 
 // LoadConfig loads the config data from the environment variables
-func (conf *Config) LoadConfig() {
-	load(reflect.ValueOf(conf), "", "")
+func LoadFromEnv(data interface{}) {
+	load(reflect.ValueOf(data), "", "")
 }
 
 //load loads the variable defined in the envTag into the value

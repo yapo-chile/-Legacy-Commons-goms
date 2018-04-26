@@ -14,7 +14,7 @@ import (
 
 func main() {
 	var conf infrastructure.Config
-	conf.LoadConfig()
+	infrastructure.LoadFromEnv(&conf)
 	jconf, _ := json.MarshalIndent(conf, "", "    ")
 	fmt.Printf("Config:\n%s\n", jconf)
 
