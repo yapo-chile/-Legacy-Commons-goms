@@ -19,6 +19,12 @@ func (m *MockFibonacciInteractor) GetNth(n int) (domain.Fibonacci, error) {
 	return args.Get(0).(domain.Fibonacci), args.Error(1)
 }
 
+func MakeMockInputGetter(input HandlerInput, response *goutils.Response) InputGetter {
+	return func() (HandlerInput, *goutils.Response) {
+		return input, response
+	}
+}
+
 func TestFibonacciHandlerInput(t *testing.T) {
 	m := MockFibonacciInteractor{}
 	h := FibonacciHandler{Interactor: &m}
@@ -39,7 +45,8 @@ func TestFibonacciHandlerExecuteOK(t *testing.T) {
 		Body: fibonacciRequestOutput{5},
 	}
 
-	r := h.Execute(&input)
+	getter := MakeMockInputGetter(&input, nil)
+	r := h.Execute(getter)
 	assert.Equal(t, expectedResponse, r)
 
 	m.AssertExpectations(t)
@@ -56,7 +63,24 @@ func TestFibonacciHandlerExecuteError(t *testing.T) {
 		Body: fibonacciRequestError{"kaboom"},
 	}
 
-	r := h.Execute(&input)
+	getter := MakeMockInputGetter(&input, nil)
+	r := h.Execute(getter)
+	assert.Equal(t, expectedResponse, r)
+
+	m.AssertExpectations(t)
+}
+
+func TestFibonacciHandlerInputError(t *testing.T) {
+	m := MockFibonacciInteractor{}
+	h := FibonacciHandler{Interactor: &m}
+
+	expectedResponse := &goutils.Response{
+		Code: http.StatusBadRequest,
+		Body: fibonacciRequestError{"kaboom"},
+	}
+
+	getter := MakeMockInputGetter(nil, expectedResponse)
+	r := h.Execute(getter)
 	assert.Equal(t, expectedResponse, r)
 
 	m.AssertExpectations(t)

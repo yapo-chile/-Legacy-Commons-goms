@@ -19,8 +19,12 @@ func (m *MockHandler) Input() HandlerInput {
 	return args.Get(0).(HandlerInput)
 }
 
-func (m *MockHandler) Execute(input HandlerInput) *goutils.Response {
-	args := m.Called(input)
+func (m *MockHandler) Execute(getter InputGetter) *goutils.Response {
+	args := m.Called(getter)
+	_, response := getter()
+	if response != nil {
+		return response
+	}
 	return args.Get(0).(*goutils.Response)
 }
 
@@ -35,8 +39,9 @@ func TestJsonJandlerFuncOK(t *testing.T) {
 		Code: 42,
 		Body: goutils.GenericError{"That's some bad hat, Harry"},
 	}
+	getter := mock.AnythingOfType("handlers.InputGetter")
+	h.On("Execute", getter).Return(response).Once()
 	h.On("Input").Return(input).Once()
-	h.On("Execute", input).Return(response).Once()
 
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest("GET", "/someurl", strings.NewReader("{}"))
@@ -51,6 +56,8 @@ func TestJsonJandlerFuncOK(t *testing.T) {
 func TestJsonJandlerFuncParseError(t *testing.T) {
 	h := MockHandler{}
 	input := &DummyInput{}
+	getter := mock.AnythingOfType("handlers.InputGetter")
+	h.On("Execute", getter)
 	h.On("Input").Return(input).Once()
 
 	w := httptest.NewRecorder()
