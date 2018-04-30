@@ -63,15 +63,12 @@ func load(conf reflect.Value, envTag, envDefault string) {
 						load(reflectedConf.Field(i).Addr(), envTag+tag, def)
 					}
 				}
-				break
 			// Here for each type we should make a cast of the env variable and then set the value
 			case reflect.String:
 				reflectedConf.SetString(value)
-				break
 			case reflect.Int:
 				value, _ := strconv.Atoi(value)
 				reflectedConf.Set(reflect.ValueOf(value))
-				break
 			case reflect.Bool:
 				value, _ := strconv.ParseBool(value)
 				reflectedConf.Set(reflect.ValueOf(value))
