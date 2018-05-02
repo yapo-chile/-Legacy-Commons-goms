@@ -23,8 +23,7 @@ type MockHandler struct {
 	mock.Mock
 }
 
-func (m *MockHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	m.Called(r, w)
+func MockHandlerFunc(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("been there"))
 }
 
@@ -38,16 +37,12 @@ func TestNewrelicStartOk(t *testing.T) {
 	err := nr.Start()
 	assert.NoError(t, err)
 
-	m := MockHandler{}
-	m.On("ServeHTTP",
-		mock.AnythingOfType("*http.Request"),
-		mock.AnythingOfType("newrelic.wrapF")).Return()
+	m := MockHandlerFunc
+	handler := nr.TrackHandlerFunc("test", m)
 
-	handler := nr.TrackHandler("test", &m)
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest("GET", "/someurl", strings.NewReader("{}"))
-	handler.ServeHTTP(w, r)
+	handler(w, r)
 
 	assert.Equal(t, "been there", w.Body.String())
-	m.AssertExpectations(t)
 }

@@ -24,8 +24,11 @@ func (n *NewRelicHandler) Start() error {
 	return err
 }
 
-// TrackHandler instruments a http.Handler function
-func (n *NewRelicHandler) TrackHandler(pattern string, handler http.Handler) http.Handler {
-	_, newHandler := newrelic.WrapHandle(n.app, pattern, handler)
-	return newHandler
+// TrackHandlerFunc instruments an http.HandlerFunc
+func (n *NewRelicHandler) TrackHandlerFunc(pattern string, handler http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		txn := n.app.StartTransaction(pattern, w, r)
+		defer txn.End()
+		handler(txn, r)
+	}
 }

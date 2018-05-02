@@ -1,6 +1,8 @@
 package infrastructure
 
 import (
+	"net/http"
+
 	"github.schibsted.io/Yapo/goms/pkg/interfaces/handlers"
 	"gopkg.in/gorilla/mux.v1"
 )
@@ -18,20 +20,31 @@ type routeGroups struct {
 	Groups []Route
 }
 
+type WrapperFunc func(pattern string, handler http.HandlerFunc) http.HandlerFunc
+
 // Routes is an array of routes with a common prefix
 type Routes []routeGroups
 
+type RouterMaker struct {
+	Routes      Routes
+	WrapperFunc WrapperFunc
+}
+
 // NewRouter setups a Router based on the provided routes.
-func NewRouter(routes []routeGroups) *mux.Router {
+func (maker *RouterMaker) NewRouter() *mux.Router {
 	router := mux.NewRouter()
-	for _, routeGroup := range routes {
+	for _, routeGroup := range maker.Routes {
 		subRouter := router.PathPrefix(routeGroup.Prefix).Subrouter()
 		for _, route := range routeGroup.Groups {
+			handler := handlers.MakeJSONHandlerFunc(route.Handler)
+			if maker.WrapperFunc != nil {
+				handler = maker.WrapperFunc(route.Name, handler)
+			}
 			subRouter.
 				Methods(route.Method).
 				Path(route.Pattern).
 				Name(route.Name).
-				Handler(handlers.MakeJSONHandlerFunc(route.Handler))
+				Handler(handler)
 		}
 	}
 	return router

@@ -25,6 +25,17 @@ func main() {
 		os.Exit(2)
 	}
 
+	logger.Info("Setting up New Relic")
+	newrelic := infrastructure.NewRelicHandler{
+		Appname: conf.NewRelicConf.Appname,
+		Key:     conf.NewRelicConf.Key,
+	}
+	err = newrelic.Start()
+	if err != nil {
+		logger.Error("Error loading New Relic: %+v", err)
+		os.Exit(2)
+	}
+
 	logger.Info("Initializing resources")
 
 	// HealthHandler
@@ -39,27 +50,30 @@ func main() {
 		Interactor: &fibonacciInteractor,
 	}
 
-	var routes = infrastructure.Routes{
-		{
-			//this is the base path, all routes will start with this
-			Prefix: "/api/v{version:[1-9][0-9]*}",
-			Groups: []infrastructure.Route{
-				{
-					Name:    "Check service health",
-					Method:  "GET",
-					Pattern: "/healthcheck",
-					Handler: &healthHandler,
-				},
-				{
-					Name:    "Retrieve the Nth Fibonacci with Clean Architecture",
-					Method:  "GET",
-					Pattern: "/fibonacci",
-					Handler: &fibonacciHandler,
+	maker := infrastructure.RouterMaker{
+		WrapperFunc: newrelic.TrackHandlerFunc,
+		Routes: infrastructure.Routes{
+			{
+				//this is the base path, all routes will start with this
+				Prefix: "/api/v{version:[1-9][0-9]*}",
+				Groups: []infrastructure.Route{
+					{
+						Name:    "Check service health",
+						Method:  "GET",
+						Pattern: "/healthcheck",
+						Handler: &healthHandler,
+					},
+					{
+						Name:    "Retrieve the Nth Fibonacci with Clean Architecture",
+						Method:  "GET",
+						Pattern: "/fibonacci",
+						Handler: &fibonacciHandler,
+					},
 				},
 			},
 		},
 	}
 
 	logger.Info("Starting request serving")
-	logger.Crit("%s\n", http.ListenAndServe(conf.ServiceConf.Host, infrastructure.NewRouter(routes)))
+	logger.Crit("%s\n", http.ListenAndServe(conf.ServiceConf.Host, maker.NewRouter()))
 }
