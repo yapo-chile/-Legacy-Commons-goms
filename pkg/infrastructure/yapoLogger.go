@@ -4,9 +4,10 @@ import (
 	"github.com/Yapo/logger"
 )
 
-//yapoLogger struct that implements the Logger interface using the Yapo/logger library
+// yapoLogger struct that implements the Logger interface using the Yapo/logger library
 type yapoLogger struct{}
 
+// MakeYapoLogger creates and sets up a yapo flavored Logger
 func MakeYapoLogger(config *LoggerConf) (Logger, error) {
 	var log yapoLogger
 	err := log.init(config)

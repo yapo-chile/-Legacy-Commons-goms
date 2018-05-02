@@ -32,31 +32,32 @@ type NewRelicConf struct {
 	Appname string `env:"APPNAME" envDefault:"yapo-goms-poya"`
 }
 
-//Config holds all configuration for the service
+// Config holds all configuration for the service
 type Config struct {
 	ServiceConf  ServiceConf  `env:"SERVICE_"`
 	NewRelicConf NewRelicConf `env:"NEWRELIC_"`
 	LoggerConf   LoggerConf   `env:"LOGGER_"`
 }
 
-// LoadConfig loads the config data from the environment variables
+// LoadFromEnv loads the config data from the environment variables
 func LoadFromEnv(data interface{}) {
 	load(reflect.ValueOf(data), "", "")
 }
 
-//load loads the variable defined in the envTag into the value
+// load the variable defined in the envTag into Value
 func load(conf reflect.Value, envTag, envDefault string) {
 	if conf.Kind() == reflect.Ptr {
 		reflectedConf := reflect.Indirect(conf)
-		// we should only keep going if we can set values
+		// Only attempt to set writeable variables
 		if reflectedConf.IsValid() && reflectedConf.CanSet() {
 			value, ok := os.LookupEnv(envTag)
-			// if the env variable is not set we just use the envDefault
+			// Use the default when then the environment variable is not set
 			if !ok {
 				value = envDefault
 			}
 			switch reflectedConf.Kind() {
 			case reflect.Struct:
+				// Recursively load inner struct fields
 				for i := 0; i < reflectedConf.NumField(); i++ {
 					if tag, ok := reflectedConf.Type().Field(i).Tag.Lookup("env"); ok {
 						def, _ := reflectedConf.Type().Field(i).Tag.Lookup("envDefault")
@@ -67,11 +68,13 @@ func load(conf reflect.Value, envTag, envDefault string) {
 			case reflect.String:
 				reflectedConf.SetString(value)
 			case reflect.Int:
-				value, _ := strconv.Atoi(value)
-				reflectedConf.Set(reflect.ValueOf(value))
+				if value, err := strconv.Atoi(value); err == nil {
+					reflectedConf.Set(reflect.ValueOf(value))
+				}
 			case reflect.Bool:
-				value, _ := strconv.ParseBool(value)
-				reflectedConf.Set(reflect.ValueOf(value))
+				if value, err := strconv.ParseBool(value); err == nil {
+					reflectedConf.Set(reflect.ValueOf(value))
+				}
 			}
 		}
 	}
