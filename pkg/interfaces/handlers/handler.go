@@ -27,13 +27,13 @@ type Handler interface {
 }
 
 // MakeJSONHandlerFunc wraps a handler on a json over http context.
-func MakeJSONHandlerFunc(h Handler, l JsonHandlerLogger) http.HandlerFunc {
+func MakeJSONHandlerFunc(h Handler, l JSONHandlerLogger) http.HandlerFunc {
 	jh := jsonHandler{handler: h, logger: l}
 	return jh.run
 }
 
-// JsonHandlerLogger defines all the events a jsonHandler can report
-type JsonHandlerLogger interface {
+// JSONHandlerLogger defines all the events a jsonHandler can report
+type JSONHandlerLogger interface {
 	LogRequestStart(r *http.Request)
 	LogRequestEnd(*http.Request, *goutils.Response)
 	LogRequestPanic(*http.Request, *goutils.Response, interface{})
@@ -43,7 +43,7 @@ type JsonHandlerLogger interface {
 // as json
 type jsonHandler struct {
 	handler Handler
-	logger  JsonHandlerLogger
+	logger  JSONHandlerLogger
 }
 
 // run will prepare the input for the actual handler and format the response

@@ -4,6 +4,8 @@ import (
 	"net/http"
 
 	"github.com/Yapo/goutils"
+
+	"github.schibsted.io/Yapo/goms/pkg/interfaces/handlers"
 )
 
 type jsonHandlerDefaultLogger struct {
@@ -22,9 +24,10 @@ func (l *jsonHandlerDefaultLogger) LogRequestPanic(r *http.Request, response *go
 	l.logger.Error("> %s %s %s (%d): %s", r.RemoteAddr, r.Method, r.URL, response.Code, err)
 }
 
-// MakeJsonHandlerLogger sets up a JsonHandlerLogger instrumented
+// MakeJSONHandlerLogger sets up a JsonHandlerLogger instrumented
 // via the provided logger
-func MakeJsonHandlerLogger(logger Logger) *jsonHandlerDefaultLogger {
+//func MakeJSONHandlerLogger(logger Logger) *jsonHandlerDefaultLogger {
+func MakeJSONHandlerLogger(logger Logger) handlers.JSONHandlerLogger {
 	return &jsonHandlerDefaultLogger{
 		logger: logger,
 	}

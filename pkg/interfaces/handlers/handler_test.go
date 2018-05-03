@@ -36,9 +36,8 @@ func (m *MockPanicHandler) Input() HandlerInput {
 	return args.Get(0).(HandlerInput)
 }
 func (m *MockPanicHandler) Execute(getter InputGetter) *goutils.Response {
-	args := m.Called(getter)
+	m.Called(getter)
 	panic("dead")
-	return args.Get(0).(*goutils.Response)
 }
 
 type MockLogger struct {

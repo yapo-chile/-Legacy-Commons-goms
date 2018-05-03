@@ -41,7 +41,7 @@ func (maker *RouterMaker) NewRouter() *mux.Router {
 	for _, routeGroup := range maker.Routes {
 		subRouter := router.PathPrefix(routeGroup.Prefix).Subrouter()
 		for _, route := range routeGroup.Groups {
-			hLogger := loggers.MakeJsonHandlerLogger(maker.Logger)
+			hLogger := loggers.MakeJSONHandlerLogger(maker.Logger)
 			handler := handlers.MakeJSONHandlerFunc(route.Handler, hLogger)
 			if maker.WrapperFunc != nil {
 				handler = maker.WrapperFunc(route.Pattern, handler)
