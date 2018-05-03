@@ -44,7 +44,7 @@ func (maker *RouterMaker) NewRouter() *mux.Router {
 			hLogger := loggers.MakeJsonHandlerLogger(maker.Logger)
 			handler := handlers.MakeJSONHandlerFunc(route.Handler, hLogger)
 			if maker.WrapperFunc != nil {
-				handler = maker.WrapperFunc(route.Name, handler)
+				handler = maker.WrapperFunc(route.Pattern, handler)
 			}
 			subRouter.
 				Methods(route.Method).
