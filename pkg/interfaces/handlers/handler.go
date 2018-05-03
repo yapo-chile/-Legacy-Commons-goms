@@ -1,9 +1,9 @@
 package handlers
 
 import (
-	"github.com/Yapo/goutils"
-	"github.com/Yapo/logger"
 	"net/http"
+
+	"github.com/Yapo/goutils"
 )
 
 // HandlerInput is a placeholder for whatever input a handler may need.
@@ -27,29 +27,54 @@ type Handler interface {
 }
 
 // MakeJSONHandlerFunc wraps a handler on a json over http context.
-func MakeJSONHandlerFunc(h Handler) http.HandlerFunc {
-	jh := jsonHandler{Handler: h}
+func MakeJSONHandlerFunc(h Handler, l JsonHandlerLogger) http.HandlerFunc {
+	jh := jsonHandler{handler: h, logger: l}
 	return jh.run
+}
+
+// JsonHandlerLogger defines all the events a jsonHandler can report
+type JsonHandlerLogger interface {
+	LogRequestStart(r *http.Request)
+	LogRequestEnd(*http.Request, *goutils.Response)
+	LogRequestPanic(*http.Request, *goutils.Response, interface{})
 }
 
 // jsonHandler is an http.Handler that reads its input and formats its output
 // as json
 type jsonHandler struct {
-	Handler Handler
+	handler Handler
+	logger  JsonHandlerLogger
 }
 
 // run will prepare the input for the actual handler and format the response
 // as json. Also, request information will be logged.
 func (jh *jsonHandler) run(w http.ResponseWriter, r *http.Request) {
-	logger.Info("< %s %s %s", r.RemoteAddr, r.Method, r.URL)
+	jh.logger.LogRequestStart(r)
+	// Default response
+	response := &goutils.Response{
+		Code: http.StatusInternalServerError,
+	}
+	// Function the request can call to retrieve its input
 	inputGetter := func() (HandlerInput, *goutils.Response) {
-		input := jh.Handler.Input()
+		input := jh.handler.Input()
 		response := goutils.ParseJSONBody(r, input)
 		return input, response
 	}
-	response := jh.Handler.Execute(inputGetter)
-	logger.Info("> %s %s %s (%d)", r.RemoteAddr, r.Method, r.URL, response.Code)
-
-	goutils.CreateJSON(response)
-	goutils.WriteJSONResponse(w, response)
+	// Format the output and send it down the writer
+	outputWriter := func() {
+		goutils.CreateJSON(response)
+		goutils.WriteJSONResponse(w, response)
+	}
+	// Handle panicking handlers and report errors
+	errorHandler := func() {
+		if err := recover(); err != nil {
+			jh.logger.LogRequestPanic(r, response, err)
+		}
+	}
+	// Setup before calling the actual handler
+	defer outputWriter()
+	defer errorHandler()
+	// Do the Harlem Shake
+	response = jh.handler.Execute(inputGetter)
+	jh.logger.LogRequestEnd(r, response)
 }

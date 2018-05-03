@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.schibsted.io/Yapo/goms/pkg/interfaces/handlers"
+	"github.schibsted.io/Yapo/goms/pkg/interfaces/loggers"
 	"gopkg.in/gorilla/mux.v1"
 )
 
@@ -29,6 +30,7 @@ type Routes []routeGroups
 
 // RouterMaker gathers route and wrapper information to build a router
 type RouterMaker struct {
+	Logger      loggers.Logger
 	Routes      Routes
 	WrapperFunc WrapperFunc
 }
@@ -39,7 +41,8 @@ func (maker *RouterMaker) NewRouter() *mux.Router {
 	for _, routeGroup := range maker.Routes {
 		subRouter := router.PathPrefix(routeGroup.Prefix).Subrouter()
 		for _, route := range routeGroup.Groups {
-			handler := handlers.MakeJSONHandlerFunc(route.Handler)
+			hLogger := loggers.MakeJsonHandlerLogger(maker.Logger)
+			handler := handlers.MakeJSONHandlerFunc(route.Handler, hLogger)
 			if maker.WrapperFunc != nil {
 				handler = maker.WrapperFunc(route.Name, handler)
 			}

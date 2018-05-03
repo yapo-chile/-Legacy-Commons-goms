@@ -8,6 +8,7 @@ import (
 
 	"github.schibsted.io/Yapo/goms/pkg/infrastructure"
 	"github.schibsted.io/Yapo/goms/pkg/interfaces/handlers"
+	"github.schibsted.io/Yapo/goms/pkg/interfaces/loggers"
 	"github.schibsted.io/Yapo/goms/pkg/interfaces/repository"
 	"github.schibsted.io/Yapo/goms/pkg/usecases"
 )
@@ -42,8 +43,10 @@ func main() {
 	var healthHandler handlers.HealthHandler
 
 	// FibonacciHandler
+	fibonacciLogger := loggers.MakeFibonacciInteractorLogger(logger)
 	fibonacciRepository := repository.NewMapFibonacciRepository()
 	fibonacciInteractor := usecases.FibonacciInteractor{
+		Logger:     fibonacciLogger,
 		Repository: fibonacciRepository,
 	}
 	fibonacciHandler := handlers.FibonacciHandler{
@@ -51,6 +54,7 @@ func main() {
 	}
 
 	maker := infrastructure.RouterMaker{
+		Logger:      logger,
 		WrapperFunc: newrelic.TrackHandlerFunc,
 		Routes: infrastructure.Routes{
 			{

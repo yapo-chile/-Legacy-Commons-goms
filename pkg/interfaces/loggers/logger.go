@@ -1,4 +1,4 @@
-package infrastructure
+package loggers
 
 // Logger is an interface for logging facilities
 type Logger interface {

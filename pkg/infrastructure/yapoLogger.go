@@ -2,13 +2,14 @@ package infrastructure
 
 import (
 	"github.com/Yapo/logger"
+	"github.schibsted.io/Yapo/goms/pkg/interfaces/loggers"
 )
 
 // yapoLogger struct that implements the Logger interface using the Yapo/logger library
 type yapoLogger struct{}
 
 // MakeYapoLogger creates and sets up a yapo flavored Logger
-func MakeYapoLogger(config *LoggerConf) (Logger, error) {
+func MakeYapoLogger(config *LoggerConf) (loggers.Logger, error) {
 	var log yapoLogger
 	err := log.init(config)
 	return log, err
