@@ -28,7 +28,7 @@ func (n *NewRelicHandler) Start() error {
 func (n *NewRelicHandler) TrackHandlerFunc(pattern string, handler http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		txn := n.app.StartTransaction(pattern, w, r)
-		defer txn.End()
+		defer txn.End() // nolint: errcheck
 		handler(txn, r)
 	}
 }

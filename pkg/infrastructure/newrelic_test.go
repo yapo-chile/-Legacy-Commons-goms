@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 )
 
 func TestNewrelicStartError(t *testing.T) {
@@ -17,10 +16,6 @@ func TestNewrelicStartError(t *testing.T) {
 	}
 	err := nr.Start()
 	assert.Error(t, err)
-}
-
-type MockHandler struct {
-	mock.Mock
 }
 
 func MockHandlerFunc(w http.ResponseWriter, r *http.Request) {

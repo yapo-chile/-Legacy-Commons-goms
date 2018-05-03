@@ -20,17 +20,20 @@ type routeGroups struct {
 	Groups []Route
 }
 
+// WrapperFunc defines a type for functions that wrap an http.HandlerFunc
+// to modify its behaviour
 type WrapperFunc func(pattern string, handler http.HandlerFunc) http.HandlerFunc
 
 // Routes is an array of routes with a common prefix
 type Routes []routeGroups
 
+// RouterMaker gathers route and wrapper information to build a router
 type RouterMaker struct {
 	Routes      Routes
 	WrapperFunc WrapperFunc
 }
 
-// NewRouter setups a Router based on the provided routes.
+// NewRouter setups a Router based on the provided routes
 func (maker *RouterMaker) NewRouter() *mux.Router {
 	router := mux.NewRouter()
 	for _, routeGroup := range maker.Routes {
