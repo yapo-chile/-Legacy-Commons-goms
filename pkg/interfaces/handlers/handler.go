@@ -9,9 +9,9 @@ import (
 // HandlerInput is a placeholder for whatever input a handler may need.
 type HandlerInput interface{}
 
-// InputGetter defines a function that, when called will attempt to retrieve
-// the input of a request and return it. Should any error happen, a
-// goutils.Response will be filled with an adequate message and error code.
+// InputGetter defines a type for all functions that, when called, will attempt
+// to retrieve and parse the input of a request and return it. Should any error
+// happen, a goutils.Response must be filled with an adequate message and code
 type InputGetter func() (HandlerInput, *goutils.Response)
 
 // Handler is the interface for the objects that should process web requests.
@@ -22,11 +22,12 @@ type Handler interface {
 	// to be filled with the user input for a request
 	Input() HandlerInput
 	// Execute is the actual handler code. The InputGetter can be used to retrieve
-	// the user input at any time (or not at all).
-	Execute(input InputGetter) *goutils.Response
+	// the request's input at any time (or not at all).
+	Execute(InputGetter) *goutils.Response
 }
 
-// MakeJSONHandlerFunc wraps a handler on a json over http context.
+// MakeJSONHandlerFunc wraps a Handler on a json-over-http context, returning
+// a standard http.HandlerFunc
 func MakeJSONHandlerFunc(h Handler, l JSONHandlerLogger) http.HandlerFunc {
 	jh := jsonHandler{handler: h, logger: l}
 	return jh.run
@@ -39,15 +40,16 @@ type JSONHandlerLogger interface {
 	LogRequestPanic(*http.Request, *goutils.Response, interface{})
 }
 
-// jsonHandler is an http.Handler that reads its input and formats its output
-// as json
+// jsonHandler provides an http.HandlerFunc that reads its input and formats
+// its output as json
 type jsonHandler struct {
 	handler Handler
 	logger  JSONHandlerLogger
 }
 
 // run will prepare the input for the actual handler and format the response
-// as json. Also, request information will be logged.
+// as json. Also, request information will be logged. It's an instance of
+// http.HandlerFunc
 func (jh *jsonHandler) run(w http.ResponseWriter, r *http.Request) {
 	jh.logger.LogRequestStart(r)
 	// Default response
