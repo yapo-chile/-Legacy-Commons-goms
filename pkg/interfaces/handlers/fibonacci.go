@@ -1,4 +1,4 @@
-package interfaces
+package handlers
 
 import (
 	"github.com/Yapo/goutils"
@@ -38,7 +38,12 @@ func (h *FibonacciHandler) Input() HandlerInput {
 //   { Result: int - Operation result }
 // Expected error format:
 //   { ErrorMessage: string - Error detail }
-func (h *FibonacciHandler) Execute(input HandlerInput) *goutils.Response {
+func (h *FibonacciHandler) Execute(ig InputGetter) *goutils.Response {
+	input, response := ig()
+	if response != nil {
+		return response
+	}
+
 	in := input.(*fibonacciRequestInput)
 	f, err := h.Interactor.GetNth(in.N)
 	if err != nil {

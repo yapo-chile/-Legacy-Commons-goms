@@ -25,9 +25,12 @@ else
     echoError "Platform not supported"
 fi
 
-if [[ "$BUILD_BRANCH" != "" ]]; then
+if [ -n "${BUILD_BRANCH}" ]; then
     export GIT_BRANCH=${BUILD_BRANCH}
 fi
+
+BUILD_NAME=$(if [ -n "${GIT_TAG}" ]; then echo -n "${GIT_TAG}"; else echo -n "${GIT_BRANCH}"; fi)
+export BUILD_TAG=$(echo -n "${BUILD_NAME}" | tr '[:upper:]' '[:lower:]' | sed 's,/,_,g')
 
 echoTitle "Building docker image for ${DOCKER_IMAGE}"
 echo "GIT BRANCH: ${GIT_BRANCH}"
@@ -35,19 +38,16 @@ echo "GIT TAG: ${GIT_TAG}"
 echo "GIT COMMIT: ${GIT_COMMIT}"
 echo "GIT COMMIT SHORT: ${GIT_COMMIT_SHORT}"
 echo "BUILD CREATOR: ${BUILD_CREATOR}"
+echo "BUILD NAME: ${DOCKER_IMAGE}:${BUILD_TAG}"
 
-export GIT_BRANCH_LOWERCASE=$(echo "${GIT_BRANCH}" | awk '{print tolower($0)}'| sed 's/\//_/;')
-DOCKER_ARGS=" --no-cache"
+DOCKER_ARGS=""
 
-if [[ "$GIT_TAG" != "" ]]; then
+if [[ "${GIT_BRANCH}" == "master" ]]; then
      DOCKER_ARGS="${DOCKER_ARGS} \
-         -t ${DOCKER_IMAGE}:${GIT_TAG}"
-elif [[ "${GIT_BRANCH_LOWERCASE}" == "master" ]]; then
-     DOCKER_ARGS="${DOCKER_ARGS} \
-         -t ${DOCKER_IMAGE}:${GIT_BRANCH_LOWERCASE} -t ${DOCKER_IMAGE}:latest"
+         -t ${DOCKER_IMAGE}:${BUILD_TAG} -t ${DOCKER_IMAGE}:latest"
 else
      DOCKER_ARGS="${DOCKER_ARGS} \
-         -t ${DOCKER_IMAGE}:${GIT_BRANCH_LOWERCASE}"
+         -t ${DOCKER_IMAGE}:${BUILD_TAG}"
 fi
 
 DOCKER_ARGS=" ${DOCKER_ARGS} \
@@ -57,11 +57,6 @@ DOCKER_ARGS=" ${DOCKER_ARGS} \
     --build-arg VERSION="$VERSION" \
     --build-arg APPNAME="$APPNAME" \
     --build-arg BINARY="${DOCKER_BINARY}" \
-    --build-arg EXPOSE_PORT="${DOCKER_PORT}" \
-    --build-arg SYSLOG_ENABLED="${SYSLOG_ENABLED}" \
-    --build-arg SYSLOG_IDENTITY="${SYSLOG_IDENTITY}" \
-    --build-arg LOG_LEVEL="${LOG_LEVEL}" \
-    --build-arg STDLOG_ENABLED="${STDLOG_ENABLED}" \
     -f docker/dockerfile \
     ."
 

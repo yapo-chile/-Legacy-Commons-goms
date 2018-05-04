@@ -1,4 +1,4 @@
-include scripts/commands/vars.sh
+include scripts/commands/vars.mk
 
 ## Run tests and generate quality reports
 test:

@@ -1,4 +1,4 @@
-package interfaces
+package handlers
 
 import (
 	"github.com/Yapo/goutils"
@@ -17,7 +17,8 @@ func TestHealthHandlerInput(t *testing.T) {
 func TestHealthHandlerRun(t *testing.T) {
 	var h HealthHandler
 	var input HandlerInput
-	r := h.Execute(input)
+	getter := MakeMockInputGetter(&input, nil)
+	r := h.Execute(getter)
 
 	expected := &goutils.Response{
 		Code: http.StatusOK,

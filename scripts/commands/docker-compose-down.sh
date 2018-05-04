@@ -6,4 +6,4 @@ if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
 . "$DIR/colors.sh"
 
 echoTitle "Stopping Docker containers"
-docker-compose -f docker/docker-compose-dev.yml -p ${APPNAME} down
+docker-compose -f docker/docker-compose.yml -p ${APPNAME} down

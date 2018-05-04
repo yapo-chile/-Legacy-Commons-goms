@@ -34,10 +34,13 @@ before_script:
 script:
   # Generate coverage and checkstyle report
   - make test
+  - make docker-build
+
+after_failure:
+  - reports-publisher
 
 after_success:
   - reports-publisher
-  - make docker-build
   - make docker-publish
 
 notifications:

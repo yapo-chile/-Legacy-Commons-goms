@@ -27,6 +27,6 @@ for network in ${DOCKER_COMPOSE_NETWORKS}; do
 done
 
 echoTitle "Starting containers"
-docker-compose -f docker/docker-compose-dev.yml -p ${APPNAME} up -d
+docker-compose -f docker/docker-compose.yml -p ${APPNAME} up -d
 
 echoTitle "Done"

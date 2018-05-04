@@ -1,4 +1,4 @@
-package interfaces
+package handlers
 
 import (
 	"github.com/Yapo/goutils"
@@ -23,7 +23,7 @@ func (*HealthHandler) Input() HandlerInput {
 // Execute returns the service health status.
 // Expected response format:
 //   { Status: string - Always "OK" }
-func (*HealthHandler) Execute(input HandlerInput) *goutils.Response {
+func (*HealthHandler) Execute(ig InputGetter) *goutils.Response {
 	return &goutils.Response{
 		Code: http.StatusOK,
 		Body: healthRequestOutput{
