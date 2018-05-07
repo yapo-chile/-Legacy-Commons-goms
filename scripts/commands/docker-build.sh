@@ -10,7 +10,7 @@ echoHeader "Building code for docker platform"
 set -e
 
 rm -f ${DOCKER_BINARY}
-GOOS=linux GOARCH=386 go build -v -o ${DOCKER_BINARY} ./${MAIN_FILE}
+GOOS=linux GOARCH=amd64 go build -v -o ${DOCKER_BINARY} ./${MAIN_FILE}
 
 set +e
 
@@ -28,9 +28,6 @@ fi
 if [ -n "${BUILD_BRANCH}" ]; then
     export GIT_BRANCH=${BUILD_BRANCH}
 fi
-
-BUILD_NAME=$(if [ -n "${GIT_TAG}" ]; then echo -n "${GIT_TAG}"; else echo -n "${GIT_BRANCH}"; fi)
-export BUILD_TAG=$(echo -n "${BUILD_NAME}" | tr '[:upper:]' '[:lower:]' | sed 's,/,_,g')
 
 echoTitle "Building docker image for ${DOCKER_IMAGE}"
 echo "GIT BRANCH: ${GIT_BRANCH}"

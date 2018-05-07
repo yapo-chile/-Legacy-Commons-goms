@@ -39,5 +39,5 @@ export DOCKER_IMAGE=${DOCKER_REGISTRY}/yapo/${APPNAME}
 export DOCKER_BINARY=${APPNAME}.docker
 export DOCKER_PORT=$(call genport,1)
 
-BUILD_NAME=$(shell if [ -n "${GIT_TAG}" ]; then echo -n "${GIT_TAG}"; else echo -n "${GIT_BRANCH}"; fi;)
-export BUILD_TAG=$(shell echo -n "${BUILD_NAME}" | tr '[:upper:]' '[:lower:]' | sed 's,/,_,g')
+BUILD_NAME=$(shell if [ -n "${GIT_TAG}" ]; then echo "${GIT_TAG}"; else echo "${GIT_BRANCH}"; fi;)
+export BUILD_TAG=$(shell echo "${BUILD_NAME}" | tr '[:upper:]' '[:lower:]' | sed 's,/,_,g')
