@@ -42,5 +42,6 @@ info:
 	@echo "API Base URL : ${BASE_URL}"
 	@echo "Healthcheck  : curl ${BASE_URL}/api/v1/healthcheck"
 
+include docs.mk
 include docker.mk
 include help.mk
