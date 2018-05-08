@@ -15,7 +15,7 @@ export BUILD_CREATOR=$(shell git log --format=format:%ae | head -n 1)
 # `reports-publisher/config.json`
 export REPORT_ARTIFACTS=reports
 
-#APP variables
+# APP variables
 # This variables are for the use of your microservice. This variables must be updated each time you are creating a new microservice
 export APPNAME=goms
 export VERSION=0.0.1
@@ -29,11 +29,11 @@ export LOGGER_SYSLOG_ENABLED=false
 export LOGGER_STDLOG_ENABLED=true
 export LOGGER_LOG_LEVEL=0
 
-#Pact test variables
+# Pact test variables
 export PACT_MAIN_FILE=cmd/${APPNAME}-pact/main.go
 export PACT_BINARY=${APPNAME}-pact
 
-#DOCKER variables
+# DOCKER variables
 export DOCKER_REGISTRY=containers.schibsted.io
 export DOCKER_IMAGE=${DOCKER_REGISTRY}/yapo/${APPNAME}
 export DOCKER_BINARY=${APPNAME}.docker
@@ -41,3 +41,9 @@ export DOCKER_PORT=$(call genport,1)
 
 BUILD_NAME=$(shell if [ -n "${GIT_TAG}" ]; then echo "${GIT_TAG}"; else echo "${GIT_BRANCH}"; fi;)
 export BUILD_TAG=$(shell echo "${BUILD_NAME}" | tr '[:upper:]' '[:lower:]' | sed 's,/,_,g')
+
+# Documentation variables
+export DOCS_DIR=docs
+export DOCS_HOST=localhost:$(call genport,3)
+export DOCS_PATH=github.schibsted.io/Yapo/${APPNAME}
+export DOCS_COMMIT_MESSAGE=Generate updated documentation
