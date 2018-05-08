@@ -7,9 +7,9 @@
 
   <title>handlers - The Go Programming Language</title>
 
-<link type="text/css" rel="stylesheet" href="../../../../../../../lib/godoc/style.css">
+<link type="text/css" rel="stylesheet" href="../../../lib/godoc/style.css">
 
-<link rel="stylesheet" href="../../../../../../../lib/godoc/jquery.treeview.css">
+<link rel="stylesheet" href="../../../lib/godoc/jquery.treeview.css">
 <script type="text/javascript">window.initFuncs = [];</script>
 </head>
 <body>
@@ -170,11 +170,11 @@
 			<p>
 			<span style="font-size:90%">
 			
-				<a href="http://localhost:30303/src/github.schibsted.io/Yapo/goms/pkg/interfaces/handlers/fibonacci.go">fibonacci.go</a>
+				<a href="pkg/interfaces/handlers/fibonacci.go">fibonacci.go</a>
 			
-				<a href="http://localhost:30303/src/github.schibsted.io/Yapo/goms/pkg/interfaces/handlers/handler.go">handler.go</a>
+				<a href="pkg/interfaces/handlers/handler.go">handler.go</a>
 			
-				<a href="http://localhost:30303/src/github.schibsted.io/Yapo/goms/pkg/interfaces/handlers/health.go">health.go</a>
+				<a href="pkg/interfaces/handlers/health.go">health.go</a>
 			
 			</span>
 			</p>
@@ -224,7 +224,7 @@
 		
 			
 			
-			<h2 id="MakeJSONHandlerFunc">func <a href="http://localhost:30303/src/github.schibsted.io/Yapo/goms/pkg/interfaces/handlers/handler.go?s=1153:1226#L21">MakeJSONHandlerFunc</a>
+			<h2 id="MakeJSONHandlerFunc">func <a href="pkg/interfaces/handlers/handler.go?s=1153:1226#L21">MakeJSONHandlerFunc</a>
 				<a class="permalink" href="index.html#MakeJSONHandlerFunc">&#xb6;</a>
 			</h2>
 			<pre>func MakeJSONHandlerFunc(h <a href="index.html#Handler">Handler</a>, l <a href="index.html#JSONHandlerLogger">JSONHandlerLogger</a>) <a href="http://localhost:30303/pkg/net/http/">http</a>.<a href="http://localhost:30303/pkg/net/http/#HandlerFunc">HandlerFunc</a></pre>
@@ -240,7 +240,7 @@ a standard http.HandlerFunc
 		
 			
 			
-			<h2 id="FibonacciHandler">type <a href="http://localhost:30303/src/github.schibsted.io/Yapo/goms/pkg/interfaces/handlers/fibonacci.go?s=356:432#L3">FibonacciHandler</a>
+			<h2 id="FibonacciHandler">type <a href="pkg/interfaces/handlers/fibonacci.go?s=356:432#L3">FibonacciHandler</a>
 				<a class="permalink" href="index.html#FibonacciHandler">&#xb6;</a>
 			</h2>
 			<p>
@@ -265,7 +265,7 @@ demonstrate Clean Architecture with a practical scenario
 
 			
 				
-				<h3 id="FibonacciHandler.Execute">func (*FibonacciHandler) <a href="http://localhost:30303/src/github.schibsted.io/Yapo/goms/pkg/interfaces/handlers/fibonacci.go?s=1127:1195#L31">Execute</a>
+				<h3 id="FibonacciHandler.Execute">func (*FibonacciHandler) <a href="pkg/interfaces/handlers/fibonacci.go?s=1127:1195#L31">Execute</a>
 					<a class="permalink" href="index.html#FibonacciHandler.Execute">&#xb6;</a>
 				</h3>
 				<pre>func (h *<a href="index.html#FibonacciHandler">FibonacciHandler</a>) Execute(ig <a href="index.html#InputGetter">InputGetter</a>) *<a href="http://localhost:30303/pkg/github.com/Yapo/goutils/">goutils</a>.<a href="http://localhost:30303/pkg/github.com/Yapo/goutils/#Response">Response</a></pre>
@@ -293,7 +293,7 @@ Expected error format:
 				
 			
 				
-				<h3 id="FibonacciHandler.Input">func (*FibonacciHandler) <a href="http://localhost:30303/src/github.schibsted.io/Yapo/goms/pkg/interfaces/handlers/fibonacci.go?s=687:734#L18">Input</a>
+				<h3 id="FibonacciHandler.Input">func (*FibonacciHandler) <a href="pkg/interfaces/handlers/fibonacci.go?s=687:734#L18">Input</a>
 					<a class="permalink" href="index.html#FibonacciHandler.Input">&#xb6;</a>
 				</h3>
 				<pre>func (h *<a href="index.html#FibonacciHandler">FibonacciHandler</a>) Input() <a href="index.html#HandlerInput">HandlerInput</a></pre>
@@ -308,7 +308,7 @@ Input returns a fresh, empty instance of fibonacciRequestInput
 		
 			
 			
-			<h2 id="Handler">type <a href="http://localhost:30303/src/github.schibsted.io/Yapo/goms/pkg/interfaces/handlers/handler.go?s=694:1042#L10">Handler</a>
+			<h2 id="Handler">type <a href="pkg/interfaces/handlers/handler.go?s=694:1042#L10">Handler</a>
 				<a class="permalink" href="index.html#Handler">&#xb6;</a>
 			</h2>
 			<p>
@@ -340,7 +340,7 @@ Execute(input) receives a filled input struct to handle the request
 		
 			
 			
-			<h2 id="HandlerInput">type <a href="http://localhost:30303/src/github.schibsted.io/Yapo/goms/pkg/interfaces/handlers/handler.go?s=142:171#L1">HandlerInput</a>
+			<h2 id="HandlerInput">type <a href="pkg/interfaces/handlers/handler.go?s=142:171#L1">HandlerInput</a>
 				<a class="permalink" href="index.html#HandlerInput">&#xb6;</a>
 			</h2>
 			<p>
@@ -363,7 +363,7 @@ HandlerInput is a placeholder for whatever input a handler may need.
 		
 			
 			
-			<h2 id="HealthHandler">type <a href="http://localhost:30303/src/github.schibsted.io/Yapo/goms/pkg/interfaces/handlers/health.go?s=247:274#L1">HealthHandler</a>
+			<h2 id="HealthHandler">type <a href="pkg/interfaces/handlers/health.go?s=247:274#L1">HealthHandler</a>
 				<a class="permalink" href="index.html#HealthHandler">&#xb6;</a>
 			</h2>
 			<p>
@@ -386,7 +386,7 @@ requests with an OK message. Expected response format:
 
 			
 				
-				<h3 id="HealthHandler.Execute">func (*HealthHandler) <a href="http://localhost:30303/src/github.schibsted.io/Yapo/goms/pkg/interfaces/handlers/health.go?s=631:694#L16">Execute</a>
+				<h3 id="HealthHandler.Execute">func (*HealthHandler) <a href="pkg/interfaces/handlers/health.go?s=631:694#L16">Execute</a>
 					<a class="permalink" href="index.html#HealthHandler.Execute">&#xb6;</a>
 				</h3>
 				<pre>func (*<a href="index.html#HealthHandler">HealthHandler</a>) Execute(ig <a href="index.html#InputGetter">InputGetter</a>) *<a href="http://localhost:30303/pkg/github.com/Yapo/goutils/">goutils</a>.<a href="http://localhost:30303/pkg/github.com/Yapo/goutils/#Response">Response</a></pre>
@@ -402,7 +402,7 @@ Expected response format:
 				
 			
 				
-				<h3 id="HealthHandler.Input">func (*HealthHandler) <a href="http://localhost:30303/src/github.schibsted.io/Yapo/goms/pkg/interfaces/handlers/health.go?s=440:482#L9">Input</a>
+				<h3 id="HealthHandler.Input">func (*HealthHandler) <a href="pkg/interfaces/handlers/health.go?s=440:482#L9">Input</a>
 					<a class="permalink" href="index.html#HealthHandler.Input">&#xb6;</a>
 				</h3>
 				<pre>func (*<a href="index.html#HealthHandler">HealthHandler</a>) Input() <a href="index.html#HandlerInput">HandlerInput</a></pre>
@@ -417,7 +417,7 @@ Input returns a fresh, empty instance of healthHandlerInput
 		
 			
 			
-			<h2 id="InputGetter">type <a href="http://localhost:30303/src/github.schibsted.io/Yapo/goms/pkg/interfaces/handlers/handler.go?s=412:469#L5">InputGetter</a>
+			<h2 id="InputGetter">type <a href="pkg/interfaces/handlers/handler.go?s=412:469#L5">InputGetter</a>
 				<a class="permalink" href="index.html#InputGetter">&#xb6;</a>
 			</h2>
 			<p>
@@ -442,7 +442,7 @@ happen, a goutils.Response must be filled with an adequate message and code
 		
 			
 			
-			<h2 id="JSONHandlerLogger">type <a href="http://localhost:30303/src/github.schibsted.io/Yapo/goms/pkg/interfaces/handlers/handler.go?s=1358:1541#L27">JSONHandlerLogger</a>
+			<h2 id="JSONHandlerLogger">type <a href="pkg/interfaces/handlers/handler.go?s=1358:1541#L27">JSONHandlerLogger</a>
 				<a class="permalink" href="index.html#JSONHandlerLogger">&#xb6;</a>
 			</h2>
 			<p>
@@ -491,13 +491,13 @@ and code is licensed under a <a href="http://localhost:30303/LICENSE">BSD licens
 </div><!-- #page -->
 
 <!-- TODO(adonovan): load these from <head> using "defer" attribute? -->
-<script type="text/javascript" src="../../../../../../../lib/godoc/jquery.js"></script>
-<script type="text/javascript" src="../../../../../../../lib/godoc/jquery.treeview.js"></script>
-<script type="text/javascript" src="../../../../../../../lib/godoc/jquery.treeview.edit.js"></script>
+<script type="text/javascript" src="../../../lib/godoc/jquery.js"></script>
+<script type="text/javascript" src="../../../lib/godoc/jquery.treeview.js"></script>
+<script type="text/javascript" src="../../../lib/godoc/jquery.treeview.edit.js"></script>
 
 
 <script>var goVersion = "go1.10.1";</script>
-<script type="text/javascript" src="../../../../../../../lib/godoc/godocs.js"></script>
+<script type="text/javascript" src="../../../lib/godoc/godocs.js"></script>
 
 </body>
 </html>

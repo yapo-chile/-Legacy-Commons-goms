@@ -15,7 +15,7 @@ cp -a ${DOCS_HOST}/lib ${DOCS_DIR}
 cp -a ${DOCS_HOST}/pkg/${DOCS_PATH}/* ${DOCS_DIR}
 rm -rf ${DOCS_HOST}
 
-echoHeader "Rebasing links to our doc root directory"
+echoHeader "Rebasing links to our docs root directory"
 echo "s,http://${DOCS_HOST}/src/${DOCS_PATH}/,,g" > .pattern
 grep godoc/style.css docs/index.html | sed 's/.*href="/s,/; s/lib.*/,,g/; s/\./\\./g' >> .pattern
 find docs -name "*.html" | xargs sed -i.bak -f .pattern

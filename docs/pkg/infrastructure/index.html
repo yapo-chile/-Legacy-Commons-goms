@@ -7,9 +7,9 @@
 
   <title>infrastructure - The Go Programming Language</title>
 
-<link type="text/css" rel="stylesheet" href="../../../../../../lib/godoc/style.css">
+<link type="text/css" rel="stylesheet" href="../../lib/godoc/style.css">
 
-<link rel="stylesheet" href="../../../../../../lib/godoc/jquery.treeview.css">
+<link rel="stylesheet" href="../../lib/godoc/jquery.treeview.css">
 <script type="text/javascript">window.initFuncs = [];</script>
 </head>
 <body>
@@ -185,13 +185,13 @@
 			<p>
 			<span style="font-size:90%">
 			
-				<a href="http://localhost:30303/src/github.schibsted.io/Yapo/goms/pkg/infrastructure/config.go">config.go</a>
+				<a href="pkg/infrastructure/config.go">config.go</a>
 			
-				<a href="http://localhost:30303/src/github.schibsted.io/Yapo/goms/pkg/infrastructure/newrelic.go">newrelic.go</a>
+				<a href="pkg/infrastructure/newrelic.go">newrelic.go</a>
 			
-				<a href="http://localhost:30303/src/github.schibsted.io/Yapo/goms/pkg/infrastructure/router.go">router.go</a>
+				<a href="pkg/infrastructure/router.go">router.go</a>
 			
-				<a href="http://localhost:30303/src/github.schibsted.io/Yapo/goms/pkg/infrastructure/yapoLogger.go">yapoLogger.go</a>
+				<a href="pkg/infrastructure/yapoLogger.go">yapoLogger.go</a>
 			
 			</span>
 			</p>
@@ -241,7 +241,7 @@
 		
 			
 			
-			<h2 id="LoadFromEnv">func <a href="http://localhost:30303/src/github.schibsted.io/Yapo/goms/pkg/infrastructure/config.go?s=1166:1200#L33">LoadFromEnv</a>
+			<h2 id="LoadFromEnv">func <a href="pkg/infrastructure/config.go?s=1166:1200#L33">LoadFromEnv</a>
 				<a class="permalink" href="index.html#LoadFromEnv">&#xb6;</a>
 			</h2>
 			<pre>func LoadFromEnv(data interface{})</pre>
@@ -255,7 +255,7 @@ LoadFromEnv loads the config data from the environment variables
 		
 			
 			
-			<h2 id="MakeYapoLogger">func <a href="http://localhost:30303/src/github.schibsted.io/Yapo/goms/pkg/infrastructure/yapoLogger.go?s=293:356#L2">MakeYapoLogger</a>
+			<h2 id="MakeYapoLogger">func <a href="pkg/infrastructure/yapoLogger.go?s=293:356#L2">MakeYapoLogger</a>
 				<a class="permalink" href="index.html#MakeYapoLogger">&#xb6;</a>
 			</h2>
 			<pre>func MakeYapoLogger(config *<a href="index.html#LoggerConf">LoggerConf</a>) (<a href="../interfaces/loggers/index.html">loggers</a>.<a href="../interfaces/loggers/index.html#Logger">Logger</a>, <a href="http://localhost:30303/pkg/builtin/#error">error</a>)</pre>
@@ -270,7 +270,7 @@ MakeYapoLogger creates and sets up a yapo flavored Logger
 		
 			
 			
-			<h2 id="Config">type <a href="http://localhost:30303/src/github.schibsted.io/Yapo/goms/pkg/infrastructure/config.go?s=942:1096#L26">Config</a>
+			<h2 id="Config">type <a href="pkg/infrastructure/config.go?s=942:1096#L26">Config</a>
 				<a class="permalink" href="index.html#Config">&#xb6;</a>
 			</h2>
 			<p>
@@ -297,7 +297,7 @@ Config holds all configuration for the service
 		
 			
 			
-			<h2 id="LoggerConf">type <a href="http://localhost:30303/src/github.schibsted.io/Yapo/goms/pkg/infrastructure/config.go?s=337:595#L11">LoggerConf</a>
+			<h2 id="LoggerConf">type <a href="pkg/infrastructure/config.go?s=337:595#L11">LoggerConf</a>
 				<a class="permalink" href="index.html#LoggerConf">&#xb6;</a>
 			</h2>
 			<p>
@@ -332,7 +332,7 @@ LogLevel definition:
 		
 			
 			
-			<h2 id="NewRelicConf">type <a href="http://localhost:30303/src/github.schibsted.io/Yapo/goms/pkg/infrastructure/config.go?s=720:890#L20">NewRelicConf</a>
+			<h2 id="NewRelicConf">type <a href="pkg/infrastructure/config.go?s=720:890#L20">NewRelicConf</a>
 				<a class="permalink" href="index.html#NewRelicConf">&#xb6;</a>
 			</h2>
 			<p>
@@ -359,7 +359,7 @@ TODO: You need to set the defaults according to your service
 		
 			
 			
-			<h2 id="NewRelicHandler">type <a href="http://localhost:30303/src/github.schibsted.io/Yapo/goms/pkg/infrastructure/newrelic.go?s=162:255#L1">NewRelicHandler</a>
+			<h2 id="NewRelicHandler">type <a href="pkg/infrastructure/newrelic.go?s=162:255#L1">NewRelicHandler</a>
 				<a class="permalink" href="index.html#NewRelicHandler">&#xb6;</a>
 			</h2>
 			<p>
@@ -384,7 +384,7 @@ NewRelicHandler struct representing a NewRelic handler with the new relic app
 
 			
 				
-				<h3 id="NewRelicHandler.Start">func (*NewRelicHandler) <a href="http://localhost:30303/src/github.schibsted.io/Yapo/goms/pkg/infrastructure/newrelic.go?s=298:337#L7">Start</a>
+				<h3 id="NewRelicHandler.Start">func (*NewRelicHandler) <a href="pkg/infrastructure/newrelic.go?s=298:337#L7">Start</a>
 					<a class="permalink" href="index.html#NewRelicHandler.Start">&#xb6;</a>
 				</h3>
 				<pre>func (n *<a href="index.html#NewRelicHandler">NewRelicHandler</a>) Start() <a href="http://localhost:30303/pkg/builtin/#error">error</a></pre>
@@ -397,7 +397,7 @@ Start initializes the NewRelicHandler
 				
 			
 				
-				<h3 id="NewRelicHandler.TrackHandlerFunc">func (*NewRelicHandler) <a href="http://localhost:30303/src/github.schibsted.io/Yapo/goms/pkg/infrastructure/newrelic.go?s=546:647#L18">TrackHandlerFunc</a>
+				<h3 id="NewRelicHandler.TrackHandlerFunc">func (*NewRelicHandler) <a href="pkg/infrastructure/newrelic.go?s=546:647#L18">TrackHandlerFunc</a>
 					<a class="permalink" href="index.html#NewRelicHandler.TrackHandlerFunc">&#xb6;</a>
 				</h3>
 				<pre>func (n *<a href="index.html#NewRelicHandler">NewRelicHandler</a>) TrackHandlerFunc(pattern <a href="http://localhost:30303/pkg/builtin/#string">string</a>, handler <a href="http://localhost:30303/pkg/net/http/">http</a>.<a href="http://localhost:30303/pkg/net/http/#HandlerFunc">HandlerFunc</a>) <a href="http://localhost:30303/pkg/net/http/">http</a>.<a href="http://localhost:30303/pkg/net/http/#HandlerFunc">HandlerFunc</a></pre>
@@ -412,7 +412,7 @@ TrackHandlerFunc instruments an http.HandlerFunc
 		
 			
 			
-			<h2 id="Route">type <a href="http://localhost:30303/src/github.schibsted.io/Yapo/goms/pkg/infrastructure/router.go?s=238:333#L2">Route</a>
+			<h2 id="Route">type <a href="pkg/infrastructure/router.go?s=238:333#L2">Route</a>
 				<a class="permalink" href="index.html#Route">&#xb6;</a>
 			</h2>
 			<p>
@@ -440,7 +440,7 @@ Route stands for an http endpoint description
 		
 			
 			
-			<h2 id="RouterMaker">type <a href="http://localhost:30303/src/github.schibsted.io/Yapo/goms/pkg/infrastructure/router.go?s=729:829#L22">RouterMaker</a>
+			<h2 id="RouterMaker">type <a href="pkg/infrastructure/router.go?s=729:829#L22">RouterMaker</a>
 				<a class="permalink" href="index.html#RouterMaker">&#xb6;</a>
 			</h2>
 			<p>
@@ -465,7 +465,7 @@ RouterMaker gathers route and wrapper information to build a router
 
 			
 				
-				<h3 id="RouterMaker.NewRouter">func (*RouterMaker) <a href="http://localhost:30303/src/github.schibsted.io/Yapo/goms/pkg/infrastructure/router.go?s=889:938#L29">NewRouter</a>
+				<h3 id="RouterMaker.NewRouter">func (*RouterMaker) <a href="pkg/infrastructure/router.go?s=889:938#L29">NewRouter</a>
 					<a class="permalink" href="index.html#RouterMaker.NewRouter">&#xb6;</a>
 				</h3>
 				<pre>func (maker *<a href="index.html#RouterMaker">RouterMaker</a>) NewRouter() *mux.<a href="index.html#Router">Router</a></pre>
@@ -480,7 +480,7 @@ NewRouter setups a Router based on the provided routes
 		
 			
 			
-			<h2 id="Routes">type <a href="http://localhost:30303/src/github.schibsted.io/Yapo/goms/pkg/infrastructure/router.go?s=631:656#L19">Routes</a>
+			<h2 id="Routes">type <a href="pkg/infrastructure/router.go?s=631:656#L19">Routes</a>
 				<a class="permalink" href="index.html#Routes">&#xb6;</a>
 			</h2>
 			<p>
@@ -503,7 +503,7 @@ Routes is an array of routes with a common prefix
 		
 			
 			
-			<h2 id="ServiceConf">type <a href="http://localhost:30303/src/github.schibsted.io/Yapo/goms/pkg/infrastructure/config.go?s=116:188#L1">ServiceConf</a>
+			<h2 id="ServiceConf">type <a href="pkg/infrastructure/config.go?s=116:188#L1">ServiceConf</a>
 				<a class="permalink" href="index.html#ServiceConf">&#xb6;</a>
 			</h2>
 			<p>
@@ -528,7 +528,7 @@ ServiceConf holds configuration for this Service
 		
 			
 			
-			<h2 id="WrapperFunc">type <a href="http://localhost:30303/src/github.schibsted.io/Yapo/goms/pkg/infrastructure/router.go?s=496:576#L16">WrapperFunc</a>
+			<h2 id="WrapperFunc">type <a href="pkg/infrastructure/router.go?s=496:576#L16">WrapperFunc</a>
 				<a class="permalink" href="index.html#WrapperFunc">&#xb6;</a>
 			</h2>
 			<p>
@@ -574,13 +574,13 @@ and code is licensed under a <a href="http://localhost:30303/LICENSE">BSD licens
 </div><!-- #page -->
 
 <!-- TODO(adonovan): load these from <head> using "defer" attribute? -->
-<script type="text/javascript" src="../../../../../../lib/godoc/jquery.js"></script>
-<script type="text/javascript" src="../../../../../../lib/godoc/jquery.treeview.js"></script>
-<script type="text/javascript" src="../../../../../../lib/godoc/jquery.treeview.edit.js"></script>
+<script type="text/javascript" src="../../lib/godoc/jquery.js"></script>
+<script type="text/javascript" src="../../lib/godoc/jquery.treeview.js"></script>
+<script type="text/javascript" src="../../lib/godoc/jquery.treeview.edit.js"></script>
 
 
 <script>var goVersion = "go1.10.1";</script>
-<script type="text/javascript" src="../../../../../../lib/godoc/godocs.js"></script>
+<script type="text/javascript" src="../../lib/godoc/godocs.js"></script>
 
 </body>
 </html>

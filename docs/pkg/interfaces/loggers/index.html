@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#375EAB">
 
-  <title>domain - The Go Programming Language</title>
+  <title>loggers - The Go Programming Language</title>
 
-<link type="text/css" rel="stylesheet" href="../../../../../../lib/godoc/style.css">
+<link type="text/css" rel="stylesheet" href="../../../lib/godoc/style.css">
 
-<link rel="stylesheet" href="../../../../../../lib/godoc/jquery.treeview.css">
+<link rel="stylesheet" href="../../../lib/godoc/jquery.treeview.css">
 <script type="text/javascript">window.initFuncs = [];</script>
 </head>
 <body>
@@ -45,7 +45,7 @@
 
 
   <h1>
-    Package domain
+    Package loggers
     <span class="text-muted"></span>
   </h1>
 
@@ -79,7 +79,7 @@
 		
 		<div id="short-nav">
 			<dl>
-			<dd><code>import "github.schibsted.io/Yapo/goms/pkg/domain"</code></dd>
+			<dd><code>import "github.schibsted.io/Yapo/goms/pkg/interfaces/loggers"</code></dd>
 			</dl>
 			<dl>
 			<dd><a href="index.html#pkg-overview" class="overviewLink">Overview</a></dd>
@@ -95,23 +95,7 @@
 			</div>
 			<div class="expanded">
 				<h2 class="toggleButton" title="Click to hide Overview section">Overview ▾</h2>
-				<p>
-Package domain is where all the business logic resides. No implementation
-details has place here.
-</p>
-<h3 id="hdr-What_lives_here">What lives here</h3>
-<p>
-Domain is the home of the business entities, those essencial to our business,
-and declarations for all the interfaces those entities may need in order to
-operate.
-</p>
-<h3 id="hdr-Rules_of_the_road">Rules of the road</h3>
-<p>
-Under no circumstances we should include code from any other package of our
-application, as this is the innermost layer of our Clean Architecture
-implementation.
-</p>
-
+				
 			</div>
 		</div>
 		
@@ -129,22 +113,15 @@ implementation.
 			
 			
 			
+				
+				<dd><a href="index.html#MakeFibonacciInteractorLogger">func MakeFibonacciInteractorLogger(logger Logger) usecases.FibonacciInteractorLogger</a></dd>
 			
 				
-				<dd><a href="index.html#Fibonacci">type Fibonacci</a></dd>
-				
-				
+				<dd><a href="index.html#MakeJSONHandlerLogger">func MakeJSONHandlerLogger(logger Logger) handlers.JSONHandlerLogger</a></dd>
+			
 			
 				
-				<dd><a href="index.html#FibonacciPair">type FibonacciPair</a></dd>
-				
-				
-					
-					<dd>&nbsp; &nbsp; <a href="index.html#FibonacciPair.Next">func (f FibonacciPair) Next() (int, Fibonacci)</a></dd>
-				
-			
-				
-				<dd><a href="index.html#FibonacciRepository">type FibonacciRepository</a></dd>
+				<dd><a href="index.html#Logger">type Logger</a></dd>
 				
 				
 			
@@ -159,9 +136,11 @@ implementation.
 			<p>
 			<span style="font-size:90%">
 			
-				<a href="http://localhost:30303/src/github.schibsted.io/Yapo/goms/pkg/domain/doc.go">doc.go</a>
+				<a href="pkg/interfaces/loggers/fibonacciInteractorLogger.go">fibonacciInteractorLogger.go</a>
 			
-				<a href="http://localhost:30303/src/github.schibsted.io/Yapo/goms/pkg/domain/fibonacci.go">fibonacci.go</a>
+				<a href="pkg/interfaces/loggers/jsonHandlerLogger.go">jsonHandlerLogger.go</a>
+			
+				<a href="pkg/interfaces/loggers/logger.go">logger.go</a>
 			
 			</span>
 			</p>
@@ -209,87 +188,53 @@ implementation.
 		
 		
 		
+			
+			
+			<h2 id="MakeFibonacciInteractorLogger">func <a href="pkg/interfaces/loggers/fibonacciInteractorLogger.go?s=594:678#L12">MakeFibonacciInteractorLogger</a>
+				<a class="permalink" href="index.html#MakeFibonacciInteractorLogger">&#xb6;</a>
+			</h2>
+			<pre>func MakeFibonacciInteractorLogger(logger <a href="index.html#Logger">Logger</a>) <a href="../../usecases/index.html">usecases</a>.<a href="../../usecases/index.html#FibonacciInteractorLogger">FibonacciInteractorLogger</a></pre>
+			<p>
+MakeFibonacciInteractorLogger sets up a FibonacciInteractorLogger instrumented
+via the provided logger
+</p>
+
+			
+			
+
 		
 			
 			
-			<h2 id="Fibonacci">type <a href="http://localhost:30303/src/github.schibsted.io/Yapo/goms/pkg/domain/fibonacci.go?s=93:111#L1">Fibonacci</a>
-				<a class="permalink" href="index.html#Fibonacci">&#xb6;</a>
+			<h2 id="MakeJSONHandlerLogger">func <a href="pkg/interfaces/loggers/jsonHandlerLogger.go?s=869:937#L20">MakeJSONHandlerLogger</a>
+				<a class="permalink" href="index.html#MakeJSONHandlerLogger">&#xb6;</a>
 			</h2>
+			<pre>func MakeJSONHandlerLogger(logger <a href="index.html#Logger">Logger</a>) <a href="../handlers/index.html">handlers</a>.<a href="../handlers/index.html#JSONHandlerLogger">JSONHandlerLogger</a></pre>
 			<p>
-Fibonacci is the datatype for numbers that belong to the Fibonacci Series
+MakeJSONHandlerLogger sets up a JsonHandlerLogger instrumented
+via the provided logger
+func MakeJSONHandlerLogger(logger Logger) *jsonHandlerDefaultLogger {
 </p>
 
-			<pre>type Fibonacci <a href="http://localhost:30303/pkg/builtin/#int">int</a></pre>
-
-			
-
-			
-
-			
 			
 			
 
-			
-
-			
+		
 		
 			
 			
-			<h2 id="FibonacciPair">type <a href="http://localhost:30303/src/github.schibsted.io/Yapo/goms/pkg/domain/fibonacci.go?s=188:268#L1">FibonacciPair</a>
-				<a class="permalink" href="index.html#FibonacciPair">&#xb6;</a>
+			<h2 id="Logger">type <a href="pkg/interfaces/loggers/logger.go?s=66:313#L1">Logger</a>
+				<a class="permalink" href="index.html#Logger">&#xb6;</a>
 			</h2>
 			<p>
-FibonacciPair is the pair of the latest pair of known Fibonacci Numbers
+Logger is an interface for logging facilities
 </p>
 
-			<pre>type FibonacciPair struct {
-    <span class="comment">// Indexes</span>
-<span id="FibonacciPair.IA"></span>    IA, IB <a href="http://localhost:30303/pkg/builtin/#int">int</a>
-    <span class="comment">// Values</span>
-<span id="FibonacciPair.A"></span>    A, B <a href="index.html#Fibonacci">Fibonacci</a>
-}</pre>
-
-			
-
-			
-
-			
-			
-			
-
-			
-
-			
-				
-				<h3 id="FibonacciPair.Next">func (FibonacciPair) <a href="http://localhost:30303/src/github.schibsted.io/Yapo/goms/pkg/domain/fibonacci.go?s=745:791#L15">Next</a>
-					<a class="permalink" href="index.html#FibonacciPair.Next">&#xb6;</a>
-				</h3>
-				<pre>func (f <a href="index.html#FibonacciPair">FibonacciPair</a>) Next() (<a href="http://localhost:30303/pkg/builtin/#int">int</a>, <a href="index.html#Fibonacci">Fibonacci</a>)</pre>
-				<p>
-Next produces the Fibonacci Number and the index that comes right after f
-</p>
-
-				
-				
-				
-			
-		
-			
-			
-			<h2 id="FibonacciRepository">type <a href="http://localhost:30303/src/github.schibsted.io/Yapo/goms/pkg/domain/fibonacci.go?s=341:666#L5">FibonacciRepository</a>
-				<a class="permalink" href="index.html#FibonacciRepository">&#xb6;</a>
-			</h2>
-			<p>
-FibonacciRepository defines a backing storage for Fibonacci Numbers
-</p>
-
-			<pre>type FibonacciRepository interface {
-    <span class="comment">// Get should retrieve the Nth Fibonacci if available</span>
-    Get(nth <a href="http://localhost:30303/pkg/builtin/#int">int</a>) (<a href="index.html#Fibonacci">Fibonacci</a>, <a href="http://localhost:30303/pkg/builtin/#error">error</a>)
-    <span class="comment">// Save must store the Nth Fibonacci only if (N-1) and (N-2) are known</span>
-    Save(nth <a href="http://localhost:30303/pkg/builtin/#int">int</a>, x <a href="index.html#Fibonacci">Fibonacci</a>) <a href="http://localhost:30303/pkg/builtin/#error">error</a>
-    <span class="comment">// LatestPair should retrieve the latest know pair of Fibonacci</span>
-    LatestPair() <a href="index.html#FibonacciPair">FibonacciPair</a>
+			<pre>type Logger interface {
+    Debug(format <a href="http://localhost:30303/pkg/builtin/#string">string</a>, params ...interface{})
+    Info(format <a href="http://localhost:30303/pkg/builtin/#string">string</a>, params ...interface{})
+    Warn(format <a href="http://localhost:30303/pkg/builtin/#string">string</a>, params ...interface{})
+    Error(format <a href="http://localhost:30303/pkg/builtin/#string">string</a>, params ...interface{})
+    Crit(format <a href="http://localhost:30303/pkg/builtin/#string">string</a>, params ...interface{})
 }</pre>
 
 			
@@ -328,13 +273,13 @@ and code is licensed under a <a href="http://localhost:30303/LICENSE">BSD licens
 </div><!-- #page -->
 
 <!-- TODO(adonovan): load these from <head> using "defer" attribute? -->
-<script type="text/javascript" src="../../../../../../lib/godoc/jquery.js"></script>
-<script type="text/javascript" src="../../../../../../lib/godoc/jquery.treeview.js"></script>
-<script type="text/javascript" src="../../../../../../lib/godoc/jquery.treeview.edit.js"></script>
+<script type="text/javascript" src="../../../lib/godoc/jquery.js"></script>
+<script type="text/javascript" src="../../../lib/godoc/jquery.treeview.js"></script>
+<script type="text/javascript" src="../../../lib/godoc/jquery.treeview.edit.js"></script>
 
 
 <script>var goVersion = "go1.10.1";</script>
-<script type="text/javascript" src="../../../../../../lib/godoc/godocs.js"></script>
+<script type="text/javascript" src="../../../lib/godoc/godocs.js"></script>
 
 </body>
 </html>
