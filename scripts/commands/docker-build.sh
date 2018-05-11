@@ -10,7 +10,7 @@ echoHeader "Building code for docker platform"
 set -e
 
 rm -f ${DOCKER_BINARY}
-GOOS=linux GOARCH=amd64 go build -v -o ${DOCKER_BINARY} ./${MAIN_FILE}
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o ${DOCKER_BINARY} ./${MAIN_FILE}
 
 set +e
 
