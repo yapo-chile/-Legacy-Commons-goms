@@ -6,3 +6,4 @@ conf/conf.json
 logs/*
 reports/*
 vendor/*
+goms*

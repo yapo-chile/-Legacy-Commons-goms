@@ -1,9 +1,12 @@
 package infrastructure
 
 import (
+	"fmt"
+	"io/ioutil"
 	"os"
 	"reflect"
 	"strconv"
+	"strings"
 )
 
 // ServiceConf holds configuration for this Service
@@ -51,9 +54,27 @@ func load(conf reflect.Value, envTag, envDefault string) {
 		// Only attempt to set writeable variables
 		if reflectedConf.IsValid() && reflectedConf.CanSet() {
 			value, ok := os.LookupEnv(envTag)
-			// Use the default when then the environment variable is not set
+
+			// if the env variable is not set we try to find FILE definition
+			// this is used to handle secrets
 			if !ok {
-				value = envDefault
+				fileName, ok := os.LookupEnv(fmt.Sprintf("%s_FILE", envTag))
+				// if file is not defined just use default
+				if !ok {
+					value = envDefault
+				} else {
+					// if file was defined read file and set value
+					b, err := ioutil.ReadFile(fileName) // just pass the file name
+					if err != nil {
+						fmt.Print(err)
+					} else {
+						value = string(b)
+					}
+				}
+			}
+			// Print message if config is missing
+			if envTag != "" && value == "" && !strings.HasSuffix(envTag, "_") {
+				fmt.Printf("Config for %s missing\n", envTag)
 			}
 			switch reflectedConf.Kind() {
 			case reflect.Struct:
