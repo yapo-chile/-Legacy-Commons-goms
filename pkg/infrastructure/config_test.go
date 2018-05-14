@@ -14,6 +14,7 @@ type Nested struct {
 type TestConf struct {
 	I int    `env:"LE_I"`
 	S string `env:"LE_S"`
+	F string `env:"FROM_FILE"`
 	N Nested `env:"NESTED_"`
 }
 
