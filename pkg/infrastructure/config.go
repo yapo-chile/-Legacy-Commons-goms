@@ -47,31 +47,31 @@ func LoadFromEnv(data interface{}) {
 	load(reflect.ValueOf(data), "", "")
 }
 
+// valueFromEnv lookup the best value for a variable on the environment
+func valueFromEnv(envTag, envDefault string) string {
+	// Exact match on environment takes precedence
+	if value, ok := os.LookupEnv(envTag); ok {
+		return value
+	}
+	// Maybe it's a secret https://rancher.com/docs/rancher/v1.6/en/cattle/secrets/
+	if fileName, ok := os.LookupEnv(fmt.Sprintf("%s_FILE", envTag)); ok {
+		if b, err := ioutil.ReadFile(fileName); err == nil {
+			return string(b)
+		} else {
+			fmt.Print(err)
+		}
+	}
+	// Nothing to do, return the default
+	return envDefault
+}
+
 // load the variable defined in the envTag into Value
 func load(conf reflect.Value, envTag, envDefault string) {
 	if conf.Kind() == reflect.Ptr {
 		reflectedConf := reflect.Indirect(conf)
 		// Only attempt to set writeable variables
 		if reflectedConf.IsValid() && reflectedConf.CanSet() {
-			value, ok := os.LookupEnv(envTag)
-
-			// if the env variable is not set we try to find FILE definition
-			// this is used to handle secrets
-			if !ok {
-				fileName, ok := os.LookupEnv(fmt.Sprintf("%s_FILE", envTag))
-				// if file is not defined just use default
-				if !ok {
-					value = envDefault
-				} else {
-					// if file was defined read file and set value
-					b, err := ioutil.ReadFile(fileName) // just pass the file name
-					if err != nil {
-						fmt.Print(err)
-					} else {
-						value = string(b)
-					}
-				}
-			}
+			value := valueFromEnv(envTag, envDefault)
 			// Print message if config is missing
 			if envTag != "" && value == "" && !strings.HasSuffix(envTag, "_") {
 				fmt.Printf("Config for %s missing\n", envTag)

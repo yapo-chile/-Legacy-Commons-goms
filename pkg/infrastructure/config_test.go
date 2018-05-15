@@ -45,8 +45,8 @@ func TestConfigLoad(t *testing.T) {
 		"LE_I":           "42",
 		"LE_S":           "Don't panic",
 		"NESTED_LE_F":    "true",
-		"FROM_FILE":      dummyFile,
-		"OTHERFILE_FILE": "/fileMissing.txt",
+		"FROM_FILE":      "testdata/from.data",
+		"OTHERFILE_FILE": "testdata/not.data",
 	}
 	// Setup environment
 	for k, v := range env {
@@ -60,7 +60,7 @@ func TestConfigLoad(t *testing.T) {
 	expected := TestConf{
 		I: 42,
 		S: "Don't panic",
-		F: "temp_data",
+		F: "fullhd\n",
 		N: Nested{
 			F: true,
 		},
