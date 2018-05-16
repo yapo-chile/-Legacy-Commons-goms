@@ -1,8 +1,6 @@
 package infrastructure
 
 import (
-	"io/ioutil"
-	"log"
 	"os"
 	"testing"
 
@@ -22,25 +20,7 @@ type TestConf struct {
 	OF string `env:"OTHERFILE"`
 }
 
-func createFile(prefix string) string {
-	content := []byte("temp_data")
-	tmpfile, err := ioutil.TempFile("", prefix)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	if _, err := tmpfile.Write(content); err != nil {
-		log.Fatal(err)
-	}
-	if err := tmpfile.Close(); err != nil {
-		log.Fatal(err)
-	}
-	return tmpfile.Name() // remember clean up
-}
-
 func TestConfigLoad(t *testing.T) {
-	dummyFile := createFile("lala")
-	defer os.Remove(dummyFile)
 	env := map[string]string{
 		"LE_I":           "42",
 		"LE_S":           "Don't panic",
@@ -60,7 +40,7 @@ func TestConfigLoad(t *testing.T) {
 	expected := TestConf{
 		I: 42,
 		S: "Don't panic",
-		F: "fullhd\n",
+		F: "fullhd",
 		N: Nested{
 			F: true,
 		},

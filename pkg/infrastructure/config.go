@@ -55,11 +55,11 @@ func valueFromEnv(envTag, envDefault string) string {
 	}
 	// Maybe it's a secret https://rancher.com/docs/rancher/v1.6/en/cattle/secrets/
 	if fileName, ok := os.LookupEnv(fmt.Sprintf("%s_FILE", envTag)); ok {
-		if b, err := ioutil.ReadFile(fileName); err == nil {
+		b, err := ioutil.ReadFile(fileName)
+		if err == nil {
 			return string(b)
-		} else {
-			fmt.Print(err)
 		}
+		fmt.Print(err)
 	}
 	// Nothing to do, return the default
 	return envDefault
