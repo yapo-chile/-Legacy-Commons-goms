@@ -58,7 +58,7 @@ func main() {
 		WrapperFunc: newrelic.TrackHandlerFunc,
 		Routes: infrastructure.Routes{
 			{
-				//this is the base path, all routes will start with this
+				// This is the base path, all routes will start with this prefix
 				Prefix: "/api/v{version:[1-9][0-9]*}",
 				Groups: []infrastructure.Route{
 					{
