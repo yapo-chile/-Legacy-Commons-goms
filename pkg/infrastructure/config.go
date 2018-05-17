@@ -49,17 +49,18 @@ func LoadFromEnv(data interface{}) {
 
 // valueFromEnv lookup the best value for a variable on the environment
 func valueFromEnv(envTag, envDefault string) string {
-	// Exact match on environment takes precedence
-	if value, ok := os.LookupEnv(envTag); ok {
-		return value
-	}
-	// Maybe it's a secret https://rancher.com/docs/rancher/v1.6/en/cattle/secrets/
+	// Maybe it's a secret and <envTag>_FILE points to a file with the value
+	// https://rancher.com/docs/rancher/v1.6/en/cattle/secrets/#docker-hub-images
 	if fileName, ok := os.LookupEnv(fmt.Sprintf("%s_FILE", envTag)); ok {
 		b, err := ioutil.ReadFile(fileName)
 		if err == nil {
 			return string(b)
 		}
 		fmt.Print(err)
+	}
+	// The value might be set directly on the environment
+	if value, ok := os.LookupEnv(envTag); ok {
+		return value
 	}
 	// Nothing to do, return the default
 	return envDefault
