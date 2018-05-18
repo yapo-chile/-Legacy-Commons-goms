@@ -4,10 +4,14 @@ export GO_FILES = $(shell find . -iname '*.go' -type f | grep -v vendor | grep -
 GENPORTOFF?=0
 genport = $(shell expr ${GENPORTOFF} + \( $(shell id -u) - \( $(shell id -u) / 100 \) \* 100 \) \* 200 + 30100 + $(1))
 
+# BRANCH info from travis
+export BUILD_BRANCH=$(shell if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then echo "${TRAVIS_BRANCH}"; else echo "${TRAVIS_PULL_REQUEST_BRANCH}"; fi)
+
 # GIT variables
-export GIT_BRANCH=$(shell git branch | sed -n 's/^\* //p')
-export GIT_COMMIT=$(shell git rev-parse HEAD)
+export BRANCH=$(shell git branch | sed -n 's/^\* //p')
+export GIT_BRANCH=$(shell if [ -n "${BUILD_BRANCH}" ]; then echo "${BUILD_BRANCH}"; elif [ -n "${TRAVIS_TAG}" ]; then echo ""; else  echo "${BRANCH}"; fi;)
 export GIT_TAG=$(shell git tag -l --points-at HEAD | tr '\n' '_' | sed 's/_$$//;')
+export GIT_COMMIT=$(shell git rev-parse HEAD)
 export GIT_COMMIT_SHORT=$(shell git rev-parse --short HEAD)
 export BUILD_CREATOR=$(shell git log --format=format:%ae | head -n 1)
 

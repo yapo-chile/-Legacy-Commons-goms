@@ -1,9 +1,12 @@
 package infrastructure
 
 import (
+	"fmt"
+	"io/ioutil"
 	"os"
 	"reflect"
 	"strconv"
+	"strings"
 )
 
 // ServiceConf holds configuration for this Service
@@ -44,16 +47,35 @@ func LoadFromEnv(data interface{}) {
 	load(reflect.ValueOf(data), "", "")
 }
 
+// valueFromEnv lookup the best value for a variable on the environment
+func valueFromEnv(envTag, envDefault string) string {
+	// Maybe it's a secret and <envTag>_FILE points to a file with the value
+	// https://rancher.com/docs/rancher/v1.6/en/cattle/secrets/#docker-hub-images
+	if fileName, ok := os.LookupEnv(fmt.Sprintf("%s_FILE", envTag)); ok {
+		b, err := ioutil.ReadFile(fileName)
+		if err == nil {
+			return string(b)
+		}
+		fmt.Print(err)
+	}
+	// The value might be set directly on the environment
+	if value, ok := os.LookupEnv(envTag); ok {
+		return value
+	}
+	// Nothing to do, return the default
+	return envDefault
+}
+
 // load the variable defined in the envTag into Value
 func load(conf reflect.Value, envTag, envDefault string) {
 	if conf.Kind() == reflect.Ptr {
 		reflectedConf := reflect.Indirect(conf)
 		// Only attempt to set writeable variables
 		if reflectedConf.IsValid() && reflectedConf.CanSet() {
-			value, ok := os.LookupEnv(envTag)
-			// Use the default when then the environment variable is not set
-			if !ok {
-				value = envDefault
+			value := valueFromEnv(envTag, envDefault)
+			// Print message if config is missing
+			if envTag != "" && value == "" && !strings.HasSuffix(envTag, "_") {
+				fmt.Printf("Config for %s missing\n", envTag)
 			}
 			switch reflectedConf.Kind() {
 			case reflect.Struct:
