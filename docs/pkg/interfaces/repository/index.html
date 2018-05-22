@@ -95,7 +95,29 @@
 			</div>
 			<div class="expanded">
 				<h2 class="toggleButton" title="Click to hide Overview section">Overview ▾</h2>
-				
+				<p>
+Package repository defines interactions with different data sources and storage
+solutions. Either a file, a memory region or an external service, if data needs
+to be loaded or sent away, a repository is the abstraction we need in place.
+</p>
+<h3 id="hdr-What_lives_here">What lives here</h3>
+<p>
+The usecases and domain layers surely define interfaces for repositories that
+will provide and store the business objects they operate on. Here is where the
+implementations of those repositories reside.
+</p>
+<h3 id="hdr-Rules_of_the_road">Rules of the road</h3>
+<p>
+If any of the words: read, save, store, send, get, update, are on the table,
+it&#39;s extremely likely that you need a Repository.
+</p>
+<p>
+The representation chosen by a repository can be different from the actual
+domain object. This is perfectly ok, as repositories must be optimized for data
+retrieval or storage, or both. However, repository internal objects must NOT
+reach the internal layers. They must be converted to business entities first.
+</p>
+
 			</div>
 		</div>
 		
@@ -127,6 +149,8 @@
 			<h3>Package files</h3>
 			<p>
 			<span style="font-size:90%">
+			
+				<a href="pkg/interfaces/repository/doc.go">doc.go</a>
 			
 				<a href="pkg/interfaces/repository/fibonacci.go">fibonacci.go</a>
 			

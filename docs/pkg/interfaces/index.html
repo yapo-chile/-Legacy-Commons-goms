@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#375EAB">
 
-  <title>/src/github.schibsted.io/Yapo/goms/pkg/interfaces - The Go Programming Language</title>
+  <title>interfaces - The Go Programming Language</title>
 
 <link type="text/css" rel="stylesheet" href="../../lib/godoc/style.css">
 
@@ -45,7 +45,7 @@
 
 
   <h1>
-    Directory /src/github.schibsted.io/Yapo/goms/pkg/interfaces
+    Package interfaces
     <span class="text-muted"></span>
   </h1>
 
@@ -70,11 +70,143 @@
 	correspond to Go identifiers).
 -->
 
+	<script type='text/javascript'>
+	document.ANALYSIS_DATA = null;
+	document.CALLGRAPH = null;
+	</script>
+
+	
+		
+		<div id="short-nav">
+			<dl>
+			<dd><code>import "github.schibsted.io/Yapo/goms/pkg/interfaces"</code></dd>
+			</dl>
+			<dl>
+			<dd><a href="index.html#pkg-overview" class="overviewLink">Overview</a></dd>
+			<dd><a href="index.html#pkg-index" class="indexLink">Index</a></dd>
+			
+			
+				<dd><a href="index.html#pkg-subdirectories">Subdirectories</a></dd>
+			
+			</dl>
+		</div>
+		<!-- The package's Name is printed as title by the top-level template -->
+		<div id="pkg-overview" class="toggleVisible">
+			<div class="collapsed">
+				<h2 class="toggleButton" title="Click to show Overview section">Overview ▹</h2>
+			</div>
+			<div class="expanded">
+				<h2 class="toggleButton" title="Click to hide Overview section">Overview ▾</h2>
+				<p>
+Package interfaces is a place where the outside world lies on one side and our
+business on the other. Here we transform information from the outside world to
+business objects and internal replies to their corresponding outside world
+representation.
+</p>
+<h3 id="hdr-What_lives_here">What lives here</h3>
+<p>
+As an intermediary, here is where most translation code dwells. HTTP Handlers
+abstract away the WWW and its protocol. Databases speak their own language.
+That is allowed at this layer, but not anywhere else. File objects, external
+services, anything that affects or is affected by the real world needs to be
+separated from our business internals.
+</p>
+<h3 id="hdr-Rules_of_the_road">Rules of the road</h3>
+<p>
+Despite we being able to talk to external services at this layer, we cannot
+hardwire any service location. We talk the language, we don&#39;t decide who we
+talk to.
+</p>
+
+			</div>
+		</div>
+		
+
+		<div id="pkg-index" class="toggleVisible">
+		<div class="collapsed">
+			<h2 class="toggleButton" title="Click to show Index section">Index ▹</h2>
+		</div>
+		<div class="expanded">
+			<h2 class="toggleButton" title="Click to hide Index section">Index ▾</h2>
+
+		<!-- Table of contents for API; must be named manual-nav to turn off auto nav. -->
+			<div id="manual-nav">
+			<dl>
+			
+			
+			
+			
+			
+			</dl>
+			</div><!-- #manual-nav -->
+
+		
+
+		
+			<h3>Package files</h3>
+			<p>
+			<span style="font-size:90%">
+			
+				<a href="pkg/interfaces/doc.go">doc.go</a>
+			
+			</span>
+			</p>
+		
+		</div><!-- .expanded -->
+		</div><!-- #pkg-index -->
+
+		<div id="pkg-callgraph" class="toggle" style="display: none">
+		<div class="collapsed">
+			<h2 class="toggleButton" title="Click to show Internal Call Graph section">Internal call graph ▹</h2>
+		</div> <!-- .expanded -->
+		<div class="expanded">
+			<h2 class="toggleButton" title="Click to hide Internal Call Graph section">Internal call graph ▾</h2>
+			<p>
+			  In the call graph viewer below, each node
+			  is a function belonging to this package
+			  and its children are the functions it
+			  calls&mdash;perhaps dynamically.
+			</p>
+			<p>
+			  The root nodes are the entry points of the
+			  package: functions that may be called from
+			  outside the package.
+			  There may be non-exported or anonymous
+			  functions among them if they are called
+			  dynamically from another package.
+			</p>
+			<p>
+			  Click a node to visit that function's source code.
+			  From there you can visit its callers by
+			  clicking its declaring <code>func</code>
+			  token.
+			</p>
+			<p>
+			  Functions may be omitted if they were
+			  determined to be unreachable in the
+			  particular programs or tests that were
+			  analyzed.
+			</p>
+			<!-- Zero means show all package entry points. -->
+			<ul style="margin-left: 0.5in" id="callgraph-0" class="treeview"></ul>
+		</div>
+		</div> <!-- #pkg-callgraph -->
+
+		
+		
+		
+		
+	
+
+	
+
 
 
 
 
 	
+	
+		<h2 id="pkg-subdirectories">Subdirectories</h2>
 	
 	
 
@@ -99,7 +231,7 @@
 							<a href="handlers/index.html">handlers</a>
 						</td>
 						<td class="pkg-synopsis">
-							
+							Package handlers groups together all the code that talks to the World Wide Web.
 						</td>
 					</tr>
 				
@@ -110,7 +242,7 @@
 							<a href="loggers/index.html">loggers</a>
 						</td>
 						<td class="pkg-synopsis">
-							
+							Package loggers is where all the events from the codebase converge.
 						</td>
 					</tr>
 				
@@ -121,7 +253,7 @@
 							<a href="repository/index.html">repository</a>
 						</td>
 						<td class="pkg-synopsis">
-							
+							Package repository defines interactions with different data sources and storage solutions.
 						</td>
 					</tr>
 				

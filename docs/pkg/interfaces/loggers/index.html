@@ -95,7 +95,25 @@
 			</div>
 			<div class="expanded">
 				<h2 class="toggleButton" title="Click to hide Overview section">Overview ▾</h2>
-				
+				<p>
+Package loggers is where all the events from the codebase converge. The goal is
+to decouple the event&#39;s source from the actual handling, as both will need to
+change by different reasons. The logger will decide how to deal with each
+event, freeing the reporter from such responsibility.
+</p>
+<h3 id="hdr-What_lives_here">What lives here</h3>
+<p>
+Types that require events to be logged should declare an interface that covers
+every possible event that can occur within its scope. Those events must be
+reported on business terms, and the implementation of such interfaces must live
+on this package.
+</p>
+<h3 id="hdr-Rules_of_the_road">Rules of the road</h3>
+<p>
+If you are using syslog, a logging library, or printing to stdout/stderr
+directly, rather declare a logger interface and implement it here.
+</p>
+
 			</div>
 		</div>
 		
@@ -135,6 +153,8 @@
 			<h3>Package files</h3>
 			<p>
 			<span style="font-size:90%">
+			
+				<a href="pkg/interfaces/loggers/doc.go">doc.go</a>
 			
 				<a href="pkg/interfaces/loggers/fibonacciInteractorLogger.go">fibonacciInteractorLogger.go</a>
 			
