@@ -95,7 +95,31 @@
 			</div>
 			<div class="expanded">
 				<h2 class="toggleButton" title="Click to hide Overview section">Overview ▾</h2>
-				
+				<p>
+Package usecases is where the interaction between business objects takes place.
+This is the glue code that get things done by coordinating domain objects,
+abiding by their rules.
+</p>
+<h3 id="hdr-What_lives_here">What lives here</h3>
+<p>
+Interactors are the main kind of objects to be found here. An interactor may
+hold reference to one or many repositories from where to fetch resources, then
+use those resources for query or modification and ensure they are properly
+written back.
+</p>
+<p>
+The suggested implementation is having an interface with the usecase name and
+a single function. Then, implementing this interface with a suitable interactor
+that can be mocked on the test code of the outer layers.
+</p>
+<h3 id="hdr-Rules_of_the_road">Rules of the road</h3>
+<p>
+The only package we can (and should) import from is the domain layer. Every
+data transformation of domain entities must done via their public API. If that
+is not possible then it can mean two things. Either the domain dissalows it and
+cannot be performed, or the domain is incomplete and needs extension.
+</p>
+
 			</div>
 		</div>
 		
@@ -142,6 +166,8 @@
 			<h3>Package files</h3>
 			<p>
 			<span style="font-size:90%">
+			
+				<a href="pkg/usecases/doc.go">doc.go</a>
 			
 				<a href="pkg/usecases/getNthFibonacci.go">getNthFibonacci.go</a>
 			

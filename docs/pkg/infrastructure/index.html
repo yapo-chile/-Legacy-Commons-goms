@@ -95,7 +95,30 @@
 			</div>
 			<div class="expanded">
 				<h2 class="toggleButton" title="Click to hide Overview section">Overview ▾</h2>
-				
+				<p>
+Package infrastructure is where all the outside world communications resides.
+We don&#39;t speak application language here. In fact, we don&#39;t care what the
+application is, at this level.
+</p>
+<p>
+Infrastructure layer abstracts away the outside world and allows for the
+application to be tested in isolation. It also allows to minimize the effort
+of replacing one external component by another, as all possible interactions
+from anywhere else are located only on the outermost layer. No business logic
+must be impacted by such change.
+</p>
+<h3 id="hdr-What_lives_here">What lives here</h3>
+<p>
+Any code that communicates at low level with the outside world belongs to the
+infrastructure layer. Some examples are: Environment variables, handling files,
+database drivers, network connections.
+</p>
+<h3 id="hdr-Rules_of_the_road">Rules of the road</h3>
+<p>
+If you didn&#39;t write it and you&#39;re talking to it, you need code here.
+If you need to know where is it, you need code here.
+</p>
+
 			</div>
 		</div>
 		
@@ -187,6 +210,8 @@
 			
 				<a href="pkg/infrastructure/config.go">config.go</a>
 			
+				<a href="pkg/infrastructure/doc.go">doc.go</a>
+			
 				<a href="pkg/infrastructure/newrelic.go">newrelic.go</a>
 			
 				<a href="pkg/infrastructure/router.go">router.go</a>
@@ -241,7 +266,7 @@
 		
 			
 			
-			<h2 id="LoadFromEnv">func <a href="pkg/infrastructure/config.go?s=1166:1200#L33">LoadFromEnv</a>
+			<h2 id="LoadFromEnv">func <a href="pkg/infrastructure/config.go?s=1197:1231#L36">LoadFromEnv</a>
 				<a class="permalink" href="index.html#LoadFromEnv">&#xb6;</a>
 			</h2>
 			<pre>func LoadFromEnv(data interface{})</pre>
@@ -270,7 +295,7 @@ MakeYapoLogger creates and sets up a yapo flavored Logger
 		
 			
 			
-			<h2 id="Config">type <a href="pkg/infrastructure/config.go?s=942:1096#L26">Config</a>
+			<h2 id="Config">type <a href="pkg/infrastructure/config.go?s=973:1127#L29">Config</a>
 				<a class="permalink" href="index.html#Config">&#xb6;</a>
 			</h2>
 			<p>
@@ -297,7 +322,7 @@ Config holds all configuration for the service
 		
 			
 			
-			<h2 id="LoggerConf">type <a href="pkg/infrastructure/config.go?s=337:595#L11">LoggerConf</a>
+			<h2 id="LoggerConf">type <a href="pkg/infrastructure/config.go?s=368:626#L14">LoggerConf</a>
 				<a class="permalink" href="index.html#LoggerConf">&#xb6;</a>
 			</h2>
 			<p>
@@ -332,7 +357,7 @@ LogLevel definition:
 		
 			
 			
-			<h2 id="NewRelicConf">type <a href="pkg/infrastructure/config.go?s=720:890#L20">NewRelicConf</a>
+			<h2 id="NewRelicConf">type <a href="pkg/infrastructure/config.go?s=751:921#L23">NewRelicConf</a>
 				<a class="permalink" href="index.html#NewRelicConf">&#xb6;</a>
 			</h2>
 			<p>
@@ -503,7 +528,7 @@ Routes is an array of routes with a common prefix
 		
 			
 			
-			<h2 id="ServiceConf">type <a href="pkg/infrastructure/config.go?s=116:188#L1">ServiceConf</a>
+			<h2 id="ServiceConf">type <a href="pkg/infrastructure/config.go?s=147:219#L3">ServiceConf</a>
 				<a class="permalink" href="index.html#ServiceConf">&#xb6;</a>
 			</h2>
 			<p>
