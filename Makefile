@@ -31,6 +31,10 @@ run:
 ## Compile and start the service
 start: build run
 
+## Setup a new service repository based on goms
+clone:
+	@scripts/commands/clone.sh
+
 ## Run gofmt to reindent source
 fix-format:
 	@scripts/commands/fix-format.sh

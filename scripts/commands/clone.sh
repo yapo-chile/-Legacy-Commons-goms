@@ -14,6 +14,8 @@ BASEPATH=${GOPATH}/src/${GITHUB_ORG}
 GITHUB_NAME=$(git config user.name)
 GITHUB_EMAIL=$(git config user.email)
 
+set -e
+
 echoHeader "${TEMPLATE} clone tool"
 echo "This tool will help you create a new microservice based on ${TEMPLATE}"
 echoTitle "What's the name of your service? Please use dash-separated-names"
