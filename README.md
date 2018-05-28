@@ -97,10 +97,10 @@ Goms is the official golang microservice template for Yapo.
   ```
 
 * Replace every goms reference to your service's name:
-  ```
+  ```
   $ git grep -l goms | xargs sed -i.bak 's/goms/yourservice/g'
   $ find . -name "*.bak" | xargs rm
-  ```
+  ```
 
 * Go through the code examples and implement your service
   ```
@@ -116,7 +116,7 @@ Goms is the official golang microservice template for Yapo.
   pkg/interfaces/repository/fibonacci_test.go
   pkg/usecases/getNthFibonacci.go
   pkg/usecases/getNthFibonacci_test.go
-  ```  
+  ```
 
 * Enable TravisCI
   - Go to your service's github settings -> Hooks & Services -> Add Service -> Travis CI

@@ -1,27 +1,27 @@
-# SERVICE
+# __SERVICE__
 
 <!-- Badger start badges -->
-[![Status of the build](https://badger.spt-engprod-pro.schibsted.io/badge/travis/Yapo/SERVICE)](https://travis.schibsted.io/Yapo/SERVICE)
-[![Testing Coverage](https://badger.spt-engprod-pro.schibsted.io/badge/coverage/Yapo/SERVICE)](https://reports.spt-engprod-pro.schibsted.io/#/Yapo/SERVICE?branch=master&type=push&daterange&daterange)
-[![Style/Linting issues](https://badger.spt-engprod-pro.schibsted.io/badge/issues/Yapo/SERVICE)](https://reports.spt-engprod-pro.schibsted.io/#/Yapo/SERVICE?branch=master&type=push&daterange&daterange)
-[![Badger](https://badger.spt-engprod-pro.schibsted.io/badge/flaky_tests/Yapo/SERVICE)](https://databulous.spt-engprod-pro.schibsted.io/test/flaky/Yapo/SERVICE)
-[![Badger](https://badger.spt-engprod-pro.schibsted.io/badge/quality_index/Yapo/SERVICE)](https://databulous.spt-engprod-pro.schibsted.io/quality/repo/Yapo/SERVICE)
-[![Badger](https://badger.spt-engprod-pro.schibsted.io/badge/engprod/Yapo/SERVICE)](https://github.schibsted.io/spt-engprod/badger)
+[![Status of the build](https://badger.spt-engprod-pro.schibsted.io/badge/travis/Yapo/__SERVICE__)](https://travis.schibsted.io/Yapo/__SERVICE__)
+[![Testing Coverage](https://badger.spt-engprod-pro.schibsted.io/badge/coverage/Yapo/__SERVICE__)](https://reports.spt-engprod-pro.schibsted.io/#/Yapo/__SERVICE__?branch=master&type=push&daterange&daterange)
+[![Style/Linting issues](https://badger.spt-engprod-pro.schibsted.io/badge/issues/Yapo/__SERVICE__)](https://reports.spt-engprod-pro.schibsted.io/#/Yapo/__SERVICE__?branch=master&type=push&daterange&daterange)
+[![Badger](https://badger.spt-engprod-pro.schibsted.io/badge/flaky_tests/Yapo/__SERVICE__)](https://databulous.spt-engprod-pro.schibsted.io/test/flaky/Yapo/__SERVICE__)
+[![Badger](https://badger.spt-engprod-pro.schibsted.io/badge/quality_index/Yapo/__SERVICE__)](https://databulous.spt-engprod-pro.schibsted.io/quality/repo/Yapo/__SERVICE__)
+[![Badger](https://badger.spt-engprod-pro.schibsted.io/badge/engprod/Yapo/__SERVICE__)](https://github.schibsted.io/spt-engprod/badger)
 <!-- Badger end badges -->
 
-SERVICE needs a description here.
+__SERVICE__ needs a description here.
 
 ## Checklist: Is my service ready?
 
 * [ ] Configure your github repository
-  - Open https://github.schibsted.io/Yapo/SERVICE/settings
+  - Open https://github.schibsted.io/Yapo/__SERVICE__/settings
   - Features: Wikis, Restrict editing, Issues, Projects
   - Merge button: Only allow merge commits
   - GitHub Pages: master branch / docs folder
   - Open https://github.schibsted.io/Yapo/goms/settings/branches
   - Default branch: master
   - Protected branches: choose master
-  - Protect this branch
+  - Protect this branch
     + Require pull request reviews
       - Dismiss stale pull request
     + Require status checks before merging
@@ -30,7 +30,7 @@ SERVICE needs a description here.
       - Quality gate coverage
       - Travis-ci
     + Include administrators
-* [ ] Get a running `cmd/SERVICE/main.go`
+* [ ] Get a running `cmd/__SERVICE__/main.go`
   - This repo was generated automatically, so it is very likely that it doesn't compile at first try
   - Remove references to Fibonacci examples on main
   - Ensure it starts with `make start`
@@ -53,7 +53,7 @@ SERVICE needs a description here.
   - It's time for you to start coding your new service and documenting your endpoints below
   - Seriously, document your endpoints and delete this section
 
-## How to run SERVICE
+## How to run __SERVICE__
 
 * Create the dir: `~/go/src/github.schibsted.io/Yapo`
 
@@ -63,13 +63,13 @@ SERVICE needs a description here.
 
   ```
   $ cd ~/go/src/github.schibsted.io/Yapo
-  $ git clone git@github.schibsted.io:Yapo/SERVICE.git
+  $ git clone git@github.schibsted.io:Yapo/__SERVICE__.git
   ```
 
 * On the top dir execute the make instruction to clean and start:
 
   ```
-  $ cd SERVICE
+  $ cd __SERVICE__
   $ make start
   ```
 

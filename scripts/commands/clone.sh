@@ -7,7 +7,6 @@ if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
 
 TEMPLATE=goms
 BRANCH=master
-SERVICE=pack-draft
 GITHUB_ORG=github.schibsted.io/Yapo
 GITHUB_URL=git@github.schibsted.io:Yapo
 BASEPATH=${GOPATH}/src/${GITHUB_ORG}
@@ -53,7 +52,7 @@ for dir in $(find . -name "${TEMPLATE}" -type d); do
 done
 
 # Need for README-clone.md to exist on master to uncomment this code
-#sed "s/SERVICE/${SERVICE}/g" README-clone.md > README.md
+#sed "s/__SERVICE__/${SERVICE}/g" README-clone.md > README.md
 #rm README-clone.md
 
 echoTitle "Removing code examples and leftovers"
