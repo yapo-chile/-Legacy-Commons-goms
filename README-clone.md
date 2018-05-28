@@ -30,12 +30,6 @@ __SERVICE__ needs a description here.
       - Quality gate coverage
       - Travis-ci
     + Include administrators
-* [ ] Get a running `cmd/__SERVICE__/main.go`
-  - This repo was generated automatically, so it is very likely that it doesn't compile at first try
-  - Remove references to Fibonacci examples on main
-  - Ensure it starts with `make start`
-  - Send a healthcheck request to be sure it's up and running `curl localhost:30302/api/v1/healthcheck`
-  - Check for the reply to be `{"status":"OK"}`
 * [ ] Enable TravisCI
   - Go to your service's github settings -> Hooks & Services -> Add Service -> Travis CI
   - Fill in the form with the credentials you obtain from https://travis.schibsted.io/profile/
