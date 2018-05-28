@@ -13,6 +13,23 @@ SERVICE needs a description here.
 
 ## Checklist: Is my service ready?
 
+* [ ] Configure your github repository
+  - Open https://github.schibsted.io/Yapo/SERVICE/settings
+  - Features: Wikis, Restrict editing, Issues, Projects
+  - Merge button: Only allow merge commits
+  - GitHub Pages: master branch / docs folder
+  - Open https://github.schibsted.io/Yapo/goms/settings/branches
+  - Default branch: master
+  - Protected branches: choose master
+  - Protect this branch
+    + Require pull request reviews
+      - Dismiss stale pull request
+    + Require status checks before merging
+      - Require branches to be up to date
+      - Quality gate code analysis
+      - Quality gate coverage
+      - Travis-ci
+    + Include administrators
 * [ ] Get a running `cmd/SERVICE/main.go`
   - This repo was generated automatically, so it is very likely that it doesn't compile at first try
   - Remove references to Fibonacci examples on main
