@@ -18,8 +18,10 @@ set -e
 
 echoHeader "${TEMPLATE} clone tool"
 echo "This tool will help you create a new microservice based on ${TEMPLATE}"
-echoTitle "What's the name of your service? Please use dash-separated-names"
+echoTitle "What's the name of your service? Please use dash-separated-lowercase-names"
 read -p "Service name? " SERVICE
+[ -z "${SERVICE}" ] && echo "No name? No service!" && false
+echo -e "${SERVICE}" | grep -sqv "[a-z-]" && echo "Bad format. No service!" && false
 echo "Great! Please ensure that ${GITHUB_ORG}/${SERVICE} exists and is empty"
 
 echoTitle "Confirm your identity. Press enter to accept the default"
@@ -49,6 +51,10 @@ git grep -l ${TEMPLATE} | xargs sed -i.bak "s/${TEMPLATE}/${SERVICE}/g"
 for dir in $(find . -name "${TEMPLATE}" -type d); do
 	git mv ${dir} ${dir/${TEMPLATE}/${SERVICE}}
 done
+
+# Need for README-clone.md to exist on master to uncomment this code
+#sed "s/SERVICE/${SERVICE}/g" README-clone.md > README.md
+#rm README-clone.md
 
 echoTitle "Removing code examples and leftovers"
 find . -iname "*.bak" | xargs rm
