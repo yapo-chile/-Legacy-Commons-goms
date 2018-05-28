@@ -1,7 +1,8 @@
 *.swp
 *.swo
 *.rpm
-.pid*
+*.pid
+.DS_Store
 conf/conf.json
 logs/*
 reports/*
