@@ -1,8 +1,20 @@
-hash: 9e004f15a1c58d8a861356d4d521183c765425ccc99aa62e5114404d9bd2c97c
-updated: 2018-12-03T11:35:43.197913-03:00
+hash: cbd30b5e99efcba1d88f9ccb8d5ced47b97b3c26b39a85842f5bb3ae9d64f39b
+updated: 2019-01-28T10:36:11.303123-03:00
 imports:
+- name: github.com/beorn7/perks
+  version: 3a771d992973f24aa725d07868b467d1ddfceafb
+  subpackages:
+  - quantile
+- name: github.com/golang/protobuf
+  version: b27b920f9e71b439b873b17bf99f56467623814a
+  subpackages:
+  - proto
 - name: github.com/gorilla/context
   version: 08b5f424b9271eedf6f9f0ce86cb9396ed337a42
+- name: github.com/matttproud/golang_protobuf_extensions
+  version: c12348ce28de40eed0136aa2b644d0ee0650e56c
+  subpackages:
+  - pbutil
 - name: github.com/newrelic/go-agent
   version: f5bce3387232559bcbe6a5f8227c4bf508dac1ba
   subpackages:
@@ -12,12 +24,32 @@ imports:
   - internal/logger
   - internal/sysinfo
   - internal/utilization
+- name: github.com/prometheus/client_golang
+  version: d5f63107bfcac90d692baa94bd0064132e1f1d0d
+  subpackages:
+  - prometheus
+  - prometheus/internal
+  - prometheus/promhttp
+- name: github.com/prometheus/client_model
+  version: 5c3871d89910bfb32f5fcab2aa4b9ec68e65a99f
+  subpackages:
+  - go
+- name: github.com/prometheus/common
+  version: c7de2306084e37d54b8be01f3541a8464345e9a5
+  subpackages:
+  - expfmt
+  - internal/bitbucket.org/ww/goautoneg
+  - model
+- name: github.com/prometheus/procfs
+  version: 05ee40e3a273f7245e8777337fc7b46e533a9a92
+  subpackages:
+  - internal/util
+  - nfs
+  - xfs
 - name: github.com/Yapo/goutils
   version: 8563913313114ecb543b197533daa93aedb513e5
 - name: github.com/Yapo/logger
   version: 91855e974718b8c68dd00e63817568f1f512a4cc
-- name: gopkg.in/facebookgo/atomicfile.v0
-  version: 2de1f203e7d5e386a6833233882782932729f27e
 - name: gopkg.in/gorilla/mux.v1
   version: e3702bed27f0d39777b0b37b664b6280e8ef8fbf
 testImports:
@@ -32,7 +64,7 @@ testImports:
 - name: github.com/stretchr/objx
   version: 8a3f7159479fbc75b30357fbc48f380b7320f08e
 - name: github.com/stretchr/testify
-  version: f35b8ab0b5a2cef36673838d662e249dd9c94686
+  version: ffdc059bfe9ce6a4e144ba849dbedead332c6053
   subpackages:
   - assert
   - mock

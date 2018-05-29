@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"os"
 
 	"github.schibsted.io/Yapo/goms/pkg/infrastructure"
@@ -44,6 +45,10 @@ func main() {
 		os.Exit(2)
 	}
 
+	logger.Info("Setting up Prometheus")
+
+	prometheus := infrastructure.MakePrometheusHandler()
+
 	logger.Info("Initializing resources")
 
 	// HealthHandler
@@ -62,7 +67,7 @@ func main() {
 	// Setting up router
 	maker := infrastructure.RouterMaker{
 		Logger:        logger,
-		WrapperFunc:   newrelic.TrackHandlerFunc,
+		WrapperFunc:   prometheus.TrackHandlerFunc,
 		WithProfiling: conf.ServiceConf.Profiling,
 		Routes: infrastructure.Routes{
 			{
@@ -95,4 +100,10 @@ func main() {
 	go server.ListenAndServe()
 	shutdownSequence.Wait()
 	logger.Info("Server exited normally")
+
+	router := maker.NewRouter()
+	router.Handle("/metrics", prometheus.Handler())
+
+	logger.Info("Starting request serving")
+	logger.Crit("%s\n", http.ListenAndServe(conf.ServiceConf.Host, router))
 }
