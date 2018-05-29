@@ -47,13 +47,13 @@ git tag | xargs git tag -d
 
 echoTitle "Renaming paths and variables ${TEMPLATE} -> ${SERVICE}"
 git grep -l ${TEMPLATE} | xargs sed -i.bak "s/${TEMPLATE}/${SERVICE}/g"
+find cmd -name main.go | xargs sed -i.bak '11,13d; 45,55d; 70,75d'
 for dir in $(find . -name "${TEMPLATE}" -type d); do
 	git mv ${dir} ${dir/${TEMPLATE}/${SERVICE}}
 done
 
-# Need for README-clone.md to exist on master to uncomment this code
-#sed "s/__SERVICE__/${SERVICE}/g" README-clone.md > README.md
-#rm README-clone.md
+sed "s/__SERVICE__/${SERVICE}/g" README-clone.md > README.md
+rm README-clone.md
 
 echoTitle "Removing code examples and leftovers"
 find . -iname "*.bak" | xargs rm
