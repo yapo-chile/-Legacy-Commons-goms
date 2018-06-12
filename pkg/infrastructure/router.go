@@ -2,6 +2,7 @@ package infrastructure
 
 import (
 	"net/http"
+	"net/http/pprof"
 
 	"github.schibsted.io/Yapo/goms/pkg/interfaces/handlers"
 	"github.schibsted.io/Yapo/goms/pkg/interfaces/loggers"
@@ -30,9 +31,10 @@ type Routes []routeGroups
 
 // RouterMaker gathers route and wrapper information to build a router
 type RouterMaker struct {
-	Logger      loggers.Logger
-	Routes      Routes
-	WrapperFunc WrapperFunc
+	Logger        loggers.Logger
+	WrapperFunc   WrapperFunc
+	WithProfiling bool
+	Routes        Routes
 }
 
 // NewRouter setups a Router based on the provided routes
@@ -52,6 +54,19 @@ func (maker *RouterMaker) NewRouter() *mux.Router {
 				Name(route.Name).
 				Handler(handler)
 		}
+	}
+	if maker.WithProfiling {
+		router.HandleFunc("/debug/pprof/", pprof.Index)
+		router.HandleFunc("/debug/pprof/cmdline", pprof.Cmdline)
+		router.HandleFunc("/debug/pprof/profile", pprof.Profile)
+		router.HandleFunc("/debug/pprof/symbol", pprof.Symbol)
+		router.HandleFunc("/debug/pprof/trace", pprof.Trace)
+
+		router.Handle("/debug/pprof/block", pprof.Handler("block"))
+		router.Handle("/debug/pprof/goroutine", pprof.Handler("goroutine"))
+		router.Handle("/debug/pprof/heap", pprof.Handler("heap"))
+		router.Handle("/debug/pprof/mutex", pprof.Handler("mutex"))
+		router.Handle("/debug/pprof/threadcreate", pprof.Handler("threadcreate"))
 	}
 	return router
 }

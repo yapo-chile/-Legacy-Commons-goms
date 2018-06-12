@@ -53,9 +53,11 @@ func main() {
 		Interactor: &fibonacciInteractor,
 	}
 
+	// Setting up router
 	maker := infrastructure.RouterMaker{
-		Logger:      logger,
-		WrapperFunc: newrelic.TrackHandlerFunc,
+		Logger:        logger,
+		WrapperFunc:   newrelic.TrackHandlerFunc,
+		WithProfiling: conf.ServiceConf.Profiling,
 		Routes: infrastructure.Routes{
 			{
 				// This is the base path, all routes will start with this prefix
