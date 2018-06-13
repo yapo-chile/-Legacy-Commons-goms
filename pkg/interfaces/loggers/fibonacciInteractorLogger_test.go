@@ -1,11 +1,7 @@
 package loggers
 
 import (
-	"net/http/httptest"
-	"strings"
 	"testing"
-
-	"github.com/Yapo/goutils"
 )
 
 // There are no return values to assert on, as logger only cause side effects
@@ -16,12 +12,4 @@ func TestFibonacciInteractorDefaultLogger(t *testing.T) {
 	l := MakeFibonacciInteractorLogger(loggerMock{t: t})
 	l.LogBadInput(42)
 	l.LogRepositoryError(5, 42, nil)
-}
-
-func TestJSONHandlerLogger(t *testing.T) {
-	r := httptest.NewRequest("GET", "/test", strings.NewReader(""))
-	l := MakeJSONHandlerLogger(loggerMock{t: t})
-	l.LogRequestStart(r)
-	l.LogRequestEnd(r, &goutils.Response{})
-	l.LogRequestPanic(r, &goutils.Response{}, nil)
 }
