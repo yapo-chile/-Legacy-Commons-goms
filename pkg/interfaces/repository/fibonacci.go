@@ -2,6 +2,8 @@ package repository
 
 import (
 	"fmt"
+	"sync"
+
 	"github.schibsted.io/Yapo/goms/pkg/domain"
 )
 
@@ -13,6 +15,7 @@ import (
 type mapFibonacciRepository struct {
 	storage map[int]domain.Fibonacci
 	latest  []int
+	mutex   sync.RWMutex
 }
 
 // NewMapFibonacciRepository instantiates a fresh mapFibonacciRepository,
@@ -31,6 +34,8 @@ func NewMapFibonacciRepository() domain.FibonacciRepository {
 // Get returns the nth (1 based) Fibonacci should this instance know it.
 // Otherwise, will return -1 and error message.
 func (r *mapFibonacciRepository) Get(nth int) (domain.Fibonacci, error) {
+	r.mutex.RLock()
+	defer r.mutex.RUnlock()
 	f, found := r.storage[nth]
 	if !found {
 		return -1, fmt.Errorf("Don't know the %dth Fibonacci, do you?", nth)
@@ -41,6 +46,8 @@ func (r *mapFibonacciRepository) Get(nth int) (domain.Fibonacci, error) {
 // Save sets the nth Fibonacci to x should the last known pair of values end
 // at nth-1. Otherwise returns an error message.
 func (r *mapFibonacciRepository) Save(nth int, x domain.Fibonacci) error {
+	r.mutex.Lock()
+	defer r.mutex.Unlock()
 	if nth != r.latest[1]+1 {
 		return fmt.Errorf("How do you know the %dth Fibonacci number?", nth)
 	}
@@ -52,6 +59,8 @@ func (r *mapFibonacciRepository) Save(nth int, x domain.Fibonacci) error {
 
 // LatestPair retrieves the latest pair (and indexes) of known Fibonacci Numbers
 func (r *mapFibonacciRepository) LatestPair() domain.FibonacciPair {
+	r.mutex.RLock()
+	defer r.mutex.RUnlock()
 	return domain.FibonacciPair{
 		IA: r.latest[0],
 		IB: r.latest[1],
