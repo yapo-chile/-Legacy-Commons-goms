@@ -1,9 +1,11 @@
 package repository
 
 import (
+	"sync"
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"github.schibsted.io/Yapo/goms/pkg/domain"
-	"testing"
 )
 
 func TestFibonacciRepositoryCreation(t *testing.T) {
@@ -57,4 +59,24 @@ func TestFibonacciRepositorySaveNext(t *testing.T) {
 	}
 
 	assert.Equal(t, expected, p)
+}
+
+func TestFibonacciRepositoryConcurrentAccess(t *testing.T) {
+	var wg sync.WaitGroup
+	r := NewMapFibonacciRepository()
+	f := func(r domain.FibonacciRepository) {
+		defer wg.Done()
+		a, _ := r.Get(1)
+		b, _ := r.Get(2)
+		for i := 3; i < 1000; i++ {
+			r.Save(i, a+b)
+			p := r.LatestPair()
+			a = p.A
+			b, _ = r.Get(i)
+		}
+	}
+	wg.Add(2)
+	go f(r)
+	go f(r)
+	wg.Wait()
 }
