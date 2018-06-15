@@ -24,8 +24,8 @@ function run_tests {
     # Test all packages from the list
     for package in ${packages}; do
         echo "" > ${TMP_COVER_FILE}
-        go test -v -covermode="count" -coverprofile=${TMP_COVER_FILE} ${package} || status=$?
-        sed '/^mode: count$/d' ${TMP_COVER_FILE} >> ${COVER_FILE}
+        go test -v -race -covermode="atomic" -coverprofile=${TMP_COVER_FILE} ${package} || status=$?
+        sed '/^mode: atomic$/d' ${TMP_COVER_FILE} >> ${COVER_FILE}
     done
     sed -i.bak '/^$/d' ${COVER_FILE}
     return ${status:-0}
