@@ -26,7 +26,6 @@ reviewersRaffle:
             - mauro
             - piero-valdebenito
             - diego-hernandez
-            - aaron-dominguez
   dailyReminder: enabled
 slack:
   - "#yapo_backends"
