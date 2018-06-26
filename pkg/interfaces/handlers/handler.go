@@ -59,8 +59,8 @@ func (jh *jsonHandler) run(w http.ResponseWriter, r *http.Request) {
 	// Function the request can call to retrieve its input
 	inputGetter := func() (HandlerInput, *goutils.Response) {
 		input := jh.handler.Input()
-		response := goutils.ParseJSONBody(r, input)
-		return input, response
+		resp := goutils.ParseJSONBody(r, input)
+		return input, resp
 	}
 	// Format the output and send it down the writer
 	outputWriter := func() {
