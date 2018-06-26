@@ -9,8 +9,8 @@ import (
 // loggers don't panic
 
 func TestFibonacciInteractorDefaultLogger(t *testing.T) {
-	mock := &loggerMock{t: t}
-	l := MakeFibonacciInteractorLogger(mock)
+	m := &loggerMock{t: t}
+	l := MakeFibonacciInteractorLogger(m)
 	l.LogBadInput(42)
 	l.LogRepositoryError(5, 42, nil)
 }
