@@ -19,7 +19,7 @@ tools=(
 echoTitle "Installing missing tools"
 # Install missed tools
 for tool in ${tools[@]}; do
-    which $(basename ${tool}) > /dev/null || go get -u -v ${tool}
+    go get -u -v ${tool}
 done
 
 echoTitle "Installing linters"

@@ -12,15 +12,15 @@ type MockFibonacciRepository struct {
 	mock.Mock
 }
 
-func (m MockFibonacciRepository) Get(nth int) (domain.Fibonacci, error) {
+func (m *MockFibonacciRepository) Get(nth int) (domain.Fibonacci, error) {
 	ret := m.Called(nth)
 	return ret.Get(0).(domain.Fibonacci), ret.Error(1)
 }
-func (m MockFibonacciRepository) Save(nth int, x domain.Fibonacci) error {
+func (m *MockFibonacciRepository) Save(nth int, x domain.Fibonacci) error {
 	ret := m.Called(nth, x)
 	return ret.Error(0)
 }
-func (m MockFibonacciRepository) LatestPair() domain.FibonacciPair {
+func (m *MockFibonacciRepository) LatestPair() domain.FibonacciPair {
 	ret := m.Called()
 	return ret.Get(0).(domain.FibonacciPair)
 }
@@ -29,16 +29,16 @@ type MockFibonacciLogger struct {
 	mock.Mock
 }
 
-func (m MockFibonacciLogger) LogBadInput(x int) {
+func (m *MockFibonacciLogger) LogBadInput(x int) {
 	m.Called(x)
 }
-func (m MockFibonacciLogger) LogRepositoryError(i int, x domain.Fibonacci, err error) {
+func (m *MockFibonacciLogger) LogRepositoryError(i int, x domain.Fibonacci, err error) {
 	m.Called(i, x, err)
 }
 
 func TestFibonacciInteractorGetNthNegative(t *testing.T) {
 	l := &MockFibonacciLogger{}
-	m := MockFibonacciRepository{}
+	m := &MockFibonacciRepository{}
 	i := FibonacciInteractor{
 		Logger:     l,
 		Repository: m,
@@ -54,7 +54,7 @@ func TestFibonacciInteractorGetNthNegative(t *testing.T) {
 
 func TestFibonacciInteractorGetNthKnown(t *testing.T) {
 	l := &MockFibonacciLogger{}
-	m := MockFibonacciRepository{}
+	m := &MockFibonacciRepository{}
 	m.On("Get", 1).Return(domain.Fibonacci(1), nil)
 
 	i := FibonacciInteractor{
@@ -71,7 +71,7 @@ func TestFibonacciInteractorGetNthKnown(t *testing.T) {
 
 func TestFibonacciInteractorGetNthUnknown(t *testing.T) {
 	l := &MockFibonacciLogger{}
-	m := MockFibonacciRepository{}
+	m := &MockFibonacciRepository{}
 	m.On("Get", 4).Return(domain.Fibonacci(-1), errors.New("Some error")).Once()
 	m.On("LatestPair").Return(domain.FibonacciPair{IA: 1, A: domain.Fibonacci(1), IB: 2, B: domain.Fibonacci(1)}).Once()
 	m.On("Save", 3, domain.Fibonacci(2)).Return(nil)
@@ -96,7 +96,7 @@ func TestFibonacciInteractorGetNthUnknown(t *testing.T) {
 
 func TestFibonacciInteractorGetNthSaveError(t *testing.T) {
 	l := &MockFibonacciLogger{}
-	m := MockFibonacciRepository{}
+	m := &MockFibonacciRepository{}
 	m.On("Get", 4).Return(domain.Fibonacci(-1), errors.New("Some error")).Once()
 	m.On("LatestPair").Return(domain.FibonacciPair{IA: 1, A: domain.Fibonacci(1), IB: 2, B: domain.Fibonacci(1)}).Once()
 	m.On("Save", 3, domain.Fibonacci(2)).Return(errors.New("Weird error")).Once()

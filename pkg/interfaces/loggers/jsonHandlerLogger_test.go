@@ -13,8 +13,9 @@ import (
 // loggers don't panic
 
 func TestJSONHandlerLogger(t *testing.T) {
+	mock := &loggerMock{t: t}
 	r := httptest.NewRequest("GET", "/test", strings.NewReader(""))
-	l := MakeJSONHandlerLogger(loggerMock{t: t})
+	l := MakeJSONHandlerLogger(mock)
 	l.LogRequestStart(r)
 	l.LogRequestEnd(r, &goutils.Response{})
 	l.LogRequestPanic(r, &goutils.Response{}, nil)
