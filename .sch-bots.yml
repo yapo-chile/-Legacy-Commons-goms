@@ -12,20 +12,12 @@ qualityGate:
     enabled: false
 reviewersRaffle:
   strategies:
-    - my-candidates:
+    - owners:
         type: sequential
         size: 1
         participants:
-          users:
-            - dany
-            - miguel
-            - yichun
-            - jorge-poblete
-            - ana-mora
-            - luis-teran
-            - mauro
-            - piero-valdebenito
-            - diego-hernandez
+          teams:
+            - Yapo/backend
   dailyReminder: enabled
 slack:
   - "#yapo_backends"
