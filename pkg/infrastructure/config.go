@@ -11,7 +11,8 @@ import (
 
 // ServiceConf holds configuration for this Service
 type ServiceConf struct {
-	Host string `env:"HOST" envDefault:":8080"`
+	Host      string `env:"HOST" envDefault:":8080"`
+	Profiling bool   `env:"PROFILING" envDefault:"true"`
 }
 
 // LoggerConf holds configuration for logging
