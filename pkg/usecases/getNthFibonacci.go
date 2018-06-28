@@ -2,6 +2,7 @@ package usecases
 
 import (
 	"fmt"
+
 	"github.schibsted.io/Yapo/goms/pkg/domain"
 )
 

@@ -53,6 +53,17 @@ func main() {
 		Interactor: &fibonacciInteractor,
 	}
 
+	// WayStairs Handler
+	wayStairLogger := loggers.MakeWayStairInteractorLogger(logger)
+	wayStairRepository := repository.NewWayStair()
+	wayStairInteractor := usecases.WayStairInteractor{
+		Logger:     wayStairLogger,
+		Repository: wayStairRepository,
+	}
+	wayStairHandler := handlers.WayStairHandler{
+		Interactor: &wayStairInteractor,
+	}
+
 	maker := infrastructure.RouterMaker{
 		Logger:      logger,
 		WrapperFunc: newrelic.TrackHandlerFunc,
@@ -72,6 +83,12 @@ func main() {
 						Method:  "GET",
 						Pattern: "/fibonacci",
 						Handler: &fibonacciHandler,
+					},
+					{
+						Name:    "Retrieve the Nth ways needed to reach top of stair with Clean Architecture",
+						Method:  "POST",
+						Pattern: "/waystairs",
+						Handler: &wayStairHandler,
 					},
 				},
 			},
