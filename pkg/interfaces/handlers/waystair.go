@@ -33,11 +33,12 @@ func (h *WayStairHandler) Input() HandlerInput {
 // Execute carries on a /waystair request. Uses the given interactor to carry out
 // the operation and get the desired value. Expected body format:
 //	{
-//		n: int - Number of stairs to retrieve (1 based)
+// 		Ways: int - number of possible combinations
+//		Combs: String - all possible combinations
 //	}
 // Expected response format:
-//   { Result: int - Operation result,
-//     combs: slice combs }
+//   { Ways: int - Operation result,
+//     Combs: slice combs }
 // Expected error format:
 //   { ErrorMessage: string - Error detail }
 func (h *WayStairHandler) Execute(ig InputGetter) *goutils.Response {
