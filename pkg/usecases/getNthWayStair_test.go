@@ -14,7 +14,7 @@ type MockWayStairRepository struct {
 	mock.Mock
 }
 
-func (m MockWayStairRepository) WayStairs(nth int) (domain.WayStair, error) {
+func (m MockWayStairRepository) Calculate(nth int) (domain.WayStair, error) {
 	ret := m.Called(nth)
 	return ret.Get(0).(domain.WayStair), ret.Error(1)
 }
@@ -66,7 +66,7 @@ func TestWayStairInteractorGetNthKnown(t *testing.T) {
 	e := domain.WayStair{Ways: 1, Combs: "{1}"}
 	l := &MockWayStairLogger{}
 	m := MockWayStairRepository{}
-	m.On("WayStairs", 1).Return(e, nil)
+	m.On("Calculate", 1).Return(e, nil)
 
 	i := WayStairInteractor{
 		Logger:     l,
@@ -85,7 +85,7 @@ func TestWayStairInteractorGetNthError(t *testing.T) {
 	l := &MockWayStairLogger{}
 	m := MockWayStairRepository{}
 	l.On("LogRepositoryError", 1, e, errors.New("anything"))
-	m.On("WayStairs", 1).Return(e, fmt.Errorf("anything"))
+	m.On("Calculate", 1).Return(e, fmt.Errorf("anything"))
 
 	i := WayStairInteractor{
 		Logger:     l,

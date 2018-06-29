@@ -1,15 +1,13 @@
 package domain
 
-// Stair ...
-type Stair int
-
-// WayStair ...
+// WayStair contains struct to be used as output delivering
+// possible N ways and its combinations
 type WayStair struct {
 	Ways  int
 	Combs string
 }
 
-// WayStairRepository ...
+// WayStairRepository defines function that do the maths
 type WayStairRepository interface {
-	WayStairs(nth int) (WayStair, error)
+	Calculate(nth int) (WayStair, error)
 }
