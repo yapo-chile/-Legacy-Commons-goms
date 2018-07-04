@@ -14,9 +14,14 @@ type MockWayStairRepository struct {
 	mock.Mock
 }
 
-func (m MockWayStairRepository) Calculate(nth int) (domain.WayStair, error) {
+func (m MockWayStairRepository) Get(nth int) (domain.WayStair, error) {
 	ret := m.Called(nth)
 	return ret.Get(0).(domain.WayStair), ret.Error(1)
+}
+
+func (m MockWayStairRepository) Save(x domain.WayStair) error {
+	ret := m.Called(x)
+	return ret.Error(0)
 }
 
 type MockWayStairLogger struct {
@@ -30,6 +35,9 @@ func (m MockWayStairLogger) LogRepositoryError(i int, x domain.WayStair, err err
 	m.Called(i, x, err)
 }
 
+func (m MockWayStairLogger) LogCalculateError(i int, err error) {
+	m.Called(i, err)
+}
 func TestWayStairInteractorGetNthNegative(t *testing.T) {
 	l := &MockWayStairLogger{}
 	m := MockWayStairRepository{}
@@ -66,7 +74,7 @@ func TestWayStairInteractorGetNthKnown(t *testing.T) {
 	e := domain.WayStair{Ways: 1, Combs: "{1}"}
 	l := &MockWayStairLogger{}
 	m := MockWayStairRepository{}
-	m.On("Calculate", 1).Return(e, nil)
+	m.On("Get", 1).Return(e, nil)
 
 	i := WayStairInteractor{
 		Logger:     l,
@@ -79,13 +87,31 @@ func TestWayStairInteractorGetNthKnown(t *testing.T) {
 	m.AssertExpectations(t)
 	l.AssertExpectations(t)
 }
+func TestWayStairInteractorGetNthUnknown(t *testing.T) {
+	e := domain.WayStair{}
+	l := &MockWayStairLogger{}
+	m := MockWayStairRepository{}
+	l.On("LogRepositoryError", 1, e, errors.New("anything"))
+	m.On("Get", 1).Return(e, fmt.Errorf("not found"))
+	m.On("Save", domain.WayStair{Stair: 1, Ways: 1, Combs: "{1}"}, nil)
+	i := WayStairInteractor{
+		Logger:     l,
+		Repository: &m,
+	}
+
+	x, err := i.GetNth(1)
+	assert.Equal(t, e, x)
+	assert.Error(t, err)
+	m.AssertExpectations(t)
+	l.AssertExpectations(t)
+}
 
 func TestWayStairInteractorGetNthError(t *testing.T) {
 	e := domain.WayStair{}
 	l := &MockWayStairLogger{}
 	m := MockWayStairRepository{}
 	l.On("LogRepositoryError", 1, e, errors.New("anything"))
-	m.On("Calculate", 1).Return(e, fmt.Errorf("anything"))
+	m.On("Get", 1).Return(e, fmt.Errorf("anything"))
 
 	i := WayStairInteractor{
 		Logger:     l,

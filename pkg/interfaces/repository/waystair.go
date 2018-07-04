@@ -1,11 +1,8 @@
 package repository
 
 import (
-	"errors"
 	"fmt"
-	"math"
-	"strconv"
-	"strings"
+	"sync"
 
 	"github.schibsted.io/Yapo/goms/pkg/domain"
 )
@@ -14,106 +11,58 @@ import (
 // calculate possible ways and its combinations
 type WayStairRepo struct{}
 
-// NewWayStair initialice WayStairRepo
-func NewWayStair() *WayStairRepo {
-	return &WayStairRepo{}
+// mapFibonacciRepository is an implementation of domain.FibonacciRepository
+// that stores Fibonacci data on a map. It keeps the lastest known pair on a
+// separate array to speed up retrieval. The type is intentionally private.
+// The correct way to instantiate this type is with NewMapFibonacciRepository.
+// This ensures that the required initialization is performed every time.
+type storageWayStair struct {
+	ways  map[int]domain.Ways
+	combs map[int]domain.Combs
+	mutex sync.RWMutex
 }
 
-// removeDuplicates utility function that takes an slice, loop itself
-// and returns a new slice with non duplicated items
-func (r *WayStairRepo) removeDuplicates(elements []string) []string {
-	// Use map to record duplicates as we find them.
-	encountered := map[string]bool{}
-	result := []string{}
-	for v := range elements {
-		if encountered[elements[v]] == true {
-			// Do not add duplicate.
-		} else {
-			// Record this element as an encountered element.
-			encountered[elements[v]] = true
-			// Append to result slice.
-			result = append(result, elements[v])
-		}
+// NewMapFibonacciRepository instantiates a fresh mapFibonacciRepository,
+// performs the initialization and returns it as a domain.FibonacciRepository.
+// The return type prevents others to directly access data members.
+func NewStorageWayStair() domain.WayStairRepository {
+	var r storageWayStair
+	r.ways = map[int]domain.Ways{
+		1: 1,
 	}
-	return result
+	r.combs = map[int]domain.Combs{
+		1: "{1}",
+	}
+	return &r
 }
 
-// padRight utility function that fill with pad whats required by lenght
-// Ex. padRight("b", "x", 5) = output: bxxxx
-func (r *WayStairRepo) padRight(str, pad string, lenght int) string {
-	for {
-		str += pad
-		if len(str) > lenght {
-			return str[0:lenght]
-		}
+// Get returns the nth (1 based) Fibonacci should this instance know it.
+// Otherwise, will return -1 and error message.
+func (r *storageWayStair) Get(nth int) (domain.WayStair, error) {
+	r.mutex.RLock()
+	defer r.mutex.RUnlock()
+	response := domain.WayStair{}
+	w, foundWays := r.ways[nth]
+	c, foundCombs := r.combs[nth]
+	if !foundWays || !foundCombs {
+		return response, fmt.Errorf("Don't know the %dth WayStair, do you?", nth)
 	}
+	response.Stair = domain.Stair(nth)
+	response.Ways = w
+	response.Combs = domain.Combs(c)
+	return response, nil
 }
 
-// convertNatural takes any number from any base to return it as base 10/decimal
-func (r *WayStairRepo) convertNatural(num string, base int) (int, error) {
-	response := 0
-	for i := range string(num) {
-		strNum := string(num[i])
-		floatNum, err := strconv.ParseFloat(strNum, 64)
-		if err != nil {
-			return 0, errors.New("Error")
-		}
-		exp := float64(len(num) - i - 1)
-		b := float64(base)
-		response = int(floatNum*math.Pow(b, exp)) + response
-	}
-	return int(response), nil
-}
+// Save sets the nth Fibonacci to x should the last known pair of values end
+// at nth-1. Otherwise returns an error message.
+func (r *storageWayStair) Save(x domain.WayStair) error {
+	r.mutex.Lock()
+	defer r.mutex.Unlock()
 
-// getComb takes a base 10 number to transform it
-// to base 3, split them into a slice and checks if the sum of its items are equal to nstair
-// returning a comb and if its valid or not
-func (r *WayStairRepo) getComb(num int, nstair int) (string, error) {
-	num64 := int64(num)
-	nstair64 := int64(nstair)
-	// takes the number form base10 to base 3 and split it into an slice
-	slice := strings.Split(strconv.FormatInt(num64, 3), "")
-	var sum int64
-	// loop to store the total sum of the newly created slice
-	for o := range slice {
-		n, _ := strconv.ParseInt(slice[o], 10, 64)
-		sum += n
+	if x.Ways < 0 || x.Combs == "" {
+		return fmt.Errorf("How do you know this is not possible?")
 	}
-	// transforns slice into a string and removes zeros
-	response := strings.Join(slice, "")
-	response = strings.Replace(response, "0", "", -1)
-	// if the total sum is equal to the nth requested stair
-	// returns nil as well
-	if sum == nstair64 {
-		return response, nil
-	}
-	// else returns with error
-	return response, errors.New("Bad Comb")
-}
-
-// Calculate its where magic happens, if this function were Sinatra this
-// would be his New York, it takes an nth, and calculate possible ways and
-// its combinations, also checks if there is any repeated item to remove
-func (r *WayStairRepo) Calculate(nth int) (domain.WayStair, error) {
-	var combs []string
-	// validates that input is not negative
-	if nth < 0 {
-		return domain.WayStair{}, fmt.Errorf("out of range")
-	}
-	// get values of the lowest and max possible ternary number of the
-	// requested nth
-	startOn, _ := r.convertNatural(r.padRight("1", "0", nth), 3)
-	finishOn, _ := r.convertNatural(r.padRight("2", "2", nth), 3)
-	for i := startOn; i < finishOn; i++ {
-		comb, e := r.getComb(i, nth)
-		if e == nil {
-			combs = append(combs, comb)
-		}
-	}
-	// removes duplicates from final slice
-	response := r.removeDuplicates(combs)
-	return domain.WayStair{
-		Ways:  len(response),
-		Combs: fmt.Sprintf("{%s}", strings.Join(response, ",")),
-	}, nil
+	r.ways[int(x.Stair)] = x.Ways
+	r.combs[int(x.Stair)] = x.Combs
+	return nil
 }

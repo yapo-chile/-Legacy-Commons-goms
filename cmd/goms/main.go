@@ -55,10 +55,11 @@ func main() {
 
 	// WayStairs Handler
 	wayStairLogger := loggers.MakeWayStairInteractorLogger(logger)
-	wayStairRepository := repository.NewWayStair()
+	wayStairRepository := repository.NewStorageWayStair()
 	wayStairInteractor := usecases.WayStairInteractor{
-		Logger:     wayStairLogger,
-		Repository: wayStairRepository,
+		Logger:      wayStairLogger,
+		Repository:  wayStairRepository,
+		StairsLimit: conf.StairsLimit,
 	}
 	wayStairHandler := handlers.WayStairHandler{
 		Interactor: &wayStairInteractor,
@@ -86,7 +87,7 @@ func main() {
 						Handler: &fibonacciHandler,
 					},
 					{
-						Name:    "Retrieve the Nth ways needed to reach top of stair with Clean Architecture",
+						Name:    "Calculate all possible ways to climb a staircase of N steps with Clean Architecture",
 						Method:  "POST",
 						Pattern: "/waystairs",
 						Handler: &wayStairHandler,

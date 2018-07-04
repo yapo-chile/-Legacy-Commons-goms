@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/Yapo/goutils"
-	"github.schibsted.io/Yapo/goms/pkg/domain"
 	"github.schibsted.io/Yapo/goms/pkg/usecases"
 )
 
@@ -20,7 +19,8 @@ type wayStairRequestInput struct {
 }
 
 type wayStairRequestOutput struct {
-	Result domain.WayStair `json:"result"`
+	Ways         int    `json:"ways"`
+	Combinations string `json:"combinations"`
 }
 
 type wayStairRequestError goutils.GenericError
@@ -60,7 +60,8 @@ func (h *WayStairHandler) Execute(ig InputGetter) *goutils.Response {
 	return &goutils.Response{
 		Code: http.StatusOK,
 		Body: wayStairRequestOutput{
-			Result: f,
+			Ways:         int(f.Ways),
+			Combinations: string(f.Combs),
 		},
 	}
 }

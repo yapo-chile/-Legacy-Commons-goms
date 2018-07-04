@@ -17,6 +17,10 @@ func (l *wayStairInteractorDefaultLogger) LogRepositoryError(i int, x domain.Way
 	l.logger.Error("Repository refused to accept this comb(%d) (%+v): %s", i, x, err)
 }
 
+func (l *wayStairInteractorDefaultLogger) LogCalculateError(i int, err error) {
+	l.logger.Error("Calculate was issued with this comb(%d): %s", i, err)
+}
+
 // MakeWayStairInteractorLogger sets up a WayStairInteractorLogger instrumented
 // via the provided logger
 func MakeWayStairInteractorLogger(logger Logger) usecases.WayStairInteractorLogger {

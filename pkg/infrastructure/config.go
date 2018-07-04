@@ -41,6 +41,7 @@ type Config struct {
 	ServiceConf  ServiceConf  `env:"SERVICE_"`
 	NewRelicConf NewRelicConf `env:"NEWRELIC_"`
 	LoggerConf   LoggerConf   `env:"LOGGER_"`
+	StairsLimit  int          `env:"STAIRS_LIMIT" envDefault:"15"`
 }
 
 // LoadFromEnv loads the config data from the environment variables
