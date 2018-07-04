@@ -17,9 +17,7 @@ func (r *WayStairInteractor) removeDuplicates(elements []string) []string {
 	encountered := map[string]bool{}
 	result := []string{}
 	for v := range elements {
-		if encountered[elements[v]] == true {
-			// Do not add duplicate.
-		} else {
+		if encountered[elements[v]] != true {
 			// Record this element as an encountered element.
 			encountered[elements[v]] = true
 			// Append to result slice.
@@ -29,13 +27,13 @@ func (r *WayStairInteractor) removeDuplicates(elements []string) []string {
 	return result
 }
 
-// padRight utility function that fill with pad whats required by lenght
+// padRight utility function that fill with pad whats required by length
 // Ex. padRight("b", "x", 5) = output: bxxxx
-func (r *WayStairInteractor) padRight(str, pad string, lenght int) string {
+func (r *WayStairInteractor) padRight(str, pad string, length int) string {
 	for {
 		str += pad
-		if len(str) > lenght {
-			return str[0:lenght]
+		if len(str) > length {
+			return str[0:length]
 		}
 	}
 }
@@ -87,12 +85,20 @@ func (r *WayStairInteractor) getComb(num int, nstair int) (string, error) {
 // its combinations, also checks if there is any repeated item to remove
 func (r *WayStairInteractor) Calculate(nth int) (domain.WayStair, error) {
 	var combs []string
-	// validates that input is not negative
-	if nth < 0 {
-		return domain.WayStair{}, fmt.Errorf("out of range")
-	}
 	// get values of the lowest and max possible ternary number of the
 	// requested nth
+	// Ensure that input is not negative
+	if nth <= 0 {
+		r.Logger.LogBadInput(nth)
+		return domain.WayStair{},
+			fmt.Errorf("there's no such thing as %dth WayStair", nth)
+	}
+	// Ensure that input is not that high so it could ran away due memory.
+	if nth > r.StairsLimit {
+		r.Logger.LogBadInput(nth)
+		return domain.WayStair{},
+			fmt.Errorf("stop eating donnuts, you cant go higher than %d", r.StairsLimit)
+	}
 	startOn, _ := r.convertNatural(r.padRight("1", "0", nth), 3)
 	finishOn, _ := r.convertNatural(r.padRight("2", "2", nth), 3)
 	for i := startOn; i < finishOn; i++ {
@@ -120,7 +126,6 @@ type GetNthWayStairUsecase interface {
 // need/like to report as they happen
 type WayStairInteractorLogger interface {
 	LogBadInput(int)
-	LogCalculateError(int, error)
 	LogRepositoryError(int, domain.WayStair, error)
 }
 
@@ -135,25 +140,15 @@ type WayStairInteractor struct {
 // GetNth finds the nth Ways by using Repository to calculate possible ways
 // and its combination to retrieve them as answer.
 func (interactor *WayStairInteractor) GetNth(n int) (domain.WayStair, error) {
-	// Ensure that input is not negative
-	if n <= 0 {
-		interactor.Logger.LogBadInput(n)
-		return domain.WayStair{}, fmt.Errorf("there's no such thing as %dth WayStair", n)
-	}
-	// Ensure that input is not that high so it could ran away due memory.
-	if n > interactor.StairsLimit {
-		interactor.Logger.LogBadInput(n)
-		return domain.WayStair{}, fmt.Errorf("stop eating donnuts, you cant go higher than %d", interactor.StairsLimit)
-	}
 	wsRepo, err := interactor.Repository.Get(n)
 	if err == nil {
 		return wsRepo, nil
 	}
+	interactor.Logger.LogRepositoryError(n, wsRepo, err)
 	// Check if the repository already knows it
 	ws, err := interactor.Calculate(n)
 	if err != nil {
-		interactor.Logger.LogCalculateError(n, err)
-		return domain.WayStair{}, fmt.Errorf("error, this value is impossible to calculate")
+		return domain.WayStair{}, err
 	}
 
 	if errSave := interactor.Repository.Save(ws); errSave != nil {

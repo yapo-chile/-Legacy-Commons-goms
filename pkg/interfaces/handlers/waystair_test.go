@@ -39,7 +39,7 @@ func TestWayStairHandlerExecuteOK(t *testing.T) {
 	input := wayStairRequestInput{N: 1}
 	expectedResponse := &goutils.Response{
 		Code: http.StatusOK,
-		Body: wayStairRequestOutput{domain.WayStair{Ways: 1, Combs: "{1}"}},
+		Body: wayStairRequestOutput{Ways: 1, Combinations: "{1}"},
 	}
 
 	getter := MakeMockInputGetter(&input, nil)
