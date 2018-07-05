@@ -17,7 +17,7 @@ func (r *WayStairInteractor) removeDuplicates(elements []string) []string {
 	encountered := map[string]bool{}
 	result := []string{}
 	for _, v := range elements {
-		if encountered[v] != true {
+		if !encountered[v] {
 			// Record this element as an encountered element.
 			encountered[v] = true
 			// Append to result slice.
