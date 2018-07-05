@@ -51,7 +51,7 @@ func (r *StorageWayStair) Get(nth int) (domain.WayStair, error) {
 	return response, nil
 }
 
-// Save sets the nth WayStair to the mapped WayStai.
+// Save sets the nth WayStair to the mapped WayStair.
 // Otherwise returns an error message.
 func (r *StorageWayStair) Save(x domain.WayStair) error {
 	r.mutex.Lock()

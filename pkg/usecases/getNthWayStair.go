@@ -16,12 +16,12 @@ func (r *WayStairInteractor) removeDuplicates(elements []string) []string {
 	// Use map to record duplicates as we find them
 	encountered := map[string]bool{}
 	result := []string{}
-	for v := range elements {
-		if encountered[elements[v]] != true {
+	for _, v := range elements {
+		if encountered[v] != true {
 			// Record this element as an encountered element.
-			encountered[elements[v]] = true
+			encountered[v] = true
 			// Append to result slice.
-			result = append(result, elements[v])
+			result = append(result, v)
 		}
 	}
 	return result
@@ -30,12 +30,10 @@ func (r *WayStairInteractor) removeDuplicates(elements []string) []string {
 // padRight utility function that fill with pad whats required by length
 // Ex. padRight("b", "x", 5) = output: bxxxx
 func (r *WayStairInteractor) padRight(str, pad string, length int) string {
-	for {
+	for i := length; len(str) <= length; i++ {
 		str += pad
-		if len(str) > length {
-			return str[0:length]
-		}
 	}
+	return str
 }
 
 // convertNatural takes any number from any base to return it as base 10/decimal

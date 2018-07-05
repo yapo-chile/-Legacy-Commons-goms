@@ -14,7 +14,7 @@ func (l *wayStairInteractorDefaultLogger) LogBadInput(n int) {
 }
 
 func (l *wayStairInteractorDefaultLogger) LogRepositoryError(i int, x domain.WayStair, err error) {
-	l.logger.Error("Repository refused to accept this Input:%d, (%+v): %s", i, x, err)
+	l.logger.Debug("Repository refused to accept this Input:%d, (%+v): %s", i, x, err)
 }
 
 // MakeWayStairInteractorLogger sets up a WayStairInteractorLogger instrumented
