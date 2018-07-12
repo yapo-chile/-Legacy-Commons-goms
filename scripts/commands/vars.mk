@@ -22,7 +22,6 @@ export REPORT_ARTIFACTS=reports
 # APP variables
 # This variables are for the use of your microservice. This variables must be updated each time you are creating a new microservice
 export APPNAME=goms
-export VERSION=0.0.1
 export EXEC=./${APPNAME}
 export YO=`whoami`
 export SERVICE_HOST=:$(call genport,2)
@@ -42,9 +41,7 @@ export DOCKER_REGISTRY=containers.schibsted.io
 export DOCKER_IMAGE=${DOCKER_REGISTRY}/yapo/${APPNAME}
 export DOCKER_BINARY=${APPNAME}.docker
 export DOCKER_PORT=$(call genport,1)
-
-BUILD_NAME=$(shell if [ -n "${GIT_TAG}" ]; then echo "${GIT_TAG}"; else echo "${GIT_BRANCH}"; fi;)
-export BUILD_TAG=$(shell echo "${BUILD_NAME}" | tr '[:upper:]' '[:lower:]' | sed 's,/,_,g')
+export DOCKER_TAG=$(shell if [ "${GIT_BRANCH}" != "master" ]; then echo ${GIT_BRANCH}- | tr '[:upper:]' '[:lower:]' | sed 's,/,_,g'; fi;)$(shell date -u '+%Y%m%d_%H%M%S')
 
 # Documentation variables
 export DOCS_DIR=docs

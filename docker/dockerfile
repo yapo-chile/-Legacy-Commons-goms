@@ -12,8 +12,7 @@ ENV EXEC ./$BINARY
 LABEL branch=$GIT_BRANCH \
    commit=$GIT_COMMIT \
    build-creator=$BUILD_CREATOR \
-   appname=$APPNAME \
-   version=$VERSION
+   appname=$APPNAME
 
 COPY ${BINARY} /home/user/app/
 RUN touch /home/user/app/$GIT_COMMIT

@@ -31,27 +31,16 @@ fi
 
 echoTitle "Building docker image for ${DOCKER_IMAGE}"
 echo "GIT BRANCH: ${GIT_BRANCH}"
-echo "GIT TAG: ${GIT_TAG}"
 echo "GIT COMMIT: ${GIT_COMMIT}"
 echo "GIT COMMIT SHORT: ${GIT_COMMIT_SHORT}"
 echo "BUILD CREATOR: ${BUILD_CREATOR}"
-echo "BUILD NAME: ${DOCKER_IMAGE}:${BUILD_TAG}"
+echo "IMAGE NAME: ${DOCKER_IMAGE}:${DOCKER_TAG}"
 
-DOCKER_ARGS=""
-
-if [[ "${GIT_BRANCH}" == "master" ]]; then
-     DOCKER_ARGS="${DOCKER_ARGS} \
-         -t ${DOCKER_IMAGE}:${BUILD_TAG} -t ${DOCKER_IMAGE}:latest"
-else
-     DOCKER_ARGS="${DOCKER_ARGS} \
-         -t ${DOCKER_IMAGE}:${BUILD_TAG}"
-fi
-
-DOCKER_ARGS=" ${DOCKER_ARGS} \
+DOCKER_ARGS=" \
+    -t ${DOCKER_IMAGE}:${DOCKER_TAG} \
     --build-arg GIT_BRANCH="$GIT_BRANCH" \
     --build-arg GIT_COMMIT="$GIT_COMMIT" \
     --build-arg BUILD_CREATOR="$BUILD_CREATOR" \
-    --build-arg VERSION="$VERSION" \
     --build-arg APPNAME="$APPNAME" \
     --build-arg BINARY="${DOCKER_BINARY}" \
     -f docker/dockerfile \
