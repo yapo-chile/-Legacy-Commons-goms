@@ -9,10 +9,8 @@ export BUILD_BRANCH=$(shell if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then echo
 
 # GIT variables
 export BRANCH=$(shell git branch | sed -n 's/^\* //p')
-export GIT_BRANCH=$(shell if [ -n "${BUILD_BRANCH}" ]; then echo "${BUILD_BRANCH}"; elif [ -n "${TRAVIS_TAG}" ]; then echo ""; else  echo "${BRANCH}"; fi;)
-export GIT_TAG=$(shell git tag -l --points-at HEAD | tr '\n' '_' | sed 's/_$$//;')
+export GIT_BRANCH=$(shell if [ -n "${BUILD_BRANCH}" ]; then echo "${BUILD_BRANCH}"; else echo "${BRANCH}"; fi;)
 export GIT_COMMIT=$(shell git rev-parse HEAD)
-export GIT_COMMIT_SHORT=$(shell git rev-parse --short HEAD)
 export BUILD_CREATOR=$(shell git log --format=format:%ae | head -n 1)
 
 # REPORT_ARTIFACTS should be in sync with `RegexpFilePathMatcher` in
@@ -41,7 +39,6 @@ export DOCKER_REGISTRY=containers.schibsted.io
 export DOCKER_IMAGE=${DOCKER_REGISTRY}/yapo/${APPNAME}
 export DOCKER_BINARY=${APPNAME}.docker
 export DOCKER_PORT=$(call genport,1)
-export DOCKER_TAG=$(shell if [ "${GIT_BRANCH}" != "master" ]; then echo ${GIT_BRANCH}- | tr '[:upper:]' '[:lower:]' | sed 's,/,_,g'; fi;)$(shell date -u '+%Y%m%d_%H%M%S')
 
 # Documentation variables
 export DOCS_DIR=docs
