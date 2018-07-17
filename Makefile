@@ -26,7 +26,7 @@ build:
 
 ## Execute the service
 run:
-	@${EXEC}
+	@./${APPNAME}
 
 ## Compile and start the service
 start: build run
