@@ -1,5 +1,17 @@
 #!/usr/bin/env bash
 
-echo "Publishing docker image to Artifactory"
-docker login --username "${ARTIFACTORY_USER}" --password "${ARTIFACTORY_PWD}" "${DOCKER_REGISTRY}"
-docker push "${DOCKER_IMAGE}"
+# Include colors.sh
+DIR="${BASH_SOURCE%/*}"
+if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
+. "$DIR/colors.sh"
+
+########### CODE ##############
+
+#Publishing is only allowed throw Travis
+if [[ -n "$TRAVIS" ]]; then
+    echoTitle "Publishing docker image to Artifactory"
+    container_cache login --username "${ARTIFACTORY_USER}" --password "${ARTIFACTORY_PWD}" "${DOCKER_REGISTRY}"
+    container_cache push "${DOCKER_IMAGE}"
+else
+    echoError "DOCKER PUBLISHING IS ONLY ALLOWED IN TRAVIS"
+fi

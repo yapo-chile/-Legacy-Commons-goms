@@ -19,6 +19,13 @@ else
     DOCKER_TAG=local
 fi
 
+#In case we are in travis, we will use cached docker environment.
+if [[ -n "$TRAVIS" ]]; then
+    DOCKER_COMMAND=container_cache
+else
+    DOCKER_COMMAND=docker
+fi
+
 
 ########### CODE ##############
 
@@ -60,7 +67,7 @@ DOCKER_ARGS=" \
 
 echo "args: ${DOCKER_ARGS}"
 set -x
-docker build ${DOCKER_ARGS}
+${DOCKER_COMMAND} build ${DOCKER_ARGS}
 set +x
 
 echoTitle "Build done"
