@@ -7,7 +7,7 @@ if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
 
 ########### CODE ##############
 
-#Publishing is only allowed throw Travis
+#Publishing is only allowed from Travis
 if [[ -n "$TRAVIS" ]]; then
     echoTitle "Publishing docker image to Artifactory"
     container_cache login --username "${ARTIFACTORY_USER}" --password "${ARTIFACTORY_PWD}" "${DOCKER_REGISTRY}"

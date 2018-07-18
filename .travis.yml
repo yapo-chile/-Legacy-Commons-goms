@@ -10,7 +10,7 @@ go:
   - "1.10"
   - master
 
-# This build should not be trigger by tags
+# This build should not be triggered by tags
 if: tags IS blank
 
 matrix:
