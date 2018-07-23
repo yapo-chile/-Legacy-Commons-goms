@@ -4,21 +4,19 @@ ARG GIT_COMMIT
 ARG GIT_BRANCH
 ARG BUILD_CREATOR
 ARG APPNAME
-ARG VERSION
 ARG BINARY
 
-ENV EXEC ./$BINARY
+EXPOSE 8080
+WORKDIR /home/user/app/
+
+# Need to define ENV in order to use it in CMD
+ENV BINARY $BINARY
+CMD ./$BINARY
 
 LABEL branch=$GIT_BRANCH \
    commit=$GIT_COMMIT \
    build-creator=$BUILD_CREATOR \
-   appname=$APPNAME \
-   version=$VERSION
+   appname=$APPNAME
 
 COPY ${BINARY} /home/user/app/
 RUN touch /home/user/app/$GIT_COMMIT
-WORKDIR /home/user/app/
-
-EXPOSE 8080
-
-CMD $EXEC
