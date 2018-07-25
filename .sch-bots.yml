@@ -10,6 +10,8 @@ qualityGate:
     enabled: true
   JIRA:
     enabled: false
+  reviewers:
+    minRequiredApprovals: 2
 reviewersRaffle:
   strategies:
     - owners:
