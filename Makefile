@@ -31,6 +31,12 @@ run:
 ## Compile and start the service
 start: build run
 
+## Compile and start the service using docker
+docker-start: build docker-build docker-compose-up info
+
+## Stop docker containers
+stop: docker-down
+
 ## Setup a new service repository based on goms
 clone:
 	@scripts/commands/clone.sh

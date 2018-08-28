@@ -18,3 +18,7 @@ docker-compose-up:
 ## Stop all running docker containers for this service
 docker-compose-down:
 	@scripts/commands/docker-compose-down.sh
+
+## Down containers using docker-compose
+docker-down:
+	@scripts/commands/docker-compose-down.sh

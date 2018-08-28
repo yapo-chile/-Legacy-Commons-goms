@@ -33,8 +33,10 @@ fi
 echoHeader "Building code for docker platform"
 set -e
 
-rm -f ${DOCKER_BINARY}
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o ${DOCKER_BINARY} ./${MAIN_FILE}
+#Plain binary name is used because in this way we are able to
+#run our process as PID 1 so gracefull stoping instances will be handled efficiently
+rm -f app.docker
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o app.docker ./${MAIN_FILE}
 
 set +e
 
@@ -64,7 +66,6 @@ DOCKER_ARGS=" \
     --build-arg GIT_COMMIT="$GIT_COMMIT" \
     --build-arg BUILD_CREATOR="$BUILD_CREATOR" \
     --build-arg APPNAME="$APPNAME" \
-    --build-arg BINARY="${DOCKER_BINARY}" \
     -f docker/dockerfile \
     ."
 

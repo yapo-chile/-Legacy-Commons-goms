@@ -1,8 +1,9 @@
 package handlers
 
 import (
-	"github.com/Yapo/goutils"
 	"net/http"
+
+	"github.com/Yapo/goutils"
 )
 
 // HealthHandler implements the handler interface and responds to /healthcheck

@@ -13,8 +13,11 @@ import (
 	"github.schibsted.io/Yapo/goms/pkg/usecases"
 )
 
+var shutdownSequence = infrastructure.NewShutdownSequence()
+
 func main() {
 	var conf infrastructure.Config
+	shutdownSequence.Listen()
 	infrastructure.LoadFromEnv(&conf)
 	jconf, _ := json.MarshalIndent(conf, "", "    ")
 	fmt.Printf("Config:\n%s\n", jconf)
@@ -41,7 +44,6 @@ func main() {
 
 	// HealthHandler
 	var healthHandler handlers.HealthHandler
-
 	// FibonacciHandler
 	fibonacciLogger := loggers.MakeFibonacciInteractorLogger(logger)
 	fibonacciRepository := repository.NewMapFibonacciRepository()
@@ -79,6 +81,14 @@ func main() {
 			},
 		},
 	}
+	server := infrastructure.NewHTTPServer(
+		fmt.Sprintf("%s:%d", conf.Runtime.Host, conf.Runtime.Port),
+		maker.NewRouter(),
+		logger,
+	)
+	shutdownSequence.Push(server)
+	go server.ListenAndServe()
+	shutdownSequence.Wait()
 
 	logger.Info("Starting request serving")
 	logger.Crit("%s\n", http.ListenAndServe(conf.ServiceConf.Host, maker.NewRouter()))
