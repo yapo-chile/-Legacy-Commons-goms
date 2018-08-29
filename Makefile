@@ -35,7 +35,7 @@ start: build run
 docker-start: build docker-build docker-compose-up info
 
 ## Stop docker containers
-stop: docker-down
+docker-stop: docker-compose-down
 
 ## Setup a new service repository based on goms
 clone:
