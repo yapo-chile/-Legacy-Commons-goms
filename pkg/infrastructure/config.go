@@ -36,11 +36,18 @@ type NewRelicConf struct {
 	Appname string `env:"APPNAME" envDefault:"yapo-goms-poya"`
 }
 
+// RuntimeConfig config to start the app
+type RuntimeConfig struct {
+	Host string `env:"HOST" envDefault:"0.0.0.0"`
+	Port int    `env:"PORT" envDefault:"8080"`
+}
+
 // Config holds all configuration for the service
 type Config struct {
-	ServiceConf  ServiceConf  `env:"SERVICE_"`
-	NewRelicConf NewRelicConf `env:"NEWRELIC_"`
-	LoggerConf   LoggerConf   `env:"LOGGER_"`
+	ServiceConf  ServiceConf   `env:"SERVICE_"`
+	NewRelicConf NewRelicConf  `env:"NEWRELIC_"`
+	LoggerConf   LoggerConf    `env:"LOGGER_"`
+	Runtime      RuntimeConfig `env:"APP_"`
 }
 
 // LoadFromEnv loads the config data from the environment variables

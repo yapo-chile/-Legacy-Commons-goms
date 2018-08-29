@@ -36,7 +36,6 @@ export PACT_BINARY=${APPNAME}-pact
 # DOCKER variables
 export DOCKER_REGISTRY=containers.schibsted.io
 export DOCKER_IMAGE=${DOCKER_REGISTRY}/yapo/${APPNAME}
-export DOCKER_BINARY=${APPNAME}.docker
 export DOCKER_PORT=$(call genport,1)
 
 # Documentation variables
