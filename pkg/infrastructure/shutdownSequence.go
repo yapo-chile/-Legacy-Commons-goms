@@ -22,7 +22,7 @@ func (s *ShutdownSequence) Push(task io.Closer) {
 }
 
 // Pop removes the last component pushed
-func (s *ShutdownSequence) Pop() io.Closer {
+func (s *ShutdownSequence) pop() io.Closer {
 	if len(s.sequence) > 0 {
 		task := s.sequence[len(s.sequence)-1]
 		s.sequence = s.sequence[:len(s.sequence)-1]
@@ -55,7 +55,7 @@ func (s *ShutdownSequence) Listen() {
 		<-sigint
 		// We received an interrupt signal, shut down.
 		for i := 0; i <= len(s.sequence); i++ {
-			if task := s.Pop(); task != nil {
+			if task := s.pop(); task != nil {
 				if err := task.Close(); err != nil {
 					fmt.Printf("Error closing the task of type %T: %+v\n", task, err)
 				}
