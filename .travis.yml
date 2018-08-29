@@ -9,10 +9,10 @@ go:
 # This build should not be triggered by tags
 if: tags IS blank
 
-# Anything in before_script that returns a nonzero exit code will
+# Anything in install that returns a nonzero exit code will
 # flunk the build and immediately stop. It's sorta like having
 # set -e enabled in bash.
-before_script:
+install:
   # run the initial setup
   - make setup
   # Export the current branch according to travis (including pr builds) 
