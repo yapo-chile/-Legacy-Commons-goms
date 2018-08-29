@@ -30,7 +30,10 @@ after_failure:
 
 after_success:
   - reports-publisher
-  - make docker-publish
+
+deploy:
+  - provider: script
+    script: make docker-publish
 
 notifications:
   webhooks:
