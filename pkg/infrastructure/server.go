@@ -4,13 +4,13 @@ import (
 	"context"
 	"net/http"
 
-	"github.schibsted.io/Yapo/payment-schedule/pkg/domain"
+	"github.schibsted.io/Yapo/goms/pkg/interfaces/loggers"
 )
 
 // Server struct that implements http server to routes incoming requests
 // to be proccessed. Server also includes logger to log messages in case of error
 type Server struct {
-	logger domain.Logger
+	logger loggers.Logger
 	server *http.Server
 }
 
@@ -18,7 +18,7 @@ type Server struct {
 // methods. NewHttpServer also includes close method to implements io.closer
 func NewHTTPServer(addr string,
 	routes http.Handler,
-	logger domain.Logger) *Server {
+	logger loggers.Logger) *Server {
 	return &Server{
 		logger: logger,
 		server: &http.Server{
