@@ -7,7 +7,7 @@ if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
 
 ########### DYNAMIC VARS ###############
 
-#In case we are in travis, docker tag will be "branch_name-20180101-1200". In case of master branch, branch-name is blank.
+#In case we are in travis, docker tag will be "branch_name-20180101-1200". In case of master branch, branch_name is blank.
 #In case of local build (not in travis) tag will be "local".
 if [[ -n "$TRAVIS" ]]; then
     if [ "${GIT_BRANCH}" != "master" ]; then
@@ -18,6 +18,9 @@ if [[ -n "$TRAVIS" ]]; then
 else
     DOCKER_TAG=local
 fi
+
+#Share docker tag with docker-publish
+export DOCKER_TAG
 
 #In case we are in travis, we will use cached docker environment.
 if [[ -n "$TRAVIS" ]]; then
