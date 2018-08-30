@@ -20,7 +20,7 @@ else
 fi
 
 #Share docker tag with docker-publish
-export DOCKER_TAG
+export DOCKER_TAG=$DOCKER_TAG
 
 #In case we are in travis, we will use cached docker environment.
 if [[ -n "$TRAVIS" ]]; then
