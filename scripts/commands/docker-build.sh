@@ -12,9 +12,9 @@ if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
 
 if [[ -n "$TRAVIS" ]]; then
     if [ "${GIT_BRANCH}" != "master" ]; then
-        DOCKER_TAG=$(echo ${GIT_BRANCH}-${TAG})
+        DOCKER_TAG=$(echo ${GIT_BRANCH}-${GIT_COMMIT_DATE_TAG})
     else
-        DOCKER_TAG=${TAG}
+        DOCKER_TAG=${GIT_COMMIT_DATE_TAG}
     fi
 else
     DOCKER_TAG=local
