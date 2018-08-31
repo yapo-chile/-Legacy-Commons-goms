@@ -13,7 +13,7 @@ export GIT_BRANCH=$(shell if [ -n "${BUILD_BRANCH}" ]; then echo "${BUILD_BRANCH
 export GIT_COMMIT=$(shell git rev-parse HEAD)
 # if TZ=UTC is removed, local hour will be parse instead
 export GIT_COMMIT_DATE=$(shell TZ=UTC git show --quiet --date='format-local:%d-%m-%Y_%H:%M:%S' --format="%cd")
-
+export TAG=$(shell TZ=UTC git show --quiet --date='format-local:%Y%m%d_%H%M%S' --format="%cd")
 export BUILD_CREATOR=$(shell git log --format=format:%ae | head -n 1)
 
 # REPORT_ARTIFACTS should be in sync with `RegexpFilePathMatcher` in
