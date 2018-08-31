@@ -11,9 +11,9 @@ if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
 #In case of local build (not in travis) tag will be "local".
 if [[ -n "$TRAVIS" ]]; then
     if [ "${GIT_BRANCH}" != "master" ]; then
-        DOCKER_TAG=$(echo ${GIT_BRANCH}- | tr '[:upper:]' '[:lower:]' | sed 's,/,_,g')$(date -u '+%Y%m%d_%H%M%S')
+        DOCKER_TAG=$(echo ${GIT_BRANCH}- | tr '[:upper:]' '[:lower:]' | sed 's,/,_,g')${GIT_COMMIT_DATE}
     else
-        DOCKER_TAG=$(date -u '+%Y%m%d_%H%M%S')
+        DOCKER_TAG=${GIT_COMMIT_DATE}
     fi
 else
     DOCKER_TAG=local
