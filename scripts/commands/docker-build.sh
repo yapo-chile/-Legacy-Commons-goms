@@ -10,10 +10,14 @@ if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
 #In case we are in travis, docker tag will be "branch_name-20180101-1200". In case of master branch, branch-name is blank.
 #In case of local build (not in travis) tag will be "local".
 
-if [ "${GIT_BRANCH}" != "master" ]; then
-    DOCKER_TAG=$(echo ${GIT_BRANCH} | tr '[:upper:]' '[:lower:]' | sed 's,/,_,g')
+if [[ -n "$TRAVIS" ]]; then
+    if [ "${GIT_BRANCH}" != "master" ]; then
+        DOCKER_TAG=$(echo ${GIT_BRANCH} | tr '[:upper:]' '[:lower:]' | sed 's,/,_,g')
+    else
+        DOCKER_TAG=$(TZ=UTC git show --quiet --date='format-local:%Y%m%d_%H%M%S' --format="%cd")
+    fi
 else
-    DOCKER_TAG=$(shell TZ=UTC git show --quiet --date='format-local:%Y%m%d_%H%M%S' --format="%cd")
+    DOCKER_TAG=local
 fi
 
 #In case we are in travis, we will use cached docker environment.
