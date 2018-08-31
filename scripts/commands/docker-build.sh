@@ -57,6 +57,7 @@ fi
 echoTitle "Building docker image for ${DOCKER_IMAGE}"
 echo "GIT BRANCH: ${GIT_BRANCH}"
 echo "GIT COMMIT: ${GIT_COMMIT}"
+# echo "GIT COMMIT DATE: ${GIT_COMMIT_DATE}"
 echo "BUILD CREATOR: ${BUILD_CREATOR}"
 echo "IMAGE NAME: ${DOCKER_IMAGE}:${DOCKER_TAG}"
 
@@ -64,10 +65,12 @@ DOCKER_ARGS=" \
     -t ${DOCKER_IMAGE}:${DOCKER_TAG} \
     --build-arg GIT_BRANCH="$GIT_BRANCH" \
     --build-arg GIT_COMMIT="$GIT_COMMIT" \
+    --build-arg GIT_COMMIT_DATE="$GIT_COMMIT_DATE" \
     --build-arg BUILD_CREATOR="$BUILD_CREATOR" \
     --build-arg APPNAME="$APPNAME" \
     -f docker/dockerfile \
     ."
+# --build-arg GIT_COMMIT_DATE="$GIT_COMMIT_DATE" \
 
 echo "args: ${DOCKER_ARGS}"
 set -x
