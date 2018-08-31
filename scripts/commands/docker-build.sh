@@ -13,7 +13,7 @@ if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
 if [ "${GIT_BRANCH}" != "master" ]; then
     DOCKER_TAG=$(echo ${GIT_BRANCH} | tr '[:upper:]' '[:lower:]' | sed 's,/,_,g')
 else
-    DOCKER_TAG=${GIT_COMMIT_DATE_TAG}
+    DOCKER_TAG=$(shell TZ=UTC git show --quiet --date='format-local:%Y%m%d_%H%M%S' --format="%cd")
 fi
 
 #In case we are in travis, we will use cached docker environment.
