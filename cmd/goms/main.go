@@ -19,8 +19,9 @@ func main() {
 	var conf infrastructure.Config
 	shutdownSequence.Listen()
 	infrastructure.LoadFromEnv(&conf)
-	jconf, _ := json.MarshalIndent(conf, "", "    ")
-	fmt.Printf("Config:\n%s\n", jconf)
+	if jconf, err := json.MarshalIndent(conf, "", "    "); err != nil {
+		fmt.Printf("Config: \n%s\n", jconf)
+	}
 
 	fmt.Printf("Setting up logger\n")
 	logger, err := infrastructure.MakeYapoLogger(&conf.LoggerConf)
