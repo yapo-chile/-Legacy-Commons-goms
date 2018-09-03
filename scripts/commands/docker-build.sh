@@ -9,11 +9,12 @@ if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
 
 #In case we are in travis, docker tag will be "branch_name-20180101-1200". In case of master branch, branch-name is blank.
 #In case of local build (not in travis) tag will be "local".
+
 if [[ -n "$TRAVIS" ]]; then
     if [ "${GIT_BRANCH}" != "master" ]; then
-        DOCKER_TAG=$(echo ${GIT_BRANCH}- | tr '[:upper:]' '[:lower:]' | sed 's,/,_,g')$(date -u '+%Y%m%d_%H%M%S')
+        DOCKER_TAG=$(echo ${GIT_BRANCH} | tr '[:upper:]' '[:lower:]' | sed 's,/,_,g')
     else
-        DOCKER_TAG=$(date -u '+%Y%m%d_%H%M%S')
+        DOCKER_TAG=$(TZ=UTC git show --quiet --date='format-local:%Y%m%d_%H%M%S' --format="%cd")
     fi
 else
     DOCKER_TAG=local
@@ -57,6 +58,7 @@ fi
 echoTitle "Building docker image for ${DOCKER_IMAGE}"
 echo "GIT BRANCH: ${GIT_BRANCH}"
 echo "GIT COMMIT: ${GIT_COMMIT}"
+echo "GIT COMMIT DATE: ${GIT_COMMIT_DATE}"
 echo "BUILD CREATOR: ${BUILD_CREATOR}"
 echo "IMAGE NAME: ${DOCKER_IMAGE}:${DOCKER_TAG}"
 
@@ -64,6 +66,7 @@ DOCKER_ARGS=" \
     -t ${DOCKER_IMAGE}:${DOCKER_TAG} \
     --build-arg GIT_BRANCH="$GIT_BRANCH" \
     --build-arg GIT_COMMIT="$GIT_COMMIT" \
+    --build-arg GIT_COMMIT_DATE="$GIT_COMMIT_DATE" \
     --build-arg BUILD_CREATOR="$BUILD_CREATOR" \
     --build-arg APPNAME="$APPNAME" \
     -f docker/dockerfile \
