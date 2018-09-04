@@ -11,6 +11,7 @@ export BUILD_BRANCH=$(shell if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then echo
 export BRANCH=$(shell git branch | sed -n 's/^\* //p')
 export GIT_BRANCH=$(shell if [ -n "${BUILD_BRANCH}" ]; then echo "${BUILD_BRANCH}"; else echo "${BRANCH}"; fi;)
 export GIT_COMMIT=$(shell git rev-parse HEAD)
+export GIT_COMMIT_DATE=$(shell TZ="America/Santiago" git show --quiet --date='format-local:%d-%m-%Y_%H:%M:%S' --format="%cd")
 export BUILD_CREATOR=$(shell git log --format=format:%ae | head -n 1)
 
 # REPORT_ARTIFACTS should be in sync with `RegexpFilePathMatcher` in

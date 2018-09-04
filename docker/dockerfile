@@ -3,6 +3,7 @@ RUN apk update && apk add ca-certificates && rm -rf /var/cache/apk/*
 
 ARG GIT_COMMIT
 ARG GIT_BRANCH
+ARG GIT_COMMIT_DATE
 ARG BUILD_CREATOR
 ARG APPNAME
 
@@ -10,8 +11,10 @@ ENV PS1="\[\e[1;32m\]$APPNAME \[\e[1;31m\][`pwd`] # \[\e[0m\]"
 ENV TZ America/Santiago
 
 # Need to define ENV in order to use it in CMD
+
 LABEL branch=$GIT_BRANCH \
    commit=$GIT_COMMIT \
+   commit-date=$GIT_COMMIT_DATE \
    build-creator=$BUILD_CREATOR \
    appname=$APPNAME
 
