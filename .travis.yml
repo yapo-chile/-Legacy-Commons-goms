@@ -1,31 +1,18 @@
 dist: trusty
 language: go
 
-# Only the last two Go releases are supported by the Go team with security
-# updates. Any versions older than that should be considered deprecated.
-# Don't bother testing with them. tip builds your code with the latest
-# development version of Go. This can warn you that your code will break
-# in the next version of Go. Don't worry! Later we declare that test runs
-# are allowed to fail on Go tip.
+# Only current version is considered given limitations to publish more than one
+# report per build to Quality Gates.
 go:
-  - "1.10"
-  - master
+  - "1.11"
 
 # This build should not be triggered by tags
 if: tags IS blank
 
-matrix:
-  # It's ok if our code fails on unstable development versions of Go.
-  allow_failures:
-    - go: master
-  # Don't wait for tip tests to finish. Mark the test run green if the
-  # tests pass on the stable versions of Go.
-  fast_finish: true
-
-# Anything in before_script that returns a nonzero exit code will
+# Anything in install that returns a nonzero exit code will
 # flunk the build and immediately stop. It's sorta like having
 # set -e enabled in bash.
-before_script:
+install:
   # run the initial setup
   - make setup
   # Export the current branch according to travis (including pr builds) 
@@ -43,7 +30,12 @@ after_failure:
 
 after_success:
   - reports-publisher
-  - make docker-publish
+
+deploy:
+  - provider: script
+    script: make docker-publish
+    on:
+      all_branches: true
 
 notifications:
   webhooks:
