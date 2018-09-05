@@ -7,6 +7,9 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
+// PrometheusHandler provides both, a way to instrument http.HandlerFunc with
+// Prometheus, and a Prometheus http.Handler that can receive scrape requests
+// from a central server
 type PrometheusHandler struct {
 	counter      *prometheus.CounterVec
 	duration     prometheus.ObserverVec
@@ -15,6 +18,8 @@ type PrometheusHandler struct {
 	responseSize prometheus.ObserverVec
 }
 
+// MakePrometheusHandler Builds a fresh PrometheusHandler, initializing its
+// metrics
 func MakePrometheusHandler() PrometheusHandler {
 	h := PrometheusHandler{
 		counter: prometheus.NewCounterVec(
@@ -59,6 +64,8 @@ func MakePrometheusHandler() PrometheusHandler {
 	return h
 }
 
+// TrackHandlerFunc instruments handler with Prometheus, adding every
+// configured metric
 func (h *PrometheusHandler) TrackHandlerFunc(pattern string, handler http.HandlerFunc) http.HandlerFunc {
 	return promhttp.InstrumentHandlerInFlight(h.inFlight,
 		promhttp.InstrumentHandlerCounter(h.counter,
@@ -71,6 +78,8 @@ func (h *PrometheusHandler) TrackHandlerFunc(pattern string, handler http.Handle
 	).ServeHTTP
 }
 
+// Handler returns an http.Handler suitable to handle prometheus scraping
+// requests. Usually it's run under /metrics URL
 func (h *PrometheusHandler) Handler() http.Handler {
 	return promhttp.Handler()
 }
