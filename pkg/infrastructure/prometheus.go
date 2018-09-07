@@ -47,7 +47,7 @@ func MakePrometheusHandler() PrometheusHandler {
 				Help:    "A histogram of request sizes for requests.",
 				Buckets: []float64{50, 100, 200, 500, 1000, 1500},
 			},
-			[]string{},
+			[]string{"handler", "method"},
 		),
 		responseSize: prometheus.NewHistogramVec(
 			prometheus.HistogramOpts{
@@ -55,7 +55,7 @@ func MakePrometheusHandler() PrometheusHandler {
 				Help:    "A histogram of response sizes for requests.",
 				Buckets: []float64{200, 500, 900, 1500},
 			},
-			[]string{},
+			[]string{"handler", "method"},
 		),
 	}
 
@@ -67,11 +67,23 @@ func MakePrometheusHandler() PrometheusHandler {
 // TrackHandlerFunc instruments handler with Prometheus, adding every
 // configured metric
 func (h *PrometheusHandler) TrackHandlerFunc(pattern string, handler http.HandlerFunc) http.HandlerFunc {
+	// In Flight requests
 	return promhttp.InstrumentHandlerInFlight(h.inFlight,
-		promhttp.InstrumentHandlerCounter(h.counter,
-			promhttp.InstrumentHandlerDuration(h.duration.MustCurryWith(prometheus.Labels{"handler": pattern}),
-				promhttp.InstrumentHandlerRequestSize(h.requestSize,
-					promhttp.InstrumentHandlerResponseSize(h.responseSize, handler),
+		// Request Counter
+		promhttp.InstrumentHandlerCounter(
+			h.counter.MustCurryWith(prometheus.Labels{"handler": pattern}),
+			// Duration
+			promhttp.InstrumentHandlerDuration(
+				h.duration.MustCurryWith(prometheus.Labels{"handler": pattern}),
+				// Request Size
+				promhttp.InstrumentHandlerRequestSize(
+					h.requestSize.MustCurryWith(prometheus.Labels{"handler": pattern}),
+					// Response Size
+					promhttp.InstrumentHandlerResponseSize(
+						h.responseSize.MustCurryWith(prometheus.Labels{"handler": pattern}),
+						// Replace this handler to add new metrics
+						handler,
+					),
 				),
 			),
 		),
