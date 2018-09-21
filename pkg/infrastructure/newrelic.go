@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/newrelic/go-agent"
-	"github.schibsted.io/Yapo/payment-schedule/pkg/domain"
+	"github.schibsted.io/Yapo/goms/pkg/interfaces/loggers"
 )
 
 // NewRelicHandler struct representing a NewRelic handler with the new relic app
@@ -13,7 +13,7 @@ type NewRelicHandler struct {
 	Key     string
 	app     newrelic.Application
 	Enabled bool
-	Logger  domain.Logger
+	Logger  loggers.Logger
 }
 
 // Start initializes the NewRelicHandler
