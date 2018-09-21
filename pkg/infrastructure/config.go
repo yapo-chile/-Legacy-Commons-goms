@@ -34,6 +34,7 @@ type LoggerConf struct {
 type NewRelicConf struct {
 	Key     string `env:"KEY" envDefault:"923864cba2f12410aff39279cddfd339a07f13a3"`
 	Appname string `env:"APPNAME" envDefault:"yapo-goms-poya"`
+	Enabled bool   `env:"ENABLED" envDefault:"false"`
 }
 
 // RuntimeConfig config to start the app
