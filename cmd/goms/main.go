@@ -34,6 +34,8 @@ func main() {
 	newrelic := infrastructure.NewRelicHandler{
 		Appname: conf.NewRelicConf.Appname,
 		Key:     conf.NewRelicConf.Key,
+		Enabled: conf.NewRelicConf.Enabled,
+		Logger:  logger,
 	}
 	err = newrelic.Start()
 	if err != nil {
