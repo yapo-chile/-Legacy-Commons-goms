@@ -1,5 +1,5 @@
-hash: 45dc56e2fe31ff490be02b73124387ae8d8dc095cff01809b3fc8e596b2bafaf
-updated: 2018-06-26T11:04:33.993388-04:00
+hash: 9e004f15a1c58d8a861356d4d521183c765425ccc99aa62e5114404d9bd2c97c
+updated: 2018-12-03T11:35:43.197913-03:00
 imports:
 - name: github.com/gorilla/context
   version: 08b5f424b9271eedf6f9f0ce86cb9396ed337a42
@@ -13,7 +13,7 @@ imports:
   - internal/sysinfo
   - internal/utilization
 - name: github.com/Yapo/goutils
-  version: 721ca4146b6a61457bd15254c0fc1d6f6bcbce20
+  version: 8563913313114ecb543b197533daa93aedb513e5
 - name: github.com/Yapo/logger
   version: 91855e974718b8c68dd00e63817568f1f512a4cc
 - name: gopkg.in/facebookgo/atomicfile.v0
