@@ -20,6 +20,8 @@ func main() {
 	infrastructure.LoadFromEnv(&conf)
 	if jconf, err := json.MarshalIndent(conf, "", "    "); err == nil {
 		fmt.Printf("Config: \n%s\n", jconf)
+	} else {
+		fmt.Printf("Config: \n%+v\n", conf)
 	}
 
 	fmt.Printf("Setting up logger\n")
