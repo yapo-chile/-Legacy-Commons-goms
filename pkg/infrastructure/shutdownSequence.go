@@ -51,7 +51,7 @@ func (s *ShutdownSequence) Wait() {
 func (s *ShutdownSequence) Listen() {
 	go func() {
 		sigint := make(chan os.Signal, 1)
-		signal.Notify(sigint)
+		signal.Notify(sigint, os.Interrupt)
 		<-sigint
 		// We received an interrupt signal, shut down.
 		for i := 0; i <= len(s.sequence); i++ {
