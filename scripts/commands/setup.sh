@@ -20,11 +20,11 @@ tools=(
 echoTitle "Installing missing tools"
 # Install missed tools
 for tool in ${tools[@]}; do
-    go get -u -v ${tool}
+    env GO111MODULE=off go get -u -v ${tool}
 done
 
 echoTitle "Installing linters"
 # Install all available linters
-gometalinter.v2 --install
+env GO111MODULE=off gometalinter.v2 --install
 
 set +e
