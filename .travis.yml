@@ -22,8 +22,8 @@ install:
 # in a modern Go project.
 script:
   # Generate coverage and checkstyle report
-  - make test
-  - make docker-build
+  - env GO111MODULE=on make test
+  - env GO111MODULE=on make docker-build
 
 after_failure:
   - reports-publisher
