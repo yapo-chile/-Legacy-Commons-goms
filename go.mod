@@ -10,7 +10,6 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/stretchr/objx v0.1.1 // indirect
 	github.com/stretchr/testify v1.2.2
-	gopkg.in/facebookgo/atomicfile.v0 v0.0.0-20151019160806-2de1f203e7d5 // indirect
 	gopkg.in/gorilla/mux.v1 v1.6.2
 	gopkg.in/stretchr/testify.v1 v1.2.2 // indirect
 )

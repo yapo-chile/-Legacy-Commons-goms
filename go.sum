@@ -16,7 +16,6 @@ github.com/stretchr/objx v0.1.1 h1:2vfRuCMp5sSVIDSqO8oNnWJq7mPa6KVP3iPIwFBuy8A=
 github.com/stretchr/objx v0.1.1/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.2.2 h1:bSDNvY7ZPG5RlJ8otE/7V6gMiyenm9RtJ7IUVIAoJ1w=
 github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
-gopkg.in/facebookgo/atomicfile.v0 v0.0.0-20151019160806-2de1f203e7d5/go.mod h1:yiizTbH5YPITgnaIs//6z2Lz/0oqgYCdauayxU3327A=
 gopkg.in/gorilla/mux.v1 v1.6.2 h1:tqLaxQbXrLoJ8s8TxRt8h0Cy8tC6hoZYPUh6XEydXdQ=
 gopkg.in/gorilla/mux.v1 v1.6.2/go.mod h1:e2OVw+7KJ9sr6MyI5tOf+k3H6vtMSI2/AnbzLAWuwRw=
 gopkg.in/stretchr/testify.v1 v1.2.2 h1:yhQC6Uy5CqibAIlk1wlusa/MJ3iAN49/BsR/dCCKz3M=
