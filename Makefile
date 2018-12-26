@@ -32,7 +32,7 @@ run:
 start: build run
 
 ## Compile and start the service using docker
-docker-start: build docker-build docker-compose-up info
+docker-start: docker-build docker-compose-up info
 
 ## Stop docker containers
 docker-stop: docker-compose-down
