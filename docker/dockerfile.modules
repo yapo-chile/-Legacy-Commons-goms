@@ -1,0 +1,11 @@
+FROM golang:1.11
+
+ARG APPNAME
+
+ADD ./ /goms
+WORKDIR /goms
+RUN go mod init github.schibsted.io/Yapo/goms
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o /app.linux cmd/$APPNAME/main.go
+
+EXPOSE 8080
+CMD ["/app.linux"]
