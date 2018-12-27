@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"net/http"
 	"os"
 
 	"github.schibsted.io/Yapo/goms/pkg/infrastructure"
@@ -19,8 +18,10 @@ func main() {
 	var conf infrastructure.Config
 	shutdownSequence.Listen()
 	infrastructure.LoadFromEnv(&conf)
-	if jconf, err := json.MarshalIndent(conf, "", "    "); err != nil {
+	if jconf, err := json.MarshalIndent(conf, "", "    "); err == nil {
 		fmt.Printf("Config: \n%s\n", jconf)
+	} else {
+		fmt.Printf("Config: \n%+v\n", conf)
 	}
 
 	fmt.Printf("Setting up logger\n")
@@ -90,9 +91,8 @@ func main() {
 		logger,
 	)
 	shutdownSequence.Push(server)
+	logger.Info("Starting request serving")
 	go server.ListenAndServe()
 	shutdownSequence.Wait()
-
-	logger.Info("Starting request serving")
-	logger.Crit("%s\n", http.ListenAndServe(conf.ServiceConf.Host, maker.NewRouter()))
+	logger.Info("Server exited normally")
 }

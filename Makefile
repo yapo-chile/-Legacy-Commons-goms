@@ -26,7 +26,7 @@ build:
 
 ## Execute the service
 run:
-	@./${APPNAME}
+	@env APP_PORT=${SERVICE_PORT} ./${APPNAME}
 
 ## Compile and start the service
 start: build run
