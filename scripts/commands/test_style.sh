@@ -13,11 +13,11 @@ CHECKSTYLE_FILE=${REPORT_ARTIFACTS}/checkstyle-report.xml
 
 echoHeader "Running Checkstyle Tests"
 
-COMMAND='gometalinter.v2 ./... --config ".gometalinter.json"'
+COMMAND='golangci-lint run --no-config --enable-all --deadline 5m'
 if [[ $@ == **display** ]]; then
     COMMAND="${COMMAND}"
 else
-    COMMAND="${COMMAND} --checkstyle | tee /dev/tty > ${CHECKSTYLE_FILE}"
+    COMMAND="${COMMAND} --out-format checkstyle | tee /dev/tty > ${CHECKSTYLE_FILE}"
 fi
 
 eval ${COMMAND}
