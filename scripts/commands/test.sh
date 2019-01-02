@@ -6,5 +6,5 @@ if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
 
 echoHeader "Running Tests"
 
-env GO111MODULE=off "$DIR/test_style.sh"
-env GO111MODULE=on "$DIR/test_cover.sh"
+"$DIR/test_style.sh"
+"$DIR/test_cover.sh"
