@@ -7,6 +7,7 @@ import (
 	"github.com/gorilla/context"
 	"github.schibsted.io/Yapo/goms/pkg/interfaces/handlers"
 	"github.schibsted.io/Yapo/goms/pkg/interfaces/loggers"
+
 	"gopkg.in/gorilla/mux.v1"
 )
 

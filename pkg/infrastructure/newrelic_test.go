@@ -23,7 +23,7 @@ func TestNewrelicStartError(t *testing.T) {
 }
 
 func MockHandlerFunc(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("been there"))
+	w.Write([]byte("been there")) // nolint: errcheck
 }
 
 func TestNewrelicStartOk(t *testing.T) {

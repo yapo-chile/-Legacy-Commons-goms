@@ -2,12 +2,13 @@ package usecases
 
 import (
 	"fmt"
+
 	"github.schibsted.io/Yapo/goms/pkg/domain"
 )
 
 // GetNthFibonacciUsecase states:
 // As a User, I would like to know which the Nth Fibonacci Number is.
-// GetNth should return that number to me, or an appropiate error if not possible.
+// GetNth should return that number to me, or an appropriate error if not possible.
 type GetNthFibonacciUsecase interface {
 	GetNth(n int) (domain.Fibonacci, error)
 }

@@ -2,12 +2,13 @@ package handlers
 
 import (
 	"errors"
+	"net/http"
+	"testing"
+
 	"github.com/Yapo/goutils"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.schibsted.io/Yapo/goms/pkg/domain"
-	"net/http"
-	"testing"
 )
 
 type MockFibonacciInteractor struct {

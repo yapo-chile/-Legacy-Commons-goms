@@ -69,7 +69,7 @@ func TestFibonacciRepositoryConcurrentAccess(t *testing.T) {
 		a, _ := r.Get(1)
 		b, _ := r.Get(2)
 		for i := 3; i < 1000; i++ {
-			r.Save(i, a+b)
+			r.Save(i, a+b) // nolint: errcheck
 			p := r.LatestPair()
 			a = p.A
 			b, _ = r.Get(i)

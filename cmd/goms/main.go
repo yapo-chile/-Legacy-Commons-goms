@@ -12,11 +12,12 @@ import (
 	"github.schibsted.io/Yapo/goms/pkg/usecases"
 )
 
-var shutdownSequence = infrastructure.NewShutdownSequence()
-
 func main() {
-	var conf infrastructure.Config
+
+	shutdownSequence := infrastructure.NewShutdownSequence()
 	shutdownSequence.Listen()
+
+	var conf infrastructure.Config
 	infrastructure.LoadFromEnv(&conf)
 	if jconf, err := json.MarshalIndent(conf, "", "    "); err == nil {
 		fmt.Printf("Config: \n%s\n", jconf)
