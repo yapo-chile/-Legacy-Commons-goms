@@ -13,6 +13,7 @@ CHECKSTYLE_FILE=${REPORT_ARTIFACTS}/checkstyle-report.xml
 
 echoHeader "Running Checkstyle Tests"
 
+env
 COMMAND='golangci-lint run --no-config --enable-all --deadline 5m'
 if [[ $@ == **display** ]]; then
     COMMAND="${COMMAND}"

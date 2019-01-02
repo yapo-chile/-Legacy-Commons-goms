@@ -2,7 +2,7 @@ include scripts/commands/vars.mk
 
 ## Run tests and generate quality reports
 test:
-	@scripts/commands/test.sh
+	@bash -x scripts/commands/test.sh
 
 ## Run tests and output coverage reports
 cover:
