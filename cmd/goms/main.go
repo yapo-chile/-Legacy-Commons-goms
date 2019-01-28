@@ -102,7 +102,8 @@ func main() {
 	logger.Info("Server exited normally")
 
 	router := maker.NewRouter()
-	router.Handle("/metrics", prometheus.Handler())
+	// Prometheus metric handler
+	router.Handle("/metrics", prometheus.Handler()).Name("metrics")
 
 	logger.Info("Starting request serving")
 	logger.Crit("%s\n", http.ListenAndServe(conf.ServiceConf.Host, router))

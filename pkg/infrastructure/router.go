@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"net/http/pprof"
 
-	"github.com/gorilla/context"
 	"github.schibsted.io/Yapo/goms/pkg/interfaces/handlers"
 	"github.schibsted.io/Yapo/goms/pkg/interfaces/loggers"
 	"gopkg.in/gorilla/mux.v1"
@@ -39,7 +38,7 @@ type RouterMaker struct {
 }
 
 // NewRouter setups a Router based on the provided routes
-func (maker *RouterMaker) NewRouter() http.Handler {
+func (maker *RouterMaker) NewRouter() *mux.Router {
 	router := mux.NewRouter()
 	for _, routeGroup := range maker.Routes {
 		subRouter := router.PathPrefix(routeGroup.Prefix).Subrouter()
@@ -69,5 +68,5 @@ func (maker *RouterMaker) NewRouter() http.Handler {
 		router.Handle("/debug/pprof/mutex", pprof.Handler("mutex"))
 		router.Handle("/debug/pprof/threadcreate", pprof.Handler("threadcreate"))
 	}
-	return context.ClearHandler(router)
+	return router
 }
