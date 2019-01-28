@@ -16,18 +16,19 @@ type PrometheusHandler struct {
 	inFlight     prometheus.Gauge
 	requestSize  prometheus.ObserverVec
 	responseSize prometheus.ObserverVec
+	Enabled      bool
 }
 
 // MakePrometheusHandler Builds a fresh PrometheusHandler, initializing its
 // metrics
-func MakePrometheusHandler() PrometheusHandler {
+func MakePrometheusHandler(enabled bool) PrometheusHandler {
 	h := PrometheusHandler{
 		counter: prometheus.NewCounterVec(
 			prometheus.CounterOpts{
 				Name: "api_requests_total",
 				Help: "A counter for requests to the wrapped handler.",
 			},
-			[]string{"code", "method"},
+			[]string{"handler", "method"},
 		),
 		duration: prometheus.NewHistogramVec(
 			prometheus.HistogramOpts{
@@ -57,6 +58,7 @@ func MakePrometheusHandler() PrometheusHandler {
 			},
 			[]string{"handler", "method"},
 		),
+		Enabled: enabled,
 	}
 
 	// Register all of the metrics in the standard registry.
@@ -66,28 +68,35 @@ func MakePrometheusHandler() PrometheusHandler {
 
 // TrackHandlerFunc instruments handler with Prometheus, adding every
 // configured metric
-func (h *PrometheusHandler) TrackHandlerFunc(pattern string, handler http.HandlerFunc) http.HandlerFunc {
-	// In Flight requests
-	return promhttp.InstrumentHandlerInFlight(h.inFlight,
-		// Request Counter
-		promhttp.InstrumentHandlerCounter(
-			h.counter.MustCurryWith(prometheus.Labels{"handler": pattern}),
-			// Duration
-			promhttp.InstrumentHandlerDuration(
-				h.duration.MustCurryWith(prometheus.Labels{"handler": pattern}),
-				// Request Size
-				promhttp.InstrumentHandlerRequestSize(
-					h.requestSize.MustCurryWith(prometheus.Labels{"handler": pattern}),
-					// Response Size
-					promhttp.InstrumentHandlerResponseSize(
-						h.responseSize.MustCurryWith(prometheus.Labels{"handler": pattern}),
-						// Replace this handler to add new metrics
-						handler,
+func (h *PrometheusHandler) TrackHandlerFunc(handlerName string, handler http.HandlerFunc) http.HandlerFunc {
+	if !h.Enabled {
+		return handler
+	}
+	handler =
+		// In Flight requests
+		promhttp.InstrumentHandlerInFlight(
+			h.inFlight,
+			// Request Counter
+			promhttp.InstrumentHandlerCounter(
+				h.counter.MustCurryWith(prometheus.Labels{"handler": handlerName}),
+				// Duration
+				promhttp.InstrumentHandlerDuration(
+					h.duration.MustCurryWith(prometheus.Labels{"handler": handlerName}),
+					// Request Size
+					promhttp.InstrumentHandlerRequestSize(
+						h.requestSize.MustCurryWith(prometheus.Labels{"handler": handlerName}),
+						// Response Size
+						promhttp.InstrumentHandlerResponseSize(
+							h.responseSize.MustCurryWith(prometheus.Labels{"handler": handlerName}),
+							// Replace this handler to add new metrics
+							handler,
+						),
 					),
 				),
 			),
-		),
-	).ServeHTTP
+		).ServeHTTP
+	// return tracked handler
+	return handler
 }
 
 // Handler returns an http.Handler suitable to handle prometheus scraping

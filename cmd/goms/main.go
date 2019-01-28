@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"net/http"
 	"os"
 
 	"github.schibsted.io/Yapo/goms/pkg/infrastructure"
@@ -46,8 +45,7 @@ func main() {
 	}
 
 	logger.Info("Setting up Prometheus")
-
-	prometheus := infrastructure.MakePrometheusHandler()
+	prometheus := infrastructure.MakePrometheusHandler(conf.PrometheusConf.Enabled)
 
 	logger.Info("Initializing resources")
 
@@ -67,7 +65,7 @@ func main() {
 	// Setting up router
 	maker := infrastructure.RouterMaker{
 		Logger:        logger,
-		WrapperFunc:   prometheus.TrackHandlerFunc,
+		WrapperFuncs:  []infrastructure.WrapperFunc{newrelic.TrackHandlerFunc, prometheus.TrackHandlerFunc},
 		WithProfiling: conf.ServiceConf.Profiling,
 		Routes: infrastructure.Routes{
 			{
@@ -90,9 +88,18 @@ func main() {
 			},
 		},
 	}
+
+	router := maker.NewRouter()
+
+	if conf.PrometheusConf.Enabled {
+		logger.Info("Prometheus On")
+		// Prometheus metric handler
+		router.Handle("/metrics", prometheus.Handler()).Name("metrics")
+	}
+
 	server := infrastructure.NewHTTPServer(
 		fmt.Sprintf("%s:%d", conf.Runtime.Host, conf.Runtime.Port),
-		maker.NewRouter(),
+		router,
 		logger,
 	)
 	shutdownSequence.Push(server)
@@ -101,10 +108,4 @@ func main() {
 	shutdownSequence.Wait()
 	logger.Info("Server exited normally")
 
-	router := maker.NewRouter()
-	// Prometheus metric handler
-	router.Handle("/metrics", prometheus.Handler()).Name("metrics")
-
-	logger.Info("Starting request serving")
-	logger.Crit("%s\n", http.ListenAndServe(conf.ServiceConf.Host, router))
 }

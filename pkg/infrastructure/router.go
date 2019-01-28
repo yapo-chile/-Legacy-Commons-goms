@@ -32,7 +32,7 @@ type Routes []routeGroups
 // RouterMaker gathers route and wrapper information to build a router
 type RouterMaker struct {
 	Logger        loggers.Logger
-	WrapperFunc   WrapperFunc
+	WrapperFuncs  []WrapperFunc
 	WithProfiling bool
 	Routes        Routes
 }
@@ -45,8 +45,10 @@ func (maker *RouterMaker) NewRouter() *mux.Router {
 		for _, route := range routeGroup.Groups {
 			hLogger := loggers.MakeJSONHandlerLogger(maker.Logger)
 			handler := handlers.MakeJSONHandlerFunc(route.Handler, hLogger)
-			if maker.WrapperFunc != nil {
-				handler = maker.WrapperFunc(route.Pattern, handler)
+			if maker.WrapperFuncs != nil {
+				for _, wrapFunc := range maker.WrapperFuncs {
+					handler = wrapFunc(route.Pattern, handler)
+				}
 			}
 			subRouter.
 				Methods(route.Method).
