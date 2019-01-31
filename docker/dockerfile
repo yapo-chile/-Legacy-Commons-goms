@@ -1,3 +1,12 @@
+FROM golang:1.10 AS go
+
+ARG APPFOLDER
+ARG APPNAME
+
+ADD ./ /go/src/github.schibsted.io/Yapo/${APPFOLDER}
+RUN make -C /go/src/github.schibsted.io/Yapo/${APPFOLDER} setup
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o /${APPNAME}.linux /go/src/github.schibsted.io/Yapo/${APPFOLDER}/cmd/${APPNAME}/main.go
+
 FROM alpine:3.8
 RUN apk update && apk add ca-certificates && rm -rf /var/cache/apk/*
 
@@ -5,7 +14,6 @@ ARG GIT_COMMIT
 ARG GIT_BRANCH
 ARG GIT_COMMIT_DATE
 ARG BUILD_CREATOR
-ARG APPNAME
 
 ENV PS1="\[\e[1;32m\]$APPNAME \[\e[1;31m\][`pwd`] # \[\e[0m\]"
 
@@ -17,7 +25,7 @@ LABEL branch=$GIT_BRANCH \
    build-creator=$BUILD_CREATOR \
    appname=$APPNAME
 
-COPY app.docker /home/user/app/
+COPY --from=go /${APPNAME}.linux /home/user/app/
 RUN touch /home/user/app/$GIT_COMMIT
 
 # Package tzdata is needed before setting TZ ENV variable

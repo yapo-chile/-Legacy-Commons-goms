@@ -69,6 +69,7 @@ DOCKER_ARGS=" \
     --build-arg GIT_COMMIT_DATE="$GIT_COMMIT_DATE" \
     --build-arg BUILD_CREATOR="$BUILD_CREATOR" \
     --build-arg APPNAME="$APPNAME" \
+    --build-arg APPFOLDER="${APPFOLDER}" \
     -f docker/dockerfile \
     ."
 
