@@ -32,12 +32,6 @@ fi
 
 #Build code again now for docker platform
 echoHeader "Building code for docker platform"
-set -e
-
-#Plain binary name is used because in this way we are able to
-#run our process as PID 1 so gracefull stoping instances will be handled efficiently
-rm -f app.docker
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o app.docker ./${MAIN_FILE}
 
 set +e
 
@@ -69,6 +63,7 @@ DOCKER_ARGS=" \
     --build-arg GIT_COMMIT_DATE="$GIT_COMMIT_DATE" \
     --build-arg BUILD_CREATOR="$BUILD_CREATOR" \
     --build-arg APPNAME="$APPNAME" \
+    --build-arg APPFOLDER="$APPFOLDER" \
     -f docker/dockerfile \
     ."
 

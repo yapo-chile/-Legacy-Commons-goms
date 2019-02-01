@@ -21,6 +21,7 @@ export REPORT_ARTIFACTS=reports
 # APP variables
 # This variables are for the use of your microservice. This variables must be updated each time you are creating a new microservice
 export APPNAME=goms
+export APPFOLDER=goms
 export YO=`whoami`
 export SERVICE_PORT=$(call genport,2)
 export SERVICE_HOST=:${SERVICE_PORT}
