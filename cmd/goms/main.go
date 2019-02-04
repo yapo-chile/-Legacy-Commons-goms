@@ -64,9 +64,10 @@ func main() {
 
 	// Setting up router
 	maker := infrastructure.RouterMaker{
-		Logger:        logger,
-		WrapperFuncs:  []infrastructure.WrapperFunc{newrelic.TrackHandlerFunc, prometheus.TrackHandlerFunc},
-		WithProfiling: conf.ServiceConf.Profiling,
+		Logger:            logger,
+		WrapperFuncs:      []infrastructure.WrapperFunc{newrelic.TrackHandlerFunc, prometheus.TrackHandlerFunc},
+		WithProfiling:     conf.ServiceConf.Profiling,
+		PrometheusHandler: &prometheus,
 		Routes: infrastructure.Routes{
 			{
 				// This is the base path, all routes will start with this prefix
@@ -90,12 +91,6 @@ func main() {
 	}
 
 	router := maker.NewRouter()
-
-	if conf.PrometheusConf.Enabled {
-		logger.Info("Prometheus On")
-		// Prometheus metric handler
-		router.Handle("/metrics", prometheus.Handler()).Name("metrics")
-	}
 
 	server := infrastructure.NewHTTPServer(
 		fmt.Sprintf("%s:%d", conf.Runtime.Host, conf.Runtime.Port),
