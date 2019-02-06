@@ -92,14 +92,15 @@ func MakePrometheusExporter(port string, enabled bool, logger loggers.Logger) *P
 			},
 		),
 		enabled: enabled,
+		logger:  logger,
 	}
 
-	// Register all of the metrics in the standard registry.
+	// Register all of the common metrics in the standard registry
 	prometheus.MustRegister(p.counter, p.duration, p.inFlight, p.requestSize, p.responseSize)
-	// Register all custom metrics
+	// Register all custom metrics in the standard registry
 	prometheus.MustRegister(p.badInputErrors, p.repositoryErrors)
 
-	// start prometheus exposer server in /metrics endopoint
+	// start prometheus exposer server in /metrics endpoint
 	p.expose(port)
 	return &p
 }
@@ -125,6 +126,7 @@ func (p *Prometheus) TrackHandlerFunc(handlerName string, handler http.HandlerFu
 	handler = promhttp.InstrumentHandlerRequestSize(
 		p.requestSize.MustCurryWith(prometheus.Labels{"handler": handlerName}), handler)
 
+	// Response Size
 	handler = promhttp.InstrumentHandlerResponseSize(
 		p.responseSize.MustCurryWith(prometheus.Labels{"handler": handlerName}),
 		handler,
