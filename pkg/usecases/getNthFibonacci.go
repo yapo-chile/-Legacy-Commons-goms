@@ -2,6 +2,8 @@ package usecases
 
 import (
 	"fmt"
+	"io"
+
 	"github.schibsted.io/Yapo/goms/pkg/domain"
 )
 
@@ -19,11 +21,18 @@ type FibonacciInteractorLogger interface {
 	LogRepositoryError(int, domain.Fibonacci, error)
 }
 
+// MetricsExporter allows operations to export metrics to prometheus
+type MetricsExporter interface {
+	IncrementCounter(metric domain.MetricType)
+	io.Closer
+}
+
 // FibonacciInteractor implements GetNthFibonacciUsecase by using Repository
 // to store new Fibonacci as required and to retrieve the final answer.
 type FibonacciInteractor struct {
 	Logger     FibonacciInteractorLogger
 	Repository domain.FibonacciRepository
+	Exposer    MetricsExporter
 }
 
 // GetNth finds the nth Fibonacci Number by recursively generating one more
@@ -32,6 +41,7 @@ func (interactor *FibonacciInteractor) GetNth(n int) (domain.Fibonacci, error) {
 	// Ensure correct input
 	if n <= 0 {
 		interactor.Logger.LogBadInput(n)
+		interactor.Exposer.IncrementCounter(domain.BadInputError)
 		return -1, fmt.Errorf("There's no such thing as %dth Fibonacci", n)
 	}
 	// Check if the repository already knows it
@@ -45,6 +55,7 @@ func (interactor *FibonacciInteractor) GetNth(n int) (domain.Fibonacci, error) {
 	err = interactor.Repository.Save(i, x)
 	if err != nil {
 		// Report the error
+		interactor.Exposer.IncrementCounter(domain.RepositoryError)
 		interactor.Logger.LogRepositoryError(i, x, err)
 		return -1, err
 	}

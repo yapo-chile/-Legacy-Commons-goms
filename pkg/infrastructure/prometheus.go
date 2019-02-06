@@ -5,24 +5,44 @@ import (
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.schibsted.io/Yapo/goms/pkg/domain"
+	"github.schibsted.io/Yapo/goms/pkg/interfaces/loggers"
 )
 
-// PrometheusHandler provides both, a way to instrument http.HandlerFunc with
-// Prometheus, and a Prometheus http.Handler that can receive scrape requests
-// from a central server
-type PrometheusHandler struct {
-	counter      *prometheus.CounterVec
-	duration     prometheus.ObserverVec
-	inFlight     prometheus.Gauge
-	requestSize  prometheus.ObserverVec
+// Prometheus provides both, a way to instrument http.HandlerFunc with
+// Prometheus, and a Prometheus http.server that can exposes metrics in a given port
+type Prometheus struct {
+	// common  metrics for handlers
+	// counter metric of HTTP request qty
+	counter *prometheus.CounterVec
+	// duration metric of request duration using http
+	duration prometheus.ObserverVec
+	// inFlight metric of requests currently being served
+	inFlight prometheus.Gauge
+	// requestSize   metric of HTTP request size
+	requestSize prometheus.ObserverVec
+	// responseSize  metric of HTTP response size
 	responseSize prometheus.ObserverVec
-	Enabled      bool
+
+	// Custom metrics
+	// badInputErrors metric of total of bad inputs getting fibo numbers
+	badInputErrors prometheus.Counter
+	// respositoryErrors metric of repository errors gettting fibo numbers
+	repositoryErrors prometheus.Counter
+
+	// Exporter params
+	// server exposes all metrics on /metrics path using a given port
+	server *http.Server
+	// logger logs runtime messages
+	logger loggers.Logger
+	// Enabled enables prometheus exporter
+	enabled bool
 }
 
-// MakePrometheusHandler Builds a fresh PrometheusHandler, initializing its
+// MakePrometheusExporter Builds a fresh Prometheus, initializing its
 // metrics
-func MakePrometheusHandler(enabled bool) PrometheusHandler {
-	h := PrometheusHandler{
+func MakePrometheusExporter(port string, enabled bool, logger loggers.Logger) *Prometheus {
+	p := Prometheus{
 		counter: prometheus.NewCounterVec(
 			prometheus.CounterOpts{
 				Name: "api_requests_total",
@@ -58,49 +78,95 @@ func MakePrometheusHandler(enabled bool) PrometheusHandler {
 			},
 			[]string{"handler", "method"},
 		),
-		Enabled: enabled,
+		// Initialize custom histograms, counters & gauges
+		badInputErrors: prometheus.NewCounter(
+			prometheus.CounterOpts{
+				Name: "fibonacci_bad_input_error_total",
+				Help: "Total of bad input errors calculating fibo numbers",
+			},
+		),
+		repositoryErrors: prometheus.NewCounter(
+			prometheus.CounterOpts{
+				Name: "fibonacci_repository_error_total",
+				Help: "Total of repository errors",
+			},
+		),
+		enabled: enabled,
 	}
 
 	// Register all of the metrics in the standard registry.
-	prometheus.MustRegister(h.counter, h.duration, h.inFlight, h.requestSize, h.responseSize)
-	return h
+	prometheus.MustRegister(p.counter, p.duration, p.inFlight, p.requestSize, p.responseSize)
+	// Register all custom metrics
+	prometheus.MustRegister(p.badInputErrors, p.repositoryErrors)
+
+	// start prometheus exposer server in /metrics endopoint
+	p.expose(port)
+	return &p
 }
 
-// TrackHandlerFunc instruments handler with Prometheus, adding every
+// TrackHandlerFunc instruments handler witp Prometheus, adding every
 // configured metric
-func (h *PrometheusHandler) TrackHandlerFunc(handlerName string, handler http.HandlerFunc) http.HandlerFunc {
-	if !h.Enabled {
+func (p *Prometheus) TrackHandlerFunc(handlerName string, handler http.HandlerFunc) http.HandlerFunc {
+	if !p.enabled {
 		return handler
 	}
-	handler =
-		// In Flight requests
-		promhttp.InstrumentHandlerInFlight(
-			h.inFlight,
-			// Request Counter
-			promhttp.InstrumentHandlerCounter(
-				h.counter.MustCurryWith(prometheus.Labels{"handler": handlerName}),
-				// Duration
-				promhttp.InstrumentHandlerDuration(
-					h.duration.MustCurryWith(prometheus.Labels{"handler": handlerName}),
-					// Request Size
-					promhttp.InstrumentHandlerRequestSize(
-						h.requestSize.MustCurryWith(prometheus.Labels{"handler": handlerName}),
-						// Response Size
-						promhttp.InstrumentHandlerResponseSize(
-							h.responseSize.MustCurryWith(prometheus.Labels{"handler": handlerName}),
-							// Replace this handler to add new metrics
-							handler,
-						),
-					),
-				),
-			),
-		).ServeHTTP
+	// In Flight requests
+	handler = promhttp.InstrumentHandlerInFlight(p.inFlight, handler).(http.HandlerFunc)
+
+	// Request Counter
+	handler = promhttp.InstrumentHandlerCounter(
+		p.counter.MustCurryWith(prometheus.Labels{"handler": handlerName}), handler)
+
+	// Duration
+	handler = promhttp.InstrumentHandlerDuration(
+		p.duration.MustCurryWith(prometheus.Labels{"handler": handlerName}), handler)
+
+	// Request Size
+	handler = promhttp.InstrumentHandlerRequestSize(
+		p.requestSize.MustCurryWith(prometheus.Labels{"handler": handlerName}), handler)
+
+	handler = promhttp.InstrumentHandlerResponseSize(
+		p.responseSize.MustCurryWith(prometheus.Labels{"handler": handlerName}),
+		handler,
+	).(http.HandlerFunc)
+
 	// return tracked handler
-	return handler
+	return handler.ServeHTTP
 }
 
-// Handler returns an http.Handler suitable to handle prometheus scraping
-// requests. Usually it's run under /metrics URL
-func (h *PrometheusHandler) Handler() http.Handler {
-	return promhttp.Handler()
+// IncrementCounter increments a prometheus counter for a given metric
+func (p *Prometheus) IncrementCounter(metric domain.MetricType) {
+	if !p.enabled {
+		return
+	}
+	switch metric {
+	case domain.BadInputError:
+		p.badInputErrors.Inc()
+	case domain.RepositoryError:
+		p.repositoryErrors.Inc()
+	default:
+		p.logger.Error("Unsupported metric type")
+	}
+}
+
+// expose starts prometheus exporter metrics server exposing metrics in "/metrics" path
+func (p *Prometheus) expose(port string) {
+	if !p.enabled {
+		return
+	}
+	p.server = &http.Server{Addr: ":" + port}
+	http.Handle("/metrics", promhttp.Handler())
+	go func() {
+		if err := p.server.ListenAndServe(); err != http.ErrServerClosed {
+			p.logger.Error("Prometheus error: %s", err)
+		}
+	}()
+}
+
+// Close closes prometheus server
+func (p *Prometheus) Close() error {
+	if !p.enabled {
+		return nil
+	}
+	return p.server.Close()
 }

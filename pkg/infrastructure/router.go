@@ -32,11 +32,10 @@ type Routes []routeGroups
 
 // RouterMaker gathers route and wrapper information to build a router
 type RouterMaker struct {
-	Logger            loggers.Logger
-	WrapperFuncs      []WrapperFunc
-	WithProfiling     bool
-	PrometheusHandler *PrometheusHandler
-	Routes            Routes
+	Logger        loggers.Logger
+	WrapperFuncs  []WrapperFunc
+	WithProfiling bool
+	Routes        Routes
 }
 
 // NewRouter setups a Router based on the provided routes
@@ -69,10 +68,6 @@ func (maker *RouterMaker) NewRouter() http.Handler {
 		router.Handle("/debug/pprof/heap", pprof.Handler("heap"))
 		router.Handle("/debug/pprof/mutex", pprof.Handler("mutex"))
 		router.Handle("/debug/pprof/threadcreate", pprof.Handler("threadcreate"))
-	}
-	if maker.PrometheusHandler != nil && maker.PrometheusHandler.Enabled {
-		maker.Logger.Info("Prometheus On")
-		router.Handle("/metrics", maker.PrometheusHandler.Handler()).Name("metrics")
 	}
 	return context.ClearHandler(router)
 }

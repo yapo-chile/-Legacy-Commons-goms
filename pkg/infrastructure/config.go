@@ -31,7 +31,8 @@ type LoggerConf struct {
 
 // PrometheusConf holds configuration to report to Prometheus
 type PrometheusConf struct {
-	Enabled bool `env:"ENABLED" envDefault:"false"`
+	Port    string `env:"PORT" envDefault:"8877"`
+	Enabled bool   `env:"ENABLED" envDefault:"false"`
 }
 
 // NewRelicConf holds configuration to report to New Relic

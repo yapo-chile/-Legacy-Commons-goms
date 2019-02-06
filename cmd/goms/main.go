@@ -45,7 +45,12 @@ func main() {
 	}
 
 	logger.Info("Setting up Prometheus")
-	prometheus := infrastructure.MakePrometheusHandler(conf.PrometheusConf.Enabled)
+	prometheus := infrastructure.MakePrometheusExporter(
+		conf.PrometheusConf.Port,
+		conf.PrometheusConf.Enabled,
+		logger,
+	)
+	shutdownSequence.Push(prometheus)
 
 	logger.Info("Initializing resources")
 
@@ -57,6 +62,7 @@ func main() {
 	fibonacciInteractor := usecases.FibonacciInteractor{
 		Logger:     fibonacciLogger,
 		Repository: fibonacciRepository,
+		Exposer:    prometheus,
 	}
 	fibonacciHandler := handlers.FibonacciHandler{
 		Interactor: &fibonacciInteractor,
@@ -64,10 +70,9 @@ func main() {
 
 	// Setting up router
 	maker := infrastructure.RouterMaker{
-		Logger:            logger,
-		WrapperFuncs:      []infrastructure.WrapperFunc{newrelic.TrackHandlerFunc, prometheus.TrackHandlerFunc},
-		WithProfiling:     conf.ServiceConf.Profiling,
-		PrometheusHandler: &prometheus,
+		Logger:        logger,
+		WrapperFuncs:  []infrastructure.WrapperFunc{newrelic.TrackHandlerFunc, prometheus.TrackHandlerFunc},
+		WithProfiling: conf.ServiceConf.Profiling,
 		Routes: infrastructure.Routes{
 			{
 				// This is the base path, all routes will start with this prefix
