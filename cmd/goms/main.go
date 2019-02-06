@@ -62,7 +62,7 @@ func main() {
 	fibonacciInteractor := usecases.FibonacciInteractor{
 		Logger:     fibonacciLogger,
 		Repository: fibonacciRepository,
-		Exposer:    prometheus,
+		Metrics:    prometheus,
 	}
 	fibonacciHandler := handlers.FibonacciHandler{
 		Interactor: &fibonacciInteractor,
