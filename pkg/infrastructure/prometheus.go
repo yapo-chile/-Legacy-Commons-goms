@@ -105,7 +105,7 @@ func MakePrometheusExporter(port string, enabled bool, logger loggers.Logger) *P
 	return &p
 }
 
-// TrackHandlerFunc instruments handler witp Prometheus, adding every
+// TrackHandlerFunc instruments handler with Prometheus, adding every
 // configured metric
 func (p *Prometheus) TrackHandlerFunc(handlerName string, handler http.HandlerFunc) http.HandlerFunc {
 	if !p.enabled {
