@@ -52,19 +52,16 @@ func main() {
 	)
 	shutdownSequence.Push(prometheus)
 
-	metricsExporter := loggers.MakeCustomMetricsExporter(prometheus)
-
 	logger.Info("Initializing resources")
 
 	// HealthHandler
 	var healthHandler handlers.HealthHandler
 	// FibonacciHandler
-	fibonacciLogger := loggers.MakeFibonacciInteractorLogger(logger)
+	fibonacciLogger := loggers.MakeFibonacciPrometheusLogger(logger, prometheus)
 	fibonacciRepository := repository.NewMapFibonacciRepository()
 	fibonacciInteractor := usecases.FibonacciInteractor{
 		Logger:     fibonacciLogger,
 		Repository: fibonacciRepository,
-		Metrics:    metricsExporter,
 	}
 	fibonacciHandler := handlers.FibonacciHandler{
 		Interactor: &fibonacciInteractor,

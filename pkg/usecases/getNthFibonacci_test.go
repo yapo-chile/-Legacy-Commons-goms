@@ -37,36 +37,20 @@ func (m *MockFibonacciLogger) LogRepositoryError(i int, x domain.Fibonacci, err 
 	m.Called(i, x, err)
 }
 
-type MockMetricsExporter struct {
-	mock.Mock
-}
-
-func (m *MockMetricsExporter) IncrementBadInputCounter() {
-	m.Called()
-}
-
-func (m *MockMetricsExporter) IncrementRepositoryErrorCounter() {
-	m.Called()
-}
-
 func TestFibonacciInteractorGetNthNegative(t *testing.T) {
 	l := &MockFibonacciLogger{}
 	m := &MockFibonacciRepository{}
-	mExporter := &MockMetricsExporter{}
 	i := FibonacciInteractor{
 		Logger:     l,
 		Repository: m,
-		Metrics:    mExporter,
 	}
 
 	l.On("LogBadInput", -1)
-	mExporter.On("IncrementBadInputCounter")
 
 	_, err := i.GetNth(-1)
 	assert.Error(t, err)
 	m.AssertExpectations(t)
 	l.AssertExpectations(t)
-	mExporter.AssertExpectations(t)
 }
 
 func TestFibonacciInteractorGetNthKnown(t *testing.T) {
@@ -114,22 +98,18 @@ func TestFibonacciInteractorGetNthUnknown(t *testing.T) {
 func TestFibonacciInteractorGetNthSaveError(t *testing.T) {
 	l := &MockFibonacciLogger{}
 	m := &MockFibonacciRepository{}
-	mExporter := &MockMetricsExporter{}
 	m.On("Get", 4).Return(domain.Fibonacci(-1), errors.New("Some error")).Once()
 	m.On("LatestPair").Return(domain.FibonacciPair{IA: 1, A: domain.Fibonacci(1), IB: 2, B: domain.Fibonacci(1)}).Once()
 	m.On("Save", 3, domain.Fibonacci(2)).Return(errors.New("Weird error")).Once()
-	mExporter.On("IncrementRepositoryErrorCounter")
 
 	l.On("LogRepositoryError", 3, domain.Fibonacci(2), errors.New("Weird error"))
 	i := FibonacciInteractor{
 		Logger:     l,
 		Repository: m,
-		Metrics:    mExporter,
 	}
 
 	_, err := i.GetNth(4)
 	assert.Error(t, err)
 	m.AssertExpectations(t)
 	l.AssertExpectations(t)
-	mExporter.AssertExpectations(t)
 }
