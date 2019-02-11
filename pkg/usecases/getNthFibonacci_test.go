@@ -41,13 +41,12 @@ type MockMetricsExporter struct {
 	mock.Mock
 }
 
-func (m *MockMetricsExporter) IncrementCounter(metric domain.MetricType) {
-	m.Called(metric)
+func (m *MockMetricsExporter) IncrementBadInputCounter() {
+	m.Called()
 }
 
-func (m *MockMetricsExporter) Close() error {
-	args := m.Called()
-	return args.Error(0)
+func (m *MockMetricsExporter) IncrementRepositoryErrorCounter() {
+	m.Called()
 }
 
 func TestFibonacciInteractorGetNthNegative(t *testing.T) {
@@ -61,7 +60,7 @@ func TestFibonacciInteractorGetNthNegative(t *testing.T) {
 	}
 
 	l.On("LogBadInput", -1)
-	mExporter.On("IncrementCounter", domain.BadInputError)
+	mExporter.On("IncrementBadInputCounter")
 
 	_, err := i.GetNth(-1)
 	assert.Error(t, err)
@@ -119,7 +118,7 @@ func TestFibonacciInteractorGetNthSaveError(t *testing.T) {
 	m.On("Get", 4).Return(domain.Fibonacci(-1), errors.New("Some error")).Once()
 	m.On("LatestPair").Return(domain.FibonacciPair{IA: 1, A: domain.Fibonacci(1), IB: 2, B: domain.Fibonacci(1)}).Once()
 	m.On("Save", 3, domain.Fibonacci(2)).Return(errors.New("Weird error")).Once()
-	mExporter.On("IncrementCounter", domain.RepositoryError)
+	mExporter.On("IncrementRepositoryErrorCounter")
 
 	l.On("LogRepositoryError", 3, domain.Fibonacci(2), errors.New("Weird error"))
 	i := FibonacciInteractor{

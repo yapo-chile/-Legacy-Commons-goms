@@ -5,7 +5,6 @@ import (
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"github.schibsted.io/Yapo/goms/pkg/domain"
 	"github.schibsted.io/Yapo/goms/pkg/interfaces/loggers"
 )
 
@@ -137,14 +136,14 @@ func (p *Prometheus) TrackHandlerFunc(handlerName string, handler http.HandlerFu
 }
 
 // IncrementCounter increments a prometheus counter for a given metric
-func (p *Prometheus) IncrementCounter(metric domain.MetricType) {
+func (p *Prometheus) IncrementCounter(metric loggers.MetricType) {
 	if !p.enabled {
 		return
 	}
 	switch metric {
-	case domain.BadInputError:
+	case loggers.BadInputError:
 		p.badInputErrors.Inc()
-	case domain.RepositoryError:
+	case loggers.RepositoryError:
 		p.repositoryErrors.Inc()
 	default:
 		p.logger.Error("Unsupported metric type")
