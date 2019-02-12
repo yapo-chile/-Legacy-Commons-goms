@@ -44,12 +44,20 @@ func main() {
 		os.Exit(2)
 	}
 
+	logger.Info("Setting up Prometheus")
+	prometheus := infrastructure.MakePrometheusExporter(
+		conf.PrometheusConf.Port,
+		conf.PrometheusConf.Enabled,
+		logger,
+	)
+	shutdownSequence.Push(prometheus)
+
 	logger.Info("Initializing resources")
 
 	// HealthHandler
 	var healthHandler handlers.HealthHandler
 	// FibonacciHandler
-	fibonacciLogger := loggers.MakeFibonacciInteractorLogger(logger)
+	fibonacciLogger := loggers.MakeFibonacciPrometheusLogger(logger, prometheus)
 	fibonacciRepository := repository.NewMapFibonacciRepository()
 	fibonacciInteractor := usecases.FibonacciInteractor{
 		Logger:     fibonacciLogger,
@@ -62,7 +70,7 @@ func main() {
 	// Setting up router
 	maker := infrastructure.RouterMaker{
 		Logger:        logger,
-		WrapperFunc:   newrelic.TrackHandlerFunc,
+		WrapperFuncs:  []infrastructure.WrapperFunc{newrelic.TrackHandlerFunc, prometheus.TrackHandlerFunc},
 		WithProfiling: conf.ServiceConf.Profiling,
 		Routes: infrastructure.Routes{
 			{
@@ -85,9 +93,12 @@ func main() {
 			},
 		},
 	}
+
+	router := maker.NewRouter()
+
 	server := infrastructure.NewHTTPServer(
 		fmt.Sprintf("%s:%d", conf.Runtime.Host, conf.Runtime.Port),
-		maker.NewRouter(),
+		router,
 		logger,
 	)
 	shutdownSequence.Push(server)
@@ -95,4 +106,5 @@ func main() {
 	go server.ListenAndServe()
 	shutdownSequence.Wait()
 	logger.Info("Server exited normally")
+
 }

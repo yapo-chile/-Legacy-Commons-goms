@@ -2,6 +2,7 @@ package usecases
 
 import (
 	"fmt"
+
 	"github.schibsted.io/Yapo/goms/pkg/domain"
 )
 
@@ -12,9 +13,9 @@ type GetNthFibonacciUsecase interface {
 	GetNth(n int) (domain.Fibonacci, error)
 }
 
-// FibonacciInteractorLogger defines all the events a FibonacciInteractor may
+// FibonacciPrometheusLogger defines all the events a FibonacciInteractor may
 // need/like to report as they happen
-type FibonacciInteractorLogger interface {
+type FibonacciPrometheusLogger interface {
 	LogBadInput(int)
 	LogRepositoryError(int, domain.Fibonacci, error)
 }
@@ -22,7 +23,7 @@ type FibonacciInteractorLogger interface {
 // FibonacciInteractor implements GetNthFibonacciUsecase by using Repository
 // to store new Fibonacci as required and to retrieve the final answer.
 type FibonacciInteractor struct {
-	Logger     FibonacciInteractorLogger
+	Logger     FibonacciPrometheusLogger
 	Repository domain.FibonacciRepository
 }
 
