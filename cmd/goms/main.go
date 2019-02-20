@@ -7,9 +7,11 @@ import (
 
 	"github.schibsted.io/Yapo/goms/pkg/infrastructure"
 	"github.schibsted.io/Yapo/goms/pkg/interfaces/handlers"
+	// CLONE REMOVE START
 	"github.schibsted.io/Yapo/goms/pkg/interfaces/loggers"
 	"github.schibsted.io/Yapo/goms/pkg/interfaces/repository"
 	"github.schibsted.io/Yapo/goms/pkg/usecases"
+	// CLONE REMOVE END
 )
 
 var shutdownSequence = infrastructure.NewShutdownSequence()
@@ -56,6 +58,8 @@ func main() {
 
 	// HealthHandler
 	var healthHandler handlers.HealthHandler
+
+	// CLONE REMOVE START
 	// FibonacciHandler
 	fibonacciLogger := loggers.MakeFibonacciPrometheusLogger(logger, prometheus)
 	fibonacciRepository := repository.NewMapFibonacciRepository()
@@ -66,6 +70,7 @@ func main() {
 	fibonacciHandler := handlers.FibonacciHandler{
 		Interactor: &fibonacciInteractor,
 	}
+	// CLONE REMOVE END
 
 	// Setting up router
 	maker := infrastructure.RouterMaker{
@@ -83,12 +88,14 @@ func main() {
 						Pattern: "/healthcheck",
 						Handler: &healthHandler,
 					},
+					// CLONE REMOVE START
 					{
 						Name:    "Retrieve the Nth Fibonacci with Clean Architecture",
 						Method:  "GET",
 						Pattern: "/fibonacci",
 						Handler: &fibonacciHandler,
 					},
+					// CLONE REMOVE END
 				},
 			},
 		},

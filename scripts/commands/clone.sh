@@ -47,7 +47,8 @@ git tag | xargs git tag -d
 
 echoTitle "Renaming paths and variables ${TEMPLATE} -> ${SERVICE}"
 git grep -l ${TEMPLATE} | xargs sed -i.bak "s/${TEMPLATE}/${SERVICE}/g"
-find cmd -name main.go | xargs sed -i.bak '11,13d; 49,59d; 74,79d'
+find cmd -name main.go | xargs sed -i.bak '/CLONE REMOVE START/,/CLONE REMOVE END/d'
+
 for dir in $(find . -name "${TEMPLATE}" -type d); do
 	git mv ${dir} ${dir/${TEMPLATE}/${SERVICE}}
 done
