@@ -23,7 +23,7 @@ func TestFibonacciHandlerInput(t *testing.T) {
 	m := MockFibonacciInteractor{}
 	mMockInputRequest := MockInputRequest{}
 	mMockInputRequest.On("Set", mock.AnythingOfType("*handlers.fibonacciRequestInput")).Return(&mMockInputRequest)
-	mMockInputRequest.On("FromJsonBody").Return(&mMockInputRequest)
+	mMockInputRequest.On("FromJSONBody").Return(&mMockInputRequest)
 
 	h := FibonacciHandler{Interactor: &m}
 	input := h.Input(&mMockInputRequest)

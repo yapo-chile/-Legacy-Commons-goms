@@ -14,16 +14,21 @@ import (
 )
 
 const (
-	BODY    string = "body"
-	PATH    string = "path"
-	QUERY   string = "query"
+	// BODY defines the constant for the body params
+	BODY string = "body"
+	// PATH defines the constant for the path params
+	PATH string = "path"
+	// QUERY defines the constant for the query params
+	QUERY string = "query"
+	// HEADERS defines the constant for the headers params
 	HEADERS string = "headers"
 
 	// errors
-	NOT_SETEABLE string = "PROVIDED_INPUT_IS_NOT_SETEABLE"
+	NotSeteable string = "PROVIDED_INPUT_IS_NOT_SETEABLE"
 )
 
-var NOT_SETEABLE_ERROR = errors.New(NOT_SETEABLE)
+// NOT_SETEABLE_ERROR describes an error that occurs when te var is not seteable
+var ErrNotSeteable = errors.New(NotSeteable)
 
 type inputRequest struct {
 	output      interface{}
@@ -36,7 +41,7 @@ func (ri *inputRequest) Set(output interface{}) handlers.InputRequest {
 	return ri
 }
 
-func (ri *inputRequest) FromJsonBody() handlers.InputRequest {
+func (ri *inputRequest) FromJSONBody() handlers.InputRequest {
 	ri.sources = append(ri.sources, BODY)
 	return ri
 }
@@ -61,19 +66,23 @@ type inputHandler struct {
 	output       handlers.HandlerInput
 }
 
+// NewInputHandler returns a new InputHandler
 func NewInputHandler() handlers.InputHandler {
 	return &inputHandler{}
 }
 
+// NewInputRequest returns a new InputRequest based on a http.request
 func (ih *inputHandler) NewInputRequest(r *http.Request) handlers.InputRequest {
 	return &inputRequest{httpRequest: r}
 }
 
+// SetInputRequest sets the input request and the request input
 func (ih *inputHandler) SetInputRequest(ri handlers.InputRequest, hi handlers.HandlerInput) {
 	ih.inputRequest = ri.(*inputRequest)
 	ih.output = hi
 }
 
+// Input does the actual process of the input
 func (ih *inputHandler) Input() (handlers.HandlerInput, *goutils.Response) {
 	if ih.inputRequest.output == nil {
 		return ih.output, &goutils.Response{
@@ -178,7 +187,7 @@ func (ih *inputHandler) parseInput(vars map[string]string, inputTag string, inpu
 				}
 			}
 		} else {
-			return NOT_SETEABLE_ERROR
+			return ErrNotSeteable
 		}
 	}
 	return nil

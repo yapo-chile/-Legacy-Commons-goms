@@ -26,15 +26,17 @@ type Handler interface {
 	Execute(InputGetter) *goutils.Response
 }
 
+// InputHandler defines what methods an input handler should have
 type InputHandler interface {
 	NewInputRequest(*http.Request) InputRequest
 	SetInputRequest(InputRequest, HandlerInput)
 	Input() (HandlerInput, *goutils.Response)
 }
 
+// InputRequest defines what methods an input handler should have
 type InputRequest interface {
 	Set(interface{}) InputRequest
-	FromJsonBody() InputRequest
+	FromJSONBody() InputRequest
 	FromPath() InputRequest
 	FromQuery() InputRequest
 	FromHeaders() InputRequest

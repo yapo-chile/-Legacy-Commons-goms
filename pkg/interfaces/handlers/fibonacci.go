@@ -28,7 +28,7 @@ type fibonacciRequestError goutils.GenericError
 func (h *FibonacciHandler) Input(ir InputRequest) HandlerInput {
 	input := fibonacciRequestInput{}
 	ir.Set(&input).
-		FromJsonBody()
+		FromJSONBody()
 	return &input
 }
 

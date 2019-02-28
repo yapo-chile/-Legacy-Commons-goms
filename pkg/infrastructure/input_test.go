@@ -11,7 +11,7 @@ import (
 
 func TestQueryParamsOK(t *testing.T) {
 	type input struct {
-		Id string `query:"id"`
+		ID string `query:"id"`
 	}
 
 	result := input{}
@@ -30,7 +30,7 @@ func TestQueryParamsOK(t *testing.T) {
 
 func TestPathOK(t *testing.T) {
 	type input struct {
-		Id string `path:"id"`
+		ID string `path:"id"`
 	}
 
 	result := input{}
@@ -52,7 +52,7 @@ func TestPathOK(t *testing.T) {
 
 func TestJsonBodyOK(t *testing.T) {
 	type input struct {
-		Id string `json:"id"`
+		ID string `json:"id"`
 	}
 
 	result := input{}
@@ -61,7 +61,7 @@ func TestJsonBodyOK(t *testing.T) {
 
 	inputHandler := NewInputHandler()
 	ri := inputHandler.NewInputRequest(r)
-	ri.Set(&result).FromJsonBody()
+	ri.Set(&result).FromJSONBody()
 
 	inputHandler.SetInputRequest(ri, &result)
 	result2, err := inputHandler.Input()
@@ -71,7 +71,7 @@ func TestJsonBodyOK(t *testing.T) {
 
 func TestHeadersOK(t *testing.T) {
 	type input struct {
-		Id string `headers:"Id"`
+		ID string `headers:"Id"`
 	}
 
 	result := input{}
@@ -91,10 +91,10 @@ func TestHeadersOK(t *testing.T) {
 
 func TestAllSourcesAtSameTimeOK(t *testing.T) {
 	type input struct {
-		HeaderId string `headers:"Id"`
-		BodyId   string `json:"id"`
-		PathId   string `path:"id"`
-		QueryId  string `query:"id"`
+		HeaderID string `headers:"Id"`
+		BodyID   string `json:"id"`
+		PathID   string `path:"id"`
+		QueryID  string `query:"id"`
 	}
 
 	result := input{}
@@ -107,7 +107,7 @@ func TestAllSourcesAtSameTimeOK(t *testing.T) {
 
 	inputHandler := NewInputHandler()
 	ri := inputHandler.NewInputRequest(r)
-	ri.Set(&result).FromHeaders().FromJsonBody().FromPath().FromQuery()
+	ri.Set(&result).FromHeaders().FromJSONBody().FromPath().FromQuery()
 
 	inputHandler.SetInputRequest(ri, &result)
 	result2, err := inputHandler.Input()
@@ -117,8 +117,8 @@ func TestAllSourcesAtSameTimeOK(t *testing.T) {
 
 func TestOverlapSourcesOK(t *testing.T) {
 	type input struct {
-		BodyId string `json:"id" path:"id"`
-		PathId string `path:"id"`
+		BodyID string `json:"id" path:"id"`
+		PathID string `path:"id"`
 	}
 
 	result := input{}
@@ -130,7 +130,7 @@ func TestOverlapSourcesOK(t *testing.T) {
 
 	inputHandler := NewInputHandler()
 	ri := inputHandler.NewInputRequest(r)
-	ri.Set(&result).FromJsonBody().FromPath()
+	ri.Set(&result).FromJSONBody().FromPath()
 
 	inputHandler.SetInputRequest(ri, &result)
 	result2, err := inputHandler.Input()
@@ -140,17 +140,17 @@ func TestOverlapSourcesOK(t *testing.T) {
 
 func TestEmptySourceOK(t *testing.T) {
 	type input struct {
-		BodyId string `json:"id"`
-		PathId string `path:"id"`
+		BodyID string `json:"id"`
+		PathID string `path:"id"`
 	}
 
 	result := input{}
-	expected := input{BodyId: "edgod"}
+	expected := input{BodyID: "edgod"}
 	r := httptest.NewRequest("POST", "/api/v1/edgugu", strings.NewReader(`{"id": "edgod"}`))
 
 	inputHandler := NewInputHandler()
 	ri := inputHandler.NewInputRequest(r)
-	ri.Set(&result).FromJsonBody().FromPath()
+	ri.Set(&result).FromJSONBody().FromPath()
 
 	inputHandler.SetInputRequest(ri, &result)
 	result2, err := inputHandler.Input()
