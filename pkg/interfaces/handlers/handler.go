@@ -20,16 +20,30 @@ type InputGetter func() (HandlerInput, *goutils.Response)
 type Handler interface {
 	// Input should return a pointer to the struct that this handler will need
 	// to be filled with the user input for a request
-	Input() HandlerInput
+	Input(InputRequest) HandlerInput
 	// Execute is the actual handler code. The InputGetter can be used to retrieve
 	// the request's input at any time (or not at all).
 	Execute(InputGetter) *goutils.Response
 }
 
+type InputHandler interface {
+	NewInputRequest(*http.Request) InputRequest
+	SetInputRequest(InputRequest, HandlerInput)
+	Input() (HandlerInput, *goutils.Response)
+}
+
+type InputRequest interface {
+	Set(interface{}) InputRequest
+	FromJsonBody() InputRequest
+	FromPath() InputRequest
+	FromQuery() InputRequest
+	FromHeaders() InputRequest
+}
+
 // MakeJSONHandlerFunc wraps a Handler on a json-over-http context, returning
 // a standard http.HandlerFunc
-func MakeJSONHandlerFunc(h Handler, l JSONHandlerLogger) http.HandlerFunc {
-	jh := jsonHandler{handler: h, logger: l}
+func MakeJSONHandlerFunc(h Handler, l JSONHandlerLogger, ih InputHandler) http.HandlerFunc {
+	jh := jsonHandler{handler: h, logger: l, inputHandler: ih}
 	return jh.run
 }
 
@@ -43,8 +57,9 @@ type JSONHandlerLogger interface {
 // jsonHandler provides an http.HandlerFunc that reads its input and formats
 // its output as json
 type jsonHandler struct {
-	handler Handler
-	logger  JSONHandlerLogger
+	handler      Handler
+	logger       JSONHandlerLogger
+	inputHandler InputHandler
 }
 
 // run will prepare the input for the actual handler and format the response
@@ -57,11 +72,9 @@ func (jh *jsonHandler) run(w http.ResponseWriter, r *http.Request) {
 		Code: http.StatusInternalServerError,
 	}
 	// Function the request can call to retrieve its input
-	inputGetter := func() (HandlerInput, *goutils.Response) {
-		input := jh.handler.Input()
-		resp := goutils.ParseJSONBody(r, input)
-		return input, resp
-	}
+	ri := jh.inputHandler.NewInputRequest(r)
+	input := jh.handler.Input(ri)
+	jh.inputHandler.SetInputRequest(ri, input)
 	// Format the output and send it down the writer
 	outputWriter := func() {
 		goutils.CreateJSON(response)
@@ -77,6 +90,6 @@ func (jh *jsonHandler) run(w http.ResponseWriter, r *http.Request) {
 	defer outputWriter()
 	defer errorHandler()
 	// Do the Harlem Shake
-	response = jh.handler.Execute(inputGetter)
+	response = jh.handler.Execute(jh.inputHandler.Input)
 	jh.logger.LogRequestEnd(r, response)
 }

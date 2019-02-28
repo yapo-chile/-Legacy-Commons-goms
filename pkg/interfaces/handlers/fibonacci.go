@@ -25,8 +25,11 @@ type fibonacciRequestOutput struct {
 type fibonacciRequestError goutils.GenericError
 
 // Input returns a fresh, empty instance of fibonacciRequestInput
-func (h *FibonacciHandler) Input() HandlerInput {
-	return &fibonacciRequestInput{}
+func (h *FibonacciHandler) Input(ir InputRequest) HandlerInput {
+	input := fibonacciRequestInput{}
+	ir.Set(&input).
+		FromJsonBody()
+	return &input
 }
 
 // Execute carries on a /fibonacci request. Uses the given interactor to carry out
