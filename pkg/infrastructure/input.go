@@ -113,9 +113,9 @@ func (ih *inputHandler) Input() (handlers.HandlerInput, *goutils.Response) {
 					ih.inputRequest.output,
 				) != nil
 		case RAWBODY:
-			rawBody, _ := ioutil.ReadAll(ih.inputRequest.httpRequest.Body)
+			rawBody, err := ioutil.ReadAll(ih.inputRequest.httpRequest.Body)
 			ih.inputRequest.httpRequest.Body = ioutil.NopCloser(bytes.NewBuffer(rawBody))
-			hasError = hasError ||
+			hasError = hasError || err != nil ||
 				ih.parseInput(
 					map[string]string{"body": string(rawBody)},
 					source,
