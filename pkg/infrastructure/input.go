@@ -1,7 +1,9 @@
 package infrastructure
 
 import (
+	"bytes"
 	"errors"
+	"io/ioutil"
 	"net/http"
 	"reflect"
 	"strconv"
@@ -16,6 +18,8 @@ import (
 const (
 	// BODY defines the constant for the body params
 	BODY string = "body"
+	// RAWBODY defines the constant for process the raw body in bytes
+	RAWBODY string = "raw"
 	// PATH defines the constant for the path params
 	PATH string = "path"
 	// QUERY defines the constant for the query params
@@ -43,6 +47,11 @@ func (ri *inputRequest) Set(output interface{}) handlers.InputRequest {
 
 func (ri *inputRequest) FromJSONBody() handlers.InputRequest {
 	ri.sources = append(ri.sources, BODY)
+	return ri
+}
+
+func (ri *inputRequest) FromRawBody() handlers.InputRequest {
+	ri.sources = append(ri.sources, RAWBODY)
 	return ri
 }
 
@@ -102,6 +111,15 @@ func (ih *inputHandler) Input() (handlers.HandlerInput, *goutils.Response) {
 				goutils.ParseJSONBody(
 					ih.inputRequest.httpRequest,
 					ih.inputRequest.output,
+				) != nil
+		case RAWBODY:
+			rawBody, _ := ioutil.ReadAll(ih.inputRequest.httpRequest.Body)
+			ih.inputRequest.httpRequest.Body = ioutil.NopCloser(bytes.NewBuffer(rawBody))
+			hasError = hasError ||
+				ih.parseInput(
+					map[string]string{"body": string(rawBody)},
+					source,
+					reflectedOutput,
 				) != nil
 		case QUERY:
 			hasError = hasError ||
@@ -183,6 +201,8 @@ func (ih *inputHandler) parseInput(vars map[string]string, inputTag string, inpu
 									}
 								}
 								reflectedInput.Field(i).Set(reflect.ValueOf(intValues))
+							case []byte:
+								reflectedInput.Field(i).SetBytes([]byte(vars[tag]))
 							}
 						}
 					}

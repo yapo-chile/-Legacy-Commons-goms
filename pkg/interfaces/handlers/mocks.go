@@ -21,6 +21,12 @@ func (m *MockInputRequest) FromJSONBody() InputRequest {
 	return args.Get(0).(InputRequest)
 }
 
+// FromRawBody is a mocked method
+func (m *MockInputRequest) FromRawBody() InputRequest {
+	args := m.Called()
+	return args.Get(0).(InputRequest)
+}
+
 // FromPath is a mocked method
 func (m *MockInputRequest) FromPath() InputRequest {
 	args := m.Called()

@@ -138,6 +138,25 @@ func TestOverlapSourcesOK(t *testing.T) {
 	assert.Equal(t, &expected, result2)
 }
 
+func TestRawBodyOK(t *testing.T) {
+	type input struct {
+		BodyID []byte `raw:"body"`
+	}
+
+	result := input{}
+	expected := input{BodyID: []byte(`{"id": "edgod"}`)}
+	r := httptest.NewRequest("POST", "/api/v1/edgugu", strings.NewReader(`{"id": "edgod"}`))
+
+	inputHandler := NewInputHandler()
+	ri := inputHandler.NewInputRequest(r)
+	ri.Set(&result).FromRawBody()
+
+	inputHandler.SetInputRequest(ri, &result)
+	result2, err := inputHandler.Input()
+	assert.Nil(t, err)
+	assert.Equal(t, &expected, result2)
+}
+
 func TestEmptySourceOK(t *testing.T) {
 	type input struct {
 		BodyID string `json:"id"`

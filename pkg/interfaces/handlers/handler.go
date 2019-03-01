@@ -37,6 +37,7 @@ type InputHandler interface {
 type InputRequest interface {
 	Set(interface{}) InputRequest
 	FromJSONBody() InputRequest
+	FromRawBody() InputRequest
 	FromPath() InputRequest
 	FromQuery() InputRequest
 	FromHeaders() InputRequest
