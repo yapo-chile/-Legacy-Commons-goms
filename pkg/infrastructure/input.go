@@ -23,11 +23,11 @@ const (
 	// HEADERS defines the constant for the headers params
 	HEADERS string = "headers"
 
-	// errors
+	// NotSeteable defines the error string of this error
 	NotSeteable string = "PROVIDED_INPUT_IS_NOT_SETEABLE"
 )
 
-// NOT_SETEABLE_ERROR describes an error that occurs when te var is not seteable
+// ErrNotSeteable describes an error that occurs when te var is not seteable
 var ErrNotSeteable = errors.New(NotSeteable)
 
 type inputRequest struct {
@@ -157,7 +157,9 @@ func (ih *inputHandler) parseInput(vars map[string]string, inputTag string, inpu
 					if tag, ok := reflectedInput.Type().Field(i).Tag.Lookup(inputTag); ok {
 						switch reflectedInput.Field(i).Kind() {
 						case reflect.Struct:
-							ih.parseInput(vars, inputTag, reflectedInput.Field(i).Addr())
+							if ih.parseInput(vars, inputTag, reflectedInput.Field(i).Addr()) != nil {
+								continue
+							}
 						case reflect.String:
 							reflectedInput.Field(i).SetString(vars[tag])
 						case reflect.Int:
