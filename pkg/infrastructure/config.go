@@ -69,6 +69,11 @@ func valueFromEnv(envTag, envDefault string) string {
 	// Maybe it's a secret and <envTag>_FILE points to a file with the value
 	// https://rancher.com/docs/rancher/v1.6/en/cattle/secrets/#docker-hub-images
 	if fileName, ok := os.LookupEnv(fmt.Sprintf("%s_FILE", envTag)); ok {
+		// filepath.Clean() will clean the input path and remove some unnecessary things
+		// like multiple separators doble "." and others
+		// if for some reason you are having troubles reaching your file, check the
+		// output of the Clean function and test if its what you expect
+		// you can find more info here: https://golang.org/pkg/path/filepath/#Clean
 		b, err := ioutil.ReadFile(filepath.Clean(fileName))
 		if err == nil {
 			return string(b)
