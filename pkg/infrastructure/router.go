@@ -45,7 +45,8 @@ func (maker *RouterMaker) NewRouter() http.Handler {
 		subRouter := router.PathPrefix(routeGroup.Prefix).Subrouter()
 		for _, route := range routeGroup.Groups {
 			hLogger := loggers.MakeJSONHandlerLogger(maker.Logger)
-			handler := handlers.MakeJSONHandlerFunc(route.Handler, hLogger)
+			hInputHandler := NewInputHandler()
+			handler := handlers.MakeJSONHandlerFunc(route.Handler, hLogger, hInputHandler)
 			for _, wrapFunc := range maker.WrapperFuncs {
 				handler = wrapFunc(route.Pattern, handler)
 			}
