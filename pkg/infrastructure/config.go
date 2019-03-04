@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"reflect"
 	"strconv"
 	"strings"
@@ -68,7 +69,7 @@ func valueFromEnv(envTag, envDefault string) string {
 	// Maybe it's a secret and <envTag>_FILE points to a file with the value
 	// https://rancher.com/docs/rancher/v1.6/en/cattle/secrets/#docker-hub-images
 	if fileName, ok := os.LookupEnv(fmt.Sprintf("%s_FILE", envTag)); ok {
-		b, err := ioutil.ReadFile(fileName)
+		b, err := ioutil.ReadFile(filepath.Clean(fileName))
 		if err == nil {
 			return string(b)
 		}
