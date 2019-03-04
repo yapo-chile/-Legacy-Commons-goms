@@ -15,17 +15,19 @@ import (
 	"github.schibsted.io/Yapo/goms/pkg/interfaces/handlers"
 )
 
+type InputSource string
+
 const (
 	// BODY defines the constant for the body params
-	BODY string = "body"
+	BODY InputSource = "body"
 	// RAWBODY defines the constant for process the raw body in bytes
-	RAWBODY string = "raw"
+	RAWBODY InputSource = "raw"
 	// PATH defines the constant for the path params
-	PATH string = "path"
+	PATH InputSource = "path"
 	// QUERY defines the constant for the query params
-	QUERY string = "query"
+	QUERY InputSource = "query"
 	// HEADERS defines the constant for the headers params
-	HEADERS string = "headers"
+	HEADERS InputSource = "headers"
 
 	// NotSeteable defines the error string of this error
 	NotSeteable string = "PROVIDED_INPUT_IS_NOT_SETEABLE"
@@ -37,7 +39,7 @@ var ErrNotSeteable = errors.New(NotSeteable)
 type inputRequest struct {
 	output      interface{}
 	httpRequest *http.Request
-	sources     []string
+	sources     []InputSource
 }
 
 func (ri *inputRequest) Set(output interface{}) handlers.InputRequest {
@@ -91,11 +93,11 @@ func (ih *inputHandler) SetInputRequest(ri handlers.InputRequest, hi handlers.Ha
 	ih.output = hi
 }
 
-// Input does the actual process of the input
+// Input does the actual process of getting the input
 func (ih *inputHandler) Input() (handlers.HandlerInput, *goutils.Response) {
 	if ih.inputRequest.output == nil {
 		return ih.output, &goutils.Response{
-			Code: http.StatusBadRequest,
+			Code: http.StatusInternalServerError,
 			Body: goutils.GenericError{
 				ErrorMessage: "Output was not set correctly",
 			},
@@ -147,7 +149,7 @@ func (ih *inputHandler) Input() (handlers.HandlerInput, *goutils.Response) {
 
 	if hasError {
 		return ih.output, &goutils.Response{
-			Code: http.StatusBadRequest,
+			Code: http.StatusInternalServerError,
 			Body: goutils.GenericError{
 				ErrorMessage: "Output was not set correctly",
 			},
@@ -164,7 +166,7 @@ func (ih *inputHandler) httpValuesToMap(values map[string][]string) map[string]s
 	return outValues
 }
 
-func (ih *inputHandler) parseInput(vars map[string]string, inputTag string, input reflect.Value) error {
+func (ih *inputHandler) parseInput(vars map[string]string, inputTag InputSource, input reflect.Value) error {
 	if input.Kind() == reflect.Ptr {
 		reflectedInput := reflect.Indirect(input)
 		// We should only keep going if we can set values
@@ -172,7 +174,7 @@ func (ih *inputHandler) parseInput(vars map[string]string, inputTag string, inpu
 			if reflectedInput.Kind() == reflect.Struct {
 				// Recursively load inner struct fields
 				for i := 0; i < reflectedInput.NumField(); i++ {
-					if tag, ok := reflectedInput.Type().Field(i).Tag.Lookup(inputTag); ok {
+					if tag, ok := reflectedInput.Type().Field(i).Tag.Lookup(string(inputTag)); ok {
 						switch reflectedInput.Field(i).Kind() {
 						case reflect.Struct:
 							if ih.parseInput(vars, inputTag, reflectedInput.Field(i).Addr()) != nil {
