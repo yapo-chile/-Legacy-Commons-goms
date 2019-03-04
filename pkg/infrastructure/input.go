@@ -15,6 +15,7 @@ import (
 	"github.schibsted.io/Yapo/goms/pkg/interfaces/handlers"
 )
 
+// InputSource defines the type for an input source
 type InputSource string
 
 const (
@@ -31,10 +32,20 @@ const (
 
 	// NotSeteable defines the error string of this error
 	NotSeteable string = "PROVIDED_INPUT_IS_NOT_SETEABLE"
+	// NotPointer defines the error string of this error
+	NotPointer string = "PROVIDED_INPUT_IS_NOT_A_POINTER"
+	// NotStruct defines the error string of this error
+	NotStruct string = "PROVIDED_INPUT_IS_NOT_A_STRUCT"
 )
 
-// ErrNotSeteable describes an error that occurs when te var is not seteable
+// ErrNotSeteable describes an error that occurs when the var is not seteable
 var ErrNotSeteable = errors.New(NotSeteable)
+
+// ErrNotPointer describes an error that occurs when the var is not a pointer
+var ErrNotPointer = errors.New(NotPointer)
+
+// ErrNotStruct describes an error that occurs when the var is not a struct
+var ErrNotStruct = errors.New(NotStruct)
 
 type inputRequest struct {
 	output      interface{}
@@ -167,51 +178,53 @@ func (ih *inputHandler) httpValuesToMap(values map[string][]string) map[string]s
 }
 
 func (ih *inputHandler) parseInput(vars map[string]string, inputTag InputSource, input reflect.Value) error {
-	if input.Kind() == reflect.Ptr {
-		reflectedInput := reflect.Indirect(input)
-		// We should only keep going if we can set values
-		if reflectedInput.IsValid() && reflectedInput.CanSet() {
-			if reflectedInput.Kind() == reflect.Struct {
-				// Recursively load inner struct fields
-				for i := 0; i < reflectedInput.NumField(); i++ {
-					if tag, ok := reflectedInput.Type().Field(i).Tag.Lookup(string(inputTag)); ok {
-						switch reflectedInput.Field(i).Kind() {
-						case reflect.Struct:
-							if ih.parseInput(vars, inputTag, reflectedInput.Field(i).Addr()) != nil {
-								continue
-							}
-						case reflect.String:
-							reflectedInput.Field(i).SetString(vars[tag])
-						case reflect.Int:
-							if value, err := strconv.Atoi(vars[tag]); err == nil {
-								reflectedInput.Field(i).Set(reflect.ValueOf(value))
-							}
-						case reflect.Slice:
-							values := strings.Split(vars[tag], ",")
-							switch reflectedInput.Field(i).Interface().(type) {
-							case []string:
-								trimValues := []string{}
-								for _, value := range values {
-									trimValues = append(trimValues, strings.TrimSpace(value))
-								}
-								reflectedInput.Field(i).Set(reflect.ValueOf(trimValues))
-							case []int:
-								intValues := []int{}
-								for _, value := range values {
-									if val, err := strconv.Atoi(strings.TrimSpace(value)); err == nil {
-										intValues = append(intValues, val)
-									}
-								}
-								reflectedInput.Field(i).Set(reflect.ValueOf(intValues))
-							case []byte:
-								reflectedInput.Field(i).SetBytes([]byte(vars[tag]))
-							}
+	if input.Kind() != reflect.Ptr {
+		return ErrNotPointer
+	}
+	reflectedInput := reflect.Indirect(input)
+	// We should only keep going if we can set values
+	if !reflectedInput.IsValid() || !reflectedInput.CanSet() {
+		return ErrNotSeteable
+	}
+	// this part of the function is made just for structs
+	if reflectedInput.Kind() != reflect.Struct {
+		return ErrNotStruct
+	}
+	// Recursively load inner struct fields
+	for i := 0; i < reflectedInput.NumField(); i++ {
+		if tag, ok := reflectedInput.Type().Field(i).Tag.Lookup(string(inputTag)); ok {
+			switch reflectedInput.Field(i).Kind() {
+			case reflect.Struct:
+				if ih.parseInput(vars, inputTag, reflectedInput.Field(i).Addr()) != nil {
+					continue
+				}
+			case reflect.String:
+				reflectedInput.Field(i).SetString(vars[tag])
+			case reflect.Int:
+				if value, err := strconv.Atoi(vars[tag]); err == nil {
+					reflectedInput.Field(i).Set(reflect.ValueOf(value))
+				}
+			case reflect.Slice:
+				values := strings.Split(vars[tag], ",")
+				switch reflectedInput.Field(i).Interface().(type) {
+				case []string:
+					trimValues := []string{}
+					for _, value := range values {
+						trimValues = append(trimValues, strings.TrimSpace(value))
+					}
+					reflectedInput.Field(i).Set(reflect.ValueOf(trimValues))
+				case []int:
+					intValues := []int{}
+					for _, value := range values {
+						if val, err := strconv.Atoi(strings.TrimSpace(value)); err == nil {
+							intValues = append(intValues, val)
 						}
 					}
+					reflectedInput.Field(i).Set(reflect.ValueOf(intValues))
+				case []byte:
+					reflectedInput.Field(i).SetBytes([]byte(vars[tag]))
 				}
 			}
-		} else {
-			return ErrNotSeteable
 		}
 	}
 	return nil
