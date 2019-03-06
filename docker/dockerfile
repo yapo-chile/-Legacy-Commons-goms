@@ -5,7 +5,7 @@ ARG APPNAME
 
 ADD ./ /go/src/github.schibsted.io/Yapo/${APPFOLDER}
 RUN make -C /go/src/github.schibsted.io/Yapo/${APPFOLDER} setup
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o /${APPNAME}.linux /go/src/github.schibsted.io/Yapo/${APPFOLDER}/cmd/${APPNAME}/main.go
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o /app.linux /go/src/github.schibsted.io/Yapo/${APPFOLDER}/cmd/${APPNAME}/main.go
 
 FROM alpine:3.8
 RUN apk update && apk add ca-certificates && rm -rf /var/cache/apk/*
@@ -26,7 +26,7 @@ LABEL branch=$GIT_BRANCH \
    build-creator=$BUILD_CREATOR \
    appname=$APPNAME
 
-COPY --from=go /${APPNAME}.linux /home/user/app/
+COPY --from=go /app.linux /home/user/app/
 RUN touch /home/user/app/$GIT_COMMIT
 
 # Package tzdata is needed before setting TZ ENV variable
@@ -38,4 +38,4 @@ RUN cp /usr/share/zoneinfo/$TZ /etc/localtime && rm -rf /var/cache/apk/*
 EXPOSE 8080
 WORKDIR /home/user/app/
 
-CMD ["./$APPNAME.docker"]
+CMD ["./app.linux"]
