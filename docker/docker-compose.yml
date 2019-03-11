@@ -4,3 +4,5 @@ services:
     image: ${DOCKER_IMAGE}:local
     ports:
      - "${DOCKER_PORT}:8080"
+    labels:
+      prometheus.port: ${PROMETHEUS_PORT}

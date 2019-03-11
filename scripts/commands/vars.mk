@@ -46,3 +46,6 @@ export DOCS_DIR=docs
 export DOCS_HOST=localhost:$(call genport,3)
 export DOCS_PATH=github.schibsted.io/Yapo/${APPNAME}
 export DOCS_COMMIT_MESSAGE=Generate updated documentation
+
+# Prometheus variables
+export PROMETHEUS_PORT=8877
