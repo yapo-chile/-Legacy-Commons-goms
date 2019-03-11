@@ -33,19 +33,6 @@ func main() {
 		os.Exit(2)
 	}
 
-	logger.Info("Setting up New Relic")
-	newrelic := infrastructure.NewRelicHandler{
-		Appname: conf.NewRelicConf.Appname,
-		Key:     conf.NewRelicConf.Key,
-		Enabled: conf.NewRelicConf.Enabled,
-		Logger:  logger,
-	}
-	err = newrelic.Start()
-	if err != nil {
-		logger.Error("Error loading New Relic: %+v", err)
-		os.Exit(2)
-	}
-
 	logger.Info("Setting up Prometheus")
 	prometheus := infrastructure.MakePrometheusExporter(
 		conf.PrometheusConf.Port,
@@ -75,7 +62,7 @@ func main() {
 	// Setting up router
 	maker := infrastructure.RouterMaker{
 		Logger:        logger,
-		WrapperFuncs:  []infrastructure.WrapperFunc{newrelic.TrackHandlerFunc, prometheus.TrackHandlerFunc},
+		WrapperFuncs:  []infrastructure.WrapperFunc{prometheus.TrackHandlerFunc},
 		WithProfiling: conf.ServiceConf.Profiling,
 		Routes: infrastructure.Routes{
 			{

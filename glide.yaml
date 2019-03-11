@@ -3,7 +3,6 @@ import:
 - package: github.com/Yapo/goutils
 - package: github.com/Yapo/logger
 - package: github.com/gorilla/context
-- package: github.com/newrelic/go-agent
 - package: github.com/prometheus/client_golang
   subpackages:
   - prometheus
