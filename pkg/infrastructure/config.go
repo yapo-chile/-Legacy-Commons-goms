@@ -36,14 +36,6 @@ type PrometheusConf struct {
 	Enabled bool   `env:"ENABLED" envDefault:"false"`
 }
 
-// NewRelicConf holds configuration to report to New Relic
-// TODO: You need to set the defaults according to your service
-type NewRelicConf struct {
-	Key     string `env:"KEY" envDefault:"923864cba2f12410aff39279cddfd339a07f13a3"`
-	Appname string `env:"APPNAME" envDefault:"yapo-goms-poya"`
-	Enabled bool   `env:"ENABLED" envDefault:"false"`
-}
-
 // RuntimeConfig config to start the app
 type RuntimeConfig struct {
 	Host string `env:"HOST" envDefault:"0.0.0.0"`
@@ -53,7 +45,6 @@ type RuntimeConfig struct {
 // Config holds all configuration for the service
 type Config struct {
 	ServiceConf    ServiceConf    `env:"SERVICE_"`
-	NewRelicConf   NewRelicConf   `env:"NEWRELIC_"`
 	PrometheusConf PrometheusConf `env:"PROMETHEUS_"`
 	LoggerConf     LoggerConf     `env:"LOGGER_"`
 	Runtime        RuntimeConfig  `env:"APP_"`
