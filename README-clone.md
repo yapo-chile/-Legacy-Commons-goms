@@ -22,8 +22,6 @@ __SERVICE__ needs a description here.
   - Default branch: master
   - Protected branches: choose master
   - Protect this branch
-    + Require pull request reviews
-      - Dismiss stale pull request
     + Require status checks before merging
       - Require branches to be up to date
       - Quality gate code analysis
