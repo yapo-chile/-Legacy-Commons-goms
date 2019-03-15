@@ -22,19 +22,12 @@ type Prometheus struct {
 	requestSize prometheus.ObserverVec
 	// responseSize  metric of HTTP response size
 	responseSize prometheus.ObserverVec
-
-	// Custom metrics
-	// badInputErrors metric of total of bad inputs getting fibo numbers
-	badInputErrors prometheus.Counter
-	// respositoryErrors metric of repository errors gettting fibo numbers
-	repositoryErrors prometheus.Counter
-
 	// Exporter params
 	// server exposes all metrics on /metrics path using a given port
 	server *http.Server
 	// logger logs runtime messages
 	logger loggers.Logger
-	// Enabled enables prometheus exporter
+	// enabled enables prometheus exporter
 	enabled bool
 }
 
@@ -77,27 +70,12 @@ func MakePrometheusExporter(port string, enabled bool, logger loggers.Logger) *P
 			},
 			[]string{"handler", "method"},
 		),
-		// Initialize custom histograms, counters & gauges
-		badInputErrors: prometheus.NewCounter(
-			prometheus.CounterOpts{
-				Name: "fibonacci_bad_input_error_total",
-				Help: "Total of bad input errors calculating fibo numbers",
-			},
-		),
-		repositoryErrors: prometheus.NewCounter(
-			prometheus.CounterOpts{
-				Name: "fibonacci_repository_error_total",
-				Help: "Total of repository errors",
-			},
-		),
 		enabled: enabled,
 		logger:  logger,
 	}
 
 	// Register all of the common metrics in the standard registry
 	prometheus.MustRegister(p.counter, p.duration, p.inFlight, p.requestSize, p.responseSize)
-	// Register all custom metrics in the standard registry
-	prometheus.MustRegister(p.badInputErrors, p.repositoryErrors)
 
 	// start prometheus exposer server in /metrics endpoint
 	p.expose(port)
@@ -135,19 +113,34 @@ func (p *Prometheus) TrackHandlerFunc(handlerName string, handler http.HandlerFu
 	return handler.ServeHTTP
 }
 
-// IncrementCounter increments a prometheus counter for a given metric
-func (p *Prometheus) IncrementCounter(metric loggers.MetricType) {
-	if !p.enabled {
-		return
+// NewCounterVector creates a new instance of CounterVector
+func (*Prometheus) NewCounterVector(name, help string, labels []string) loggers.CounterVector {
+	vector := prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: name,
+			Help: help,
+		},
+		labels,
+	)
+	prometheus.MustRegister(vector)
+	return &CounterVector{
+		vector: vector,
 	}
-	switch metric {
-	case loggers.BadInputError:
-		p.badInputErrors.Inc()
-	case loggers.RepositoryError:
-		p.repositoryErrors.Inc()
-	default:
-		p.logger.Error("Unsupported metric type")
-	}
+}
+
+// CounterVector is a Collector that bundles a set of Counters that all share the
+// same Desc, but have different values for their variable labels. This is used
+// if you want to count the same thing partitioned by various dimensions
+// (e.g. number of HTTP requests, partitioned by response code and
+// method). Create instances with NewCounterVec.
+type CounterVector struct {
+	vector *prometheus.CounterVec
+}
+
+// WithLabelValues selects counter with label
+// ex: myVec.WithLabelValues("404", "GET").Add(42)
+func (v *CounterVector) WithLabelValues(labels ...string) loggers.Counter {
+	return v.vector.WithLabelValues(labels...)
 }
 
 // expose starts prometheus exporter metrics server exposing metrics in "/metrics" path

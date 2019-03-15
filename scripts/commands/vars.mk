@@ -49,3 +49,4 @@ export DOCS_COMMIT_MESSAGE=Generate updated documentation
 
 # Prometheus variables
 export PROMETHEUS_PORT=8877
+export PROMETHEUS_ENABLED=true
