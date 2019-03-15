@@ -24,8 +24,8 @@ func (l *fibonacciPrometheusDefaultLogger) LogRepositoryError(i int, x domain.Fi
 // via the provided logger & prometheus metrics exporter
 func MakeFibonacciPrometheusLogger(logger Logger, prometheus MetricsExporter) usecases.FibonacciPrometheusLogger {
 	counterVector := prometheus.NewCounterVector( // all metrics will be stored in a vector of counters
-		"goms_fibonnaci_events_count_total", // metric name
-		"fibonnaci events counter",          // metric help
+		"goms_fibonacci_events_count_total", // metric name
+		"fibonacci events counter",          // metric help
 		[]string{"event", "type"},           // labels
 	)
 
