@@ -4,19 +4,34 @@ import (
 	"io"
 )
 
-// MetricType is the datatype to represent a prometheus metric type
-type MetricType int
+// EventType represents the kind of the event exported to prometheus.
+// It will works as filter in grafana dashboard
+type EventType string
 
-// Metrics exposer constants, add all the metrics that you need
 const (
-	// BadInputError represents counter of bad input errors
-	BadInputError MetricType = iota
-	// RepositoryError represents counter of repository errors
-	RepositoryError
+	// EventError represents an error event type
+	EventError EventType = "error"
 )
 
-// MetricsExporter allows operations to export metrics to prometheus
+// Metrics contains needed structs to export metrics data to prometheus
+type Metrics struct {
+	// collector is a prometheus data struct to collect metrics and display it on
+	// HOST:PROMETHEUS_PORT/metrics endpoint. Add any other collector if you need it.
+	collector EventsCollector
+	// exporter is a prometheus instance to allow collectors creation. Also allows
+	// close the metrics prometheus exporter
+	exporter MetricsExporter
+}
+
+// MetricsExporter allows operations to export metrics to prometheus.
+// Please before naming your metric take a look here:
+// https://confluence.schibsted.io/pages/viewpage.action?spaceKey=SPTINF&title=Common+Metrics+Standard
 type MetricsExporter interface {
-	IncrementCounter(metric MetricType)
 	io.Closer
+	NewEventsCollector(name, help string) EventsCollector
+}
+
+// EventsCollector allows operations for data collector
+type EventsCollector interface {
+	CollectEvent(eventName string, eventType EventType)
 }

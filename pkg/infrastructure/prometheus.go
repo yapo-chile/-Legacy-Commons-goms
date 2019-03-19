@@ -22,19 +22,12 @@ type Prometheus struct {
 	requestSize prometheus.ObserverVec
 	// responseSize  metric of HTTP response size
 	responseSize prometheus.ObserverVec
-
-	// Custom metrics
-	// badInputErrors metric of total of bad inputs getting fibo numbers
-	badInputErrors prometheus.Counter
-	// respositoryErrors metric of repository errors gettting fibo numbers
-	repositoryErrors prometheus.Counter
-
 	// Exporter params
 	// server exposes all metrics on /metrics path using a given port
 	server *http.Server
 	// logger logs runtime messages
 	logger loggers.Logger
-	// Enabled enables prometheus exporter
+	// enabled enables prometheus exporter
 	enabled bool
 }
 
@@ -77,27 +70,12 @@ func MakePrometheusExporter(port string, enabled bool, logger loggers.Logger) *P
 			},
 			[]string{"handler", "method"},
 		),
-		// Initialize custom histograms, counters & gauges
-		badInputErrors: prometheus.NewCounter(
-			prometheus.CounterOpts{
-				Name: "fibonacci_bad_input_error_total",
-				Help: "Total of bad input errors calculating fibo numbers",
-			},
-		),
-		repositoryErrors: prometheus.NewCounter(
-			prometheus.CounterOpts{
-				Name: "fibonacci_repository_error_total",
-				Help: "Total of repository errors",
-			},
-		),
 		enabled: enabled,
 		logger:  logger,
 	}
 
 	// Register all of the common metrics in the standard registry
 	prometheus.MustRegister(p.counter, p.duration, p.inFlight, p.requestSize, p.responseSize)
-	// Register all custom metrics in the standard registry
-	prometheus.MustRegister(p.badInputErrors, p.repositoryErrors)
 
 	// start prometheus exposer server in /metrics endpoint
 	p.expose(port)
@@ -135,19 +113,29 @@ func (p *Prometheus) TrackHandlerFunc(handlerName string, handler http.HandlerFu
 	return handler.ServeHTTP
 }
 
-// IncrementCounter increments a prometheus counter for a given metric
-func (p *Prometheus) IncrementCounter(metric loggers.MetricType) {
-	if !p.enabled {
-		return
-	}
-	switch metric {
-	case loggers.BadInputError:
-		p.badInputErrors.Inc()
-	case loggers.RepositoryError:
-		p.repositoryErrors.Inc()
-	default:
-		p.logger.Error("Unsupported metric type")
-	}
+// NewEventsCollector creates a new instance of EventsCollector
+func (*Prometheus) NewEventsCollector(name, help string) loggers.EventsCollector {
+	counterVec := prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: name,
+			Help: help,
+		},
+		[]string{"event", "type"}, // labels
+	)
+	prometheus.MustRegister(counterVec)
+	return &counterVector{counterVec}
+}
+
+// counterVector is a Collector that bundles a set of Counters that all share the
+// same descriptor, but have different values for their variable labels.
+type counterVector struct {
+	*prometheus.CounterVec
+}
+
+// CollectEvent increments the event counter. If the given event does not exist,
+// a new counter is created. Ex: CollectEvent("upload", loggers.EventSuccess)
+func (v *counterVector) CollectEvent(eventName string, eventType loggers.EventType) {
+	v.CounterVec.WithLabelValues(eventName, string(eventType)).Inc()
 }
 
 // expose starts prometheus exporter metrics server exposing metrics in "/metrics" path

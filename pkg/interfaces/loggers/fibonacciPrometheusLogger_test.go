@@ -14,22 +14,41 @@ type prometheusMock struct {
 	mock.Mock
 }
 
+func (m *prometheusMock) NewEventsCollector(name, help string) EventsCollector {
+	args := m.Called(name, help)
+	return args.Get(0).(EventsCollector)
+}
+
 func (m *prometheusMock) Close() error {
 	args := m.Called()
 	return args.Error(0)
 }
 
-func (m *prometheusMock) IncrementCounter(metric MetricType) {
-	m.Called(metric)
+type mockCollector struct {
+	mock.Mock
+}
+
+func (m *mockCollector) CollectEvent(eventName string, eventType EventType) {
+	m.Called(eventName, eventType)
 }
 
 func TestFibonacciInteractorDefaultLogger(t *testing.T) {
 	m := &loggerMock{t: t}
 	mPrometheus := &prometheusMock{}
-	mPrometheus.On("IncrementCounter", BadInputError).Once()
-	mPrometheus.On("IncrementCounter", RepositoryError).Once()
+	mCollector := &mockCollector{}
+	mPrometheus.On("NewEventsCollector",
+		mock.AnythingOfType("string"),
+		mock.AnythingOfType("string")).Return(mCollector).Once()
+
 	l := MakeFibonacciPrometheusLogger(m, mPrometheus)
+
+	mCollector.On("CollectEvent",
+		mock.AnythingOfType("string"),
+		mock.AnythingOfType("EventType"))
+
 	l.LogBadInput(42)
 	l.LogRepositoryError(5, 42, nil)
 	m.AssertExpectations(t)
+	mPrometheus.AssertExpectations(t)
+	mCollector.AssertExpectations(t)
 }
