@@ -11,28 +11,26 @@ type fibonacciPrometheusDefaultLogger struct {
 }
 
 func (l *fibonacciPrometheusDefaultLogger) LogBadInput(n int) {
-	l.metrics.collector.WithLabelValues("bad_input", EventError).Inc()
+	l.metrics.collector.CollectEvent("bad_input", EventError)
 	l.logger.Debug("GetNth doesn't like N < 1. Input: %d", n)
 }
 
 func (l *fibonacciPrometheusDefaultLogger) LogRepositoryError(i int, x domain.Fibonacci, err error) {
-	l.metrics.collector.WithLabelValues("repository", EventError).Inc()
+	l.metrics.collector.CollectEvent("repository", EventError)
 	l.logger.Error("Repository refused to save (%d, %d): %s", i, x, err)
 }
 
 // MakeFibonacciPrometheusLogger sets up a FibonacciPrometheusLogger instrumented
 // via the provided logger & prometheus metrics exporter
 func MakeFibonacciPrometheusLogger(logger Logger, prometheus MetricsExporter) usecases.FibonacciPrometheusLogger {
-	counterVector := prometheus.NewCounterVector( // all metrics will be stored in a vector of counters
+	collector := prometheus.NewEventsCollector(
 		"goms_fibonacci_events_total", // metric name
 		"fibonacci events counter",    // metric help
-		[]string{"event", "type"},     // labels
 	)
-
 	return &fibonacciPrometheusDefaultLogger{
 		logger: logger,
 		metrics: Metrics{
-			collector: counterVector,
+			collector: collector,
 			exporter:  prometheus,
 		},
 	}

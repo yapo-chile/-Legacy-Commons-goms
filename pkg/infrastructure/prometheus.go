@@ -113,34 +113,31 @@ func (p *Prometheus) TrackHandlerFunc(handlerName string, handler http.HandlerFu
 	return handler.ServeHTTP
 }
 
-// NewCounterVector creates a new instance of CounterVector
-func (*Prometheus) NewCounterVector(name, help string, labels []string) loggers.CounterVector {
-	vector := prometheus.NewCounterVec(
+// NewEventsCollector creates a new instance of EventsCollector
+func (*Prometheus) NewEventsCollector(name, help string) loggers.EventsCollector {
+	counterVector := prometheus.NewCounterVec(
 		prometheus.CounterOpts{
 			Name: name,
 			Help: help,
 		},
-		labels,
+		[]string{"event", "type"}, // labels
 	)
-	prometheus.MustRegister(vector)
+	prometheus.MustRegister(counterVector)
 	return &CounterVector{
-		vector: vector,
+		vector: counterVector,
 	}
 }
 
 // CounterVector is a Collector that bundles a set of Counters that all share the
-// same Desc, but have different values for their variable labels. This is used
-// if you want to count the same thing partitioned by various dimensions
-// (e.g. number of HTTP requests, partitioned by response code and
-// method). Create instances with NewCounterVec.
+// same descriptor, but have different values for their variable labels.
 type CounterVector struct {
 	vector *prometheus.CounterVec
 }
 
-// WithLabelValues selects counter with label
-// ex: myVec.WithLabelValues("404", "GET").Add(42)
-func (v *CounterVector) WithLabelValues(labels ...string) loggers.Counter {
-	return v.vector.WithLabelValues(labels...)
+// CollectEvent increments the event counter. If the given event does not exist,
+// a new counter is created. Ex: CollectEvent("upload", loggers.EventSuccess)
+func (v *CounterVector) CollectEvent(eventName string, eventType loggers.EventType) {
+	v.vector.WithLabelValues(eventName, string(eventType)).Inc()
 }
 
 // expose starts prometheus exporter metrics server exposing metrics in "/metrics" path
