@@ -126,7 +126,7 @@ func (*Prometheus) NewEventsCollector(name, help string) loggers.EventsCollector
 	return &counterVector{counterVec}
 }
 
-// CounterVector is a Collector that bundles a set of Counters that all share the
+// counterVector is a Collector that bundles a set of Counters that all share the
 // same descriptor, but have different values for their variable labels.
 type counterVector struct {
 	*prometheus.CounterVec
