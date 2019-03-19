@@ -9,16 +9,8 @@ import (
 type EventType string
 
 const (
-	// EventSuccess represents a successful event type
-	EventSuccess EventType = "success"
 	// EventError represents an error event type
 	EventError EventType = "error"
-	// EventInfo represents an info event type
-	EventInfo EventType = "info"
-	// EventWarning represents an warning event type
-	EventWarning EventType = "warning"
-	// EventCrit represents an critical event type
-	EventCrit EventType = "critical"
 )
 
 // Metrics contains needed structs to export metrics data to prometheus
@@ -35,8 +27,8 @@ type Metrics struct {
 // Please before naming your metric take a look here:
 // https://confluence.schibsted.io/pages/viewpage.action?spaceKey=SPTINF&title=Common+Metrics+Standard
 type MetricsExporter interface {
-	NewEventsCollector(name, help string) EventsCollector
 	io.Closer
+	NewEventsCollector(name, help string) EventsCollector
 }
 
 // EventsCollector allows operations for data collector

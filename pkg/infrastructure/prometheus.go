@@ -115,29 +115,27 @@ func (p *Prometheus) TrackHandlerFunc(handlerName string, handler http.HandlerFu
 
 // NewEventsCollector creates a new instance of EventsCollector
 func (*Prometheus) NewEventsCollector(name, help string) loggers.EventsCollector {
-	counterVector := prometheus.NewCounterVec(
+	counterVec := prometheus.NewCounterVec(
 		prometheus.CounterOpts{
 			Name: name,
 			Help: help,
 		},
 		[]string{"event", "type"}, // labels
 	)
-	prometheus.MustRegister(counterVector)
-	return &CounterVector{
-		vector: counterVector,
-	}
+	prometheus.MustRegister(counterVec)
+	return &counterVector{counterVec}
 }
 
 // CounterVector is a Collector that bundles a set of Counters that all share the
 // same descriptor, but have different values for their variable labels.
-type CounterVector struct {
-	vector *prometheus.CounterVec
+type counterVector struct {
+	*prometheus.CounterVec
 }
 
 // CollectEvent increments the event counter. If the given event does not exist,
 // a new counter is created. Ex: CollectEvent("upload", loggers.EventSuccess)
-func (v *CounterVector) CollectEvent(eventName string, eventType loggers.EventType) {
-	v.vector.WithLabelValues(eventName, string(eventType)).Inc()
+func (v *counterVector) CollectEvent(eventName string, eventType loggers.EventType) {
+	v.CounterVec.WithLabelValues(eventName, string(eventType)).Inc()
 }
 
 // expose starts prometheus exporter metrics server exposing metrics in "/metrics" path
