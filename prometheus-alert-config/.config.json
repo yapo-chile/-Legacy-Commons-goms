@@ -1,0 +1,5 @@
+{
+    "service":"pulse-service",
+    "team": "yapo-pro",
+    "prometheus": ["p1","devpre"]
+}

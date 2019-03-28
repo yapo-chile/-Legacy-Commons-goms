@@ -1,0 +1,14 @@
+groups:
+- name: yapo.rules
+  rules:
+  - alert: yapo_pulse_service_too_many_ads_deleted
+    expr: delta(pulse_messages_deleted{job="Pulse-service"}[5m]) > 500
+    for: 10m
+    labels: 
+      team: yapo
+    annotations:
+      summary: "Ads Deleted: yapo-pro"
+      description: "Too many ads deleted in the last 10 minutes."
+      jira_ticket_queue: YAPOINC
+      severity: "3"
+      tags: service:name:pulse_service,service:env:pro,company:name:yapo,notification:slack:yapo_prometheus,notification:email:ana.mora@schibsted.com,ticketing:configuration:sev3:disable,ticketing:disabled:recovery:slack:yapo_prometheus
