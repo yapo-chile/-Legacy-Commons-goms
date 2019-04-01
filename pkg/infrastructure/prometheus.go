@@ -3,9 +3,9 @@ package infrastructure
 import (
 	"net/http"
 
+	"github.com/Yapo/logger"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"github.schibsted.io/Yapo/goms/pkg/interfaces/loggers"
 )
 
 // Prometheus provides both, a way to instrument http.HandlerFunc with
@@ -25,15 +25,13 @@ type Prometheus struct {
 	// Exporter params
 	// server exposes all metrics on /metrics path using a given port
 	server *http.Server
-	// logger logs runtime messages
-	logger loggers.Logger
 	// enabled enables prometheus exporter
 	enabled bool
 }
 
 // MakePrometheusExporter Builds a fresh Prometheus, initializing its
 // metrics
-func MakePrometheusExporter(port string, enabled bool, logger loggers.Logger) *Prometheus {
+func MakePrometheusExporter(port string, enabled bool) *Prometheus {
 	p := Prometheus{
 		counter: prometheus.NewCounterVec(
 			prometheus.CounterOpts{
@@ -71,7 +69,6 @@ func MakePrometheusExporter(port string, enabled bool, logger loggers.Logger) *P
 			[]string{"handler", "method"},
 		),
 		enabled: enabled,
-		logger:  logger,
 	}
 
 	// Register all of the common metrics in the standard registry
@@ -114,28 +111,29 @@ func (p *Prometheus) TrackHandlerFunc(handlerName string, handler http.HandlerFu
 }
 
 // NewEventsCollector creates a new instance of EventsCollector
-func (*Prometheus) NewEventsCollector(name, help string) loggers.EventsCollector {
+func (*Prometheus) NewEventsCollector(name, help string) EventCollector {
 	counterVec := prometheus.NewCounterVec(
 		prometheus.CounterOpts{
 			Name: name,
 			Help: help,
 		},
-		[]string{"event", "type"}, // labels
+		[]string{"entity", "event", "type"}, // labels
 	)
 	prometheus.MustRegister(counterVec)
-	return &counterVector{counterVec}
+	return EventCollector{counterVec}
 }
 
-// counterVector is a Collector that bundles a set of Counters that all share the
+// EventCollector is a Collector that bundles a set of Counters that all share the
 // same descriptor, but have different values for their variable labels.
-type counterVector struct {
+type EventCollector struct {
 	*prometheus.CounterVec
 }
 
 // CollectEvent increments the event counter. If the given event does not exist,
-// a new counter is created. Ex: CollectEvent("upload", loggers.EventSuccess)
-func (v *counterVector) CollectEvent(eventName string, eventType loggers.EventType) {
-	v.CounterVec.WithLabelValues(eventName, string(eventType)).Inc()
+// a new counter is created. Note: prometheus uses snake case as standar.
+// Ex: CollectEvent("user_repository","upload_image", "success")
+func (v *EventCollector) CollectEvent(entityName, eventName, eventType string) {
+	v.CounterVec.WithLabelValues(entityName, eventName, eventType).Inc()
 }
 
 // expose starts prometheus exporter metrics server exposing metrics in "/metrics" path
@@ -147,7 +145,7 @@ func (p *Prometheus) expose(port string) {
 	http.Handle("/metrics", promhttp.Handler())
 	go func() {
 		if err := p.server.ListenAndServe(); err != http.ErrServerClosed {
-			p.logger.Error("Prometheus error: %s", err)
+			logger.Error("Prometheus error: %s", err)
 		}
 	}()
 }
