@@ -26,19 +26,24 @@ func main() {
 		fmt.Printf("Config: \n%+v\n", conf)
 	}
 
+	fmt.Printf("Setting up Prometheus\n")
+	prometheus := infrastructure.MakePrometheusExporter(
+		conf.PrometheusConf.Port,
+		conf.PrometheusConf.Enabled,
+	)
+
 	fmt.Printf("Setting up logger\n")
-	logger, err := infrastructure.MakeYapoLogger(&conf.LoggerConf)
+	logger, err := infrastructure.MakeYapoLogger(&conf.LoggerConf,
+		prometheus.NewEventsCollector(
+			"goms_service_events_total",
+			"events tracker counter for goms service",
+		),
+	)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(2)
 	}
 
-	logger.Info("Setting up Prometheus")
-	prometheus := infrastructure.MakePrometheusExporter(
-		conf.PrometheusConf.Port,
-		conf.PrometheusConf.Enabled,
-		logger,
-	)
 	shutdownSequence.Push(prometheus)
 
 	logger.Info("Initializing resources")
@@ -48,7 +53,7 @@ func main() {
 
 	// CLONE REMOVE START
 	// FibonacciHandler
-	fibonacciLogger := loggers.MakeFibonacciPrometheusLogger(logger, prometheus)
+	fibonacciLogger := loggers.MakeFibonacciLogger(logger)
 	fibonacciRepository := repository.NewMapFibonacciRepository()
 	fibonacciInteractor := usecases.FibonacciInteractor{
 		Logger:     fibonacciLogger,
