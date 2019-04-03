@@ -15,7 +15,7 @@ const (
 	// entityNameFuncCallDeepness deepness of function invokation for entityName
 	entityNameFuncCallDeepness int = 6
 	// stackTraceInitialBufferCapacity initial buffer capacity for stack trace
-	stackTraceInitialBufferCapacity int = 1
+	stackTraceInitialBufferCapacity int = 20
 )
 
 // getEventType gets the event type to export to prometheus
