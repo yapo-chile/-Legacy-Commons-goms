@@ -43,7 +43,7 @@ func getEventName() string {
 }
 
 func getFuncName(deepness int) string {
-	nameFull := funcName(deepness, 1)
+	nameFull := funcName(deepness, stackTraceInitialBufferCapacity)
 	nameEnd := filepath.Ext(nameFull)
 	name := strings.TrimPrefix(nameEnd, ".")
 	return name
