@@ -7,18 +7,24 @@ import (
 	"strings"
 )
 
+const (
+	eventTypeFuncCallDeepness  int = 4
+	entityNameFuncCallDeepness int = 6
+	eventNameFuncCallDeepness  int = 5
+)
+
 func getEventType() string {
-	return toSnakeCase(getFuncName(4))
+	return toSnakeCase(getFuncName(eventTypeFuncCallDeepness))
 }
 
 func getEntityName() string {
-	return toSnakeCase(getEntity(6))
+	return toSnakeCase(getEntity(entityNameFuncCallDeepness))
 }
 
 var loggerReplacer = regexp.MustCompile(`(_?log(ger)?_?)`)
 
 func getEventName() string {
-	loggerName := toSnakeCase(getFuncName(5))
+	loggerName := toSnakeCase(getFuncName(eventNameFuncCallDeepness))
 	return loggerReplacer.ReplaceAllString(loggerName, "")
 }
 
@@ -56,8 +62,11 @@ func toSnakeCase(s string) string {
 	return strings.ToLower(strings.Join(a, "_"))
 }
 
-func funcName(deepness, maxDeepness int) string {
-	pc := make([]uintptr, maxDeepness)
+// funcName returns the last function name of invocations on the calling goroutine's stack.
+// The stack trace can be skipped using deepness parameter. BufferInitialCapacity gives
+// the capacity to record in trace stack slice.
+func funcName(deepness, bufferInitialCapacity int) string {
+	pc := make([]uintptr, bufferInitialCapacity)
 	n := runtime.Callers(deepness, pc)
 	frames := runtime.CallersFrames(pc[:n])
 	frame, _ := frames.Next()
