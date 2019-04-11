@@ -26,9 +26,13 @@ RANCHER_SERVICE_ID=$(curl -s -u "${RANCHER_CREDENTIALS}" -X GET "${RANCHER_GET_S
 echo RANCHER_STACK_ID $RANCHER_STACK_ID
 echo RANCHER_SERVICE_ID $RANCHER_SERVICE_ID
 
-curl -u "${RANCHER_API_KEY}:${RANCHER_SECRET_KEY}" \
--X POST \
--H 'Accept: application/json' \
--H 'Content-Type: application/json' \
--d '{"inServiceStrategy":{"launchConfig":{"tty":true, "vcpu":1, "imageUuid":"docker:'"${DOCKER_IMAGE}"':'"${BRANCH}"'", "startFirst":true}}, "toServiceStrategy":null}' \
-"${RANCHER_API_URL}/v2-beta/projects/${RANCHER_INC_ID}/services/${RANCHER_SERVICE_ID}/?action=upgrade"
+RANCHER_UPGRADE_URL="${RANCHER_API_URL}/v2-beta/projects/${RANCHER_INC_ID}/services/${RANCHER_SERVICE_ID}/?action=upgrade"
+RANCHER_FINISH_UPGRADE_URL="${RANCHER_API_URL}/v2-beta/projects/${RANCHER_INC_ID}/services/${RANCHER_SERVICE_ID}/?action=finishupgrade"
+RANCHER_ROLLBACK_URL="${RANCHER_API_URL}/v2-beta/projects/${RANCHER_INC_ID}/services/${RANCHER_SERVICE_ID}/?action=rollback"
+
+curl -u "${RANCHER_CREDENTIALS}" \
+  -X POST \
+  -H 'Accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{"inServiceStrategy":{"launchConfig":{"tty":true, "vcpu":1, "imageUuid":"docker:'"${DOCKER_IMAGE}"':'"${BRANCH}"'", "startFirst":true}}, "toServiceStrategy":null}' \
+  "${RANCHER_UPGRADE_URL}"
