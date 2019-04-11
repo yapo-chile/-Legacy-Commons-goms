@@ -45,6 +45,10 @@ clone:
 fix-format:
 	@scripts/commands/fix-format.sh
 
+## Deploys in rancher
+deploy-rancher:
+	@scripts/commands/deploy-rancher.sh $(TARGET)
+
 ## Display basic service info
 info:
 	@echo "YO           : ${YO}"

@@ -50,3 +50,13 @@ export DOCS_COMMIT_MESSAGE=Generate updated documentation
 # Prometheus variables
 export PROMETHEUS_PORT=8877
 export PROMETHEUS_ENABLED=true
+
+# Rancher Deploy
+export RANCHER_ENV=prueba
+export RANCHER_INC_ID=1a259
+export RANCHER_API_URL=http://rancherdev.schibsted.cl:8080
+export RANCHER_STACK_PREFIX=goms-
+
+# This block shouldnt stay here, i know, its just for testable purposes
+export RANCHER_API_KEY=58AAA633531BA4DDE565
+export RANCHER_SECRET_KEY=kLKW7JMo7nGGGHK52xRL2vorwwGvqRdmMQtkezeS
