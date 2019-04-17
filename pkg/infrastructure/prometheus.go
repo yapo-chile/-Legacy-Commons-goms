@@ -2,6 +2,8 @@ package infrastructure
 
 import (
 	"net/http"
+	"regexp"
+	"strings"
 
 	"github.com/Yapo/logger"
 	"github.com/prometheus/client_golang/prometheus"
@@ -114,13 +116,26 @@ func (p *Prometheus) TrackHandlerFunc(handlerName string, handler http.HandlerFu
 func (*Prometheus) NewEventsCollector(name, help string) EventCollector {
 	counterVec := prometheus.NewCounterVec(
 		prometheus.CounterOpts{
-			Name: name,
+			Name: sanitizeMetricName(name),
 			Help: help,
 		},
 		[]string{"entity", "event", "type"}, // labels
 	)
 	prometheus.MustRegister(counterVec)
 	return EventCollector{counterVec}
+}
+
+var notSnakeChars = regexp.MustCompile("[^a-zA-Z0-9_]+")
+var endStartUnderscore = regexp.MustCompile("^_|_$")
+
+// sanitizeMetricName sanitizes prometheus metric name
+func sanitizeMetricName(name string) string {
+	str := notSnakeChars.ReplaceAllString(name, "_")
+	str = toSnakeCase(str)
+	for strings.Contains(str, "__") { // remove every double underscore
+		str = strings.Replace(str, "__", "_", -1)
+	}
+	return endStartUnderscore.ReplaceAllString(str, "")
 }
 
 // EventCollector is a Collector that bundles a set of Counters that all share the
