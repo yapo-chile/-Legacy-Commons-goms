@@ -88,7 +88,7 @@
         }
       ]
     },
-    "description": "Goms works as base project for golang services",
+    "description": "$DESCRIPTION",
     "editable": true,
     "gnetId": null,
     "graphTooltip": 0,
@@ -1041,7 +1041,7 @@
         "steppedLine": false,
         "targets": [
           {
-            "expr": "rate(request_duration_seconds_sum{instance=\"$INSTANCE\"}[$PERIOD])\n/rate(request_duration_seconds_sum{instance=\"$INSTANCE\"}[$PERIOD])\n",
+            "expr": "rate(request_duration_seconds_sum{instance=\"$INSTANCE\"}[$PERIOD])\n/rate(request_duration_seconds_count{instance=\"$INSTANCE\"}[$PERIOD])\n",
             "format": "time_series",
             "intervalFactor": 1,
             "legendFormat": "{{handler}}",
@@ -1067,7 +1067,7 @@
         },
         "yaxes": [
           {
-            "decimals": 0,
+            "decimals": 2,
             "format": "s",
             "label": "",
             "logBase": 1,
@@ -1191,7 +1191,7 @@
         "id": 4,
         "panels": [],
         "repeat": null,
-        "title": "Info Events",
+        "title": "Info & Success Events",
         "type": "row"
       },
       {
@@ -1267,11 +1267,11 @@
         ],
         "targets": [
           {
-            "expr": "$EVENTS_COLLECTOR_METRIC_NAME{instance=\"$INSTANCE\", type=\"info\"}",
+            "expr": "$EVENTS_COLLECTOR_METRIC_NAME{instance=\"$INSTANCE\", type=~\"info|success\"}",
             "format": "time_series",
             "instant": true,
             "intervalFactor": 1,
-            "legendFormat": "INFO - {{entity}}.{{event}}",
+            "legendFormat": "{{type}} - {{entity}}.{{event}}",
             "refId": "F"
           }
         ],
@@ -1327,11 +1327,11 @@
         "steppedLine": false,
         "targets": [
           {
-            "expr": "increase($EVENTS_COLLECTOR_METRIC_NAME{instance=\"$INSTANCE\", type=\"info\"}[$PERIOD])\n",
+            "expr": "increase($EVENTS_COLLECTOR_METRIC_NAME{instance=\"$INSTANCE\", type=~\"info|success\"}[$PERIOD])\n",
             "format": "time_series",
             "instant": false,
             "intervalFactor": 1,
-            "legendFormat": "{{entity}}.{{event}}",
+            "legendFormat": "{{type}} - {{entity}}.{{event}}",
             "refId": "A"
           }
         ],
@@ -1419,11 +1419,11 @@
         "steppedLine": false,
         "targets": [
           {
-            "expr": "$EVENTS_COLLECTOR_METRIC_NAME{instance=\"$INSTANCE\", type=\"info\"}\n",
+            "expr": "$EVENTS_COLLECTOR_METRIC_NAME{instance=\"$INSTANCE\", type=~\"info|success\"}\n",
             "format": "time_series",
             "instant": false,
             "intervalFactor": 1,
-            "legendFormat": "{{entity}}.{{event}}",
+            "legendFormat": "{{type}} - {{entity}}.{{event}}",
             "refId": "A"
           }
         ],
@@ -1831,7 +1831,7 @@
         ],
         "targets": [
           {
-            "expr": "$EVENTS_COLLECTOR_METRIC_NAME{instance=\"$INSTANCE\", type!=\"info\", type!=\"error\"}",
+            "expr": "$EVENTS_COLLECTOR_METRIC_NAME{instance=\"$INSTANCE\", type!=\"info\", type!=\"success\", type!=\"error\"}",
             "format": "time_series",
             "instant": true,
             "intervalFactor": 1,
@@ -1891,7 +1891,7 @@
         "steppedLine": false,
         "targets": [
           {
-            "expr": "increase($EVENTS_COLLECTOR_METRIC_NAME{instance=\"$INSTANCE\", type!=\"error\",type!=\"info\"}[$PERIOD])\n",
+            "expr": "increase($EVENTS_COLLECTOR_METRIC_NAME{instance=\"$INSTANCE\", type!=\"error\",type!=\"success\",type!=\"info\"}[$PERIOD])\n",
             "format": "time_series",
             "instant": false,
             "intervalFactor": 1,
@@ -2067,7 +2067,7 @@
           "multi": false,
           "name": "SERVICE_NAME",
           "options": [],
-          "query": "query_result(sum({stack_name=\"$STACK_NAME\"})by(service_name))",
+          "query": "query_result(sum({stack_name=~\"$STACK_NAME\"})by(service_name))",
           "refresh": 1,
           "regex": "/service_name=\"([^\"]+)\"/",
           "sort": 0,
