@@ -4,8 +4,7 @@ import (
 	"time"
 
 	"github.com/sony/gobreaker"
-
-	"github.schibsted.io/Yapo/yams-dav-sync/pkg/interfaces/loggers"
+	"github.schibsted.io/Yapo/goms/pkg/interfaces/loggers"
 )
 
 // Circuit breaker common constants & variables

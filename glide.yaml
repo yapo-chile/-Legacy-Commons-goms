@@ -7,10 +7,8 @@ import:
   subpackages:
   - prometheus
   - prometheus/promhttp
-- package: gopkg.in/gorilla/mux.v1 
 - package: github.com/sony/gobreaker
-testImport:
 - package: github.com/stretchr/testify
   subpackages:
-  - assert
   - mock
+- package: gopkg.in/gorilla/mux.v1
