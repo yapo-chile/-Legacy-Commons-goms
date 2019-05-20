@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"net/http"
 	"time"
 )
 
@@ -19,13 +18,6 @@ type HTTPRequest interface {
 	SetQueryParams(map[string]string) HTTPRequest
 	GetTimeOut() time.Duration
 	SetTimeOut(int) HTTPRequest
-}
-
-// HTTPResponse struct that contains http response of
-type HTTPResponse struct {
-	Body    interface{} `json:"Body"`
-	Code    int         `json:"Code"`
-	Headers http.Header `json:"Headers"`
 }
 
 // HTTPHandler implements HTTP handler operations
