@@ -45,7 +45,7 @@ func (h *httpHandler) Send(req repository.HTTPRequest) (interface{}, error) {
 	if isErrorCode(resp.StatusCode) {
 		h.logger.Error("Http - %s - Received an error response: %+v", req.GetMethod(), err)
 		var msg interface{}
-		json.Unmarshal([]byte(response), &msg)
+		json.Unmarshal([]byte(response), &msg) // nolint: errcheck
 		return nil, fmt.Errorf("%s", msg)
 	}
 	if err != nil {
