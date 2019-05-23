@@ -1,4 +1,4 @@
-FROM golang:1.10 AS go
+FROM golang:1.11 AS go
 
 ARG APPFOLDER
 ARG APPNAME

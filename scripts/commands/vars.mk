@@ -55,5 +55,5 @@ export PROMETHEUS_ENABLED=true
 export GOMS_HEALTH_PATH=http://localhost:${SERVICE_PORT}/api/v1/healthcheck
 
 # Circuit breaker variables
-export CIRCUIT_BREAKER_CONSECUTIVE_FAILURE=2
 export CIRCUIT_BREAKER_FAILURE_RATIO=0.5
+export CIRCUIT_BREAKER_CONSECUTIVE_FAILURE=2
