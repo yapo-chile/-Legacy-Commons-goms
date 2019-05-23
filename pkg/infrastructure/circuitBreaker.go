@@ -31,7 +31,7 @@ var (
 // NewCircuitBreaker initializes circuit breaker wrapper
 // name is the circuit breaker
 // consecutiveFailures is the maximum of consecutive errors allowed before open state
-// failureRatioToleranceCi is the maximum error ratio (errors vs requests qty) allowed before open state
+// failureRatioTolerance is the maximum error ratio (errors vs requests qty) allowed before open state
 // Interval is the cyclic period of the closed state for the CircuitBreaker to clear the internal Counts.
 // If Interval is 0, the CircuitBreaker doesn't clear internal Counts during the closed state.
 // Timeout is the period of the open state, after which the state of the CircuitBreaker becomes half-open.

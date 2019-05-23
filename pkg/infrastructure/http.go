@@ -168,7 +168,6 @@ func (r *request) SetTimeOut(timeout int) repository.HTTPRequest {
 }
 
 func isErrorCode(statusCode int) bool {
-
 	return (statusCode >= http.StatusBadRequest &&
 		statusCode <= http.StatusNetworkAuthenticationRequired)
 }
