@@ -52,17 +52,24 @@ func (s *ShutdownSequence) Listen() {
 	go func() {
 		sigint := make(chan os.Signal, 1)
 		signal.Notify(sigint)
-		<-sigint
-		// We received an interrupt signal, shut down.
-		for i := 0; i <= len(s.sequence); i++ {
-			if task := s.pop(); task != nil {
-				if err := task.Close(); err != nil {
-					fmt.Printf("Error closing the task of type %T: %+v\n", task, err)
+		for {
+			sig := <-sigint
+			switch sig {
+			case os.Interrupt:
+				// We received an interrupt signal, shut down.
+				for i := 0; i <= len(s.sequence); i++ {
+					if task := s.pop(); task != nil {
+						if err := task.Close(); err != nil {
+							fmt.Printf("Error closing the task of type %T: %+v\n", task, err)
+						}
+						s.waitGroup.Done()
+					}
 				}
-				s.waitGroup.Done()
+				// At this point all processes must be done
+				fmt.Printf("Proceeding to shut down\n")
+			default:
+				fmt.Printf("Received signal: %s\n", sig)
 			}
 		}
-		// At this point all processes must be done
-		fmt.Printf("Proceeding to shut down")
 	}()
 }
