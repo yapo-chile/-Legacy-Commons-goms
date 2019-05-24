@@ -59,6 +59,16 @@ rm README-clone.md
 echoTitle "Removing code examples and leftovers"
 find . -iname "*.bak" | xargs rm
 find . -iname "*fibonacci*" | xargs rm
+find . -iname "*getHealthcheck*" | xargs rm
+find . -iname "*gomsRepo*" | xargs rm
+
+read -p "Would you like to add HTTP connections to your repo by default? [y/N] " RESPONSE
+if [[ "${RESPONSE}" =~ ^([nN][oO]|[nN])+$ ]]
+then
+	find . -iname "*http*" | xargs rm
+	find . -iname "*Breaker*" | xargs rm
+	find . -iname "*abstract*" | xargs rm
+fi
 echo "${TEMPLATE}*" >> .gitignore
 
 echoTitle "Making first commit"
