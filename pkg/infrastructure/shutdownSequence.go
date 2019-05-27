@@ -46,8 +46,8 @@ func (s *ShutdownSequence) Wait() {
 	s.waitGroup.Wait()
 }
 
-// Close does the actual closing of things
-func (s *ShutdownSequence) Close() {
+// close does the actual closing of things
+func (s *ShutdownSequence) close() {
 	for i := 0; i <= len(s.sequence); i++ {
 		if task := s.pop(); task != nil {
 			if err := task.Close(); err != nil {
@@ -68,14 +68,13 @@ func (s *ShutdownSequence) Listen() {
 		for loop {
 			sig := <-sigint
 			fmt.Printf("Received signal: %s\n", sig)
-			switch sig {
-			case os.Interrupt:
+			if sig == os.Interrupt {
 				// We received an interrupt signal, shut down.
 				fmt.Printf("Proceeding to shut down\n")
 				loop = false
 			}
 		}
-		s.Close()
+		s.close()
 		// At this point all processes must be done
 	}()
 }
