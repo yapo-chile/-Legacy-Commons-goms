@@ -46,23 +46,35 @@ func (s *ShutdownSequence) Wait() {
 	s.waitGroup.Wait()
 }
 
+// close does the actual closing of things
+func (s *ShutdownSequence) close() {
+	for i := 0; i <= len(s.sequence); i++ {
+		if task := s.pop(); task != nil {
+			if err := task.Close(); err != nil {
+				fmt.Printf("Error closing the task of type %T: %+v\n", task, err)
+			}
+			s.waitGroup.Done()
+		}
+	}
+}
+
 // Listen launches a go routines that waits for sigint and then stops each task in the stack.
 // You need to call Listen before calling Wait, otherwise you risk waiting indefinitely
 func (s *ShutdownSequence) Listen() {
 	go func() {
 		sigint := make(chan os.Signal, 1)
 		signal.Notify(sigint)
-		<-sigint
-		// We received an interrupt signal, shut down.
-		for i := 0; i <= len(s.sequence); i++ {
-			if task := s.pop(); task != nil {
-				if err := task.Close(); err != nil {
-					fmt.Printf("Error closing the task of type %T: %+v\n", task, err)
-				}
-				s.waitGroup.Done()
+		loop := true
+		for loop {
+			sig := <-sigint
+			fmt.Printf("Received signal: %s\n", sig)
+			if sig == os.Interrupt {
+				// We received an interrupt signal, shut down.
+				fmt.Printf("Proceeding to shut down\n")
+				loop = false
 			}
 		}
+		s.close()
 		// At this point all processes must be done
-		fmt.Printf("Proceeding to shut down")
 	}()
 }
