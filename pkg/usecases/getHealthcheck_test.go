@@ -14,7 +14,7 @@ type MockGomsRepository struct {
 
 func (m *MockGomsRepository) GetHealthcheck() (string, error) {
 	ret := m.Called()
-	return ret.Get(0).(string), ret.Error(1)
+	return ret.String(0), ret.Error(1)
 }
 
 type MockGomsLogger struct {

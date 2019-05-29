@@ -118,6 +118,7 @@ func (r *request) GetHeaders() map[string][]string {
 // and will save the original body
 func (r *request) SetBody(body interface{}) repository.HTTPRequest {
 	var reader io.Reader
+	var length int
 
 	if body != nil {
 		jsonBody, err := json.Marshal(body)
@@ -125,10 +126,12 @@ func (r *request) SetBody(body interface{}) repository.HTTPRequest {
 			logger.Error("Http - Error parsing request data to json: %+v", err)
 		}
 		reader = strings.NewReader(string(jsonBody))
+		length = len(jsonBody)
 	}
 	// if SetBody is called then we add the Content-type header as a default
 	r.SetHeaders(map[string]string{"Content-type": "application/json"})
 	r.innerRequest.Body = ioutil.NopCloser(reader)
+	r.innerRequest.ContentLength = int64(length)
 
 	// this will be usefull if we need to call GetBody(...)
 	r.body = body

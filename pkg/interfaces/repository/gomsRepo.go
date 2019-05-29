@@ -30,9 +30,6 @@ func NewGomsRepository(handler HTTPHandler, timeOut int, path string) usecases.G
 
 // GetHealthcheck obtains the status of the goms application
 func (repo *GomsRepository) GetHealthcheck() (string, error) {
-
-	var gomsresp GomsResponse
-
 	request := repo.Handler.NewRequest().
 		SetMethod("GET").
 		SetPath(repo.Path).
@@ -43,11 +40,11 @@ func (repo *GomsRepository) GetHealthcheck() (string, error) {
 		return "", fmt.Errorf("There was an error obtaining healthcheck from Goms: %+v", err)
 	}
 
+	var gomsresp GomsResponse
 	if response != nil {
 		if err = json.Unmarshal([]byte(response.(string)), &gomsresp); err != nil {
 			return "", fmt.Errorf("There was an error parsing goms response: %+v", err)
 		}
-
 		return gomsresp.Status, nil
 	}
 
