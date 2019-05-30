@@ -16,7 +16,7 @@ type MockHealthcheckInteractor struct {
 
 func (m *MockHealthcheckInteractor) GetHealthcheck() (string, error) {
 	ret := m.Called()
-	return ret.Get(0).(string), ret.Error(1)
+	return ret.String(0), ret.Error(1)
 }
 
 func TestGetHealthcheckOK(t *testing.T) {

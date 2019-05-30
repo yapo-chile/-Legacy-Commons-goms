@@ -177,7 +177,7 @@ func TestPostParseError(t *testing.T) {
 	mRequest.AssertExpectations(t)
 }
 
-func TestGetNilResponseError(t *testing.T) {
+func TestGetEmptyResponseError(t *testing.T) {
 	mHandler := MockHTTPHandler{}
 	mRequest := MockRequest{}
 
@@ -190,7 +190,7 @@ func TestGetNilResponseError(t *testing.T) {
 	mRequest.On("SetTimeOut", mock.AnythingOfType("int")).Return(&mRequest).Once()
 
 	mHandler.On("NewRequest").Return(&mRequest, nil).Once()
-	mHandler.On("Send", &mRequest).Return(nil, nil).Once()
+	mHandler.On("Send", &mRequest).Return("", nil).Once()
 
 	result, err := gomsRepo.GetHealthcheck()
 
