@@ -6,7 +6,7 @@ if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
 . "$DIR/colors.sh"
 
 TEMPLATE=goms
-BRANCH=master
+BRANCH=feat/circuit_breaker
 GITHUB_ORG=github.schibsted.io/Yapo
 GITHUB_URL=git@github.schibsted.io:Yapo
 BASEPATH=${GOPATH}/src/${GITHUB_ORG}
@@ -63,7 +63,7 @@ find . -iname "*getHealthcheck*" | xargs rm
 find . -iname "*gomsRepo*" | xargs rm
 
 read -p "Would you like to add HTTP connections to your repo by default? [y/N] " RESPONSE
-if [[ "${RESPONSE}" =~ ^([nN][oO]|[nN])+$ ]]
+if [[ "${RESPONSE}" =~ ^([nN][oO]?)?$ ]]
 then
 	find . -iname "*http*" | xargs rm
 	find . -iname "*Breaker*" | xargs rm

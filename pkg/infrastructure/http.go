@@ -38,7 +38,7 @@ func (h *httpHandler) Send(req repository.HTTPRequest) (interface{}, error) {
 	resp, err := httpClient.Do(&req.(*request).innerRequest)
 	if err != nil {
 		h.logger.Error("Http - %s - Error sending HTTP request: %+v", req.GetMethod(), err)
-		return nil, fmt.Errorf("Found error: %+v", err)
+		return "", fmt.Errorf("Found error: %+v", err)
 	}
 
 	response, err := ioutil.ReadAll(resp.Body)
@@ -46,9 +46,9 @@ func (h *httpHandler) Send(req repository.HTTPRequest) (interface{}, error) {
 		h.logger.Error("Http - %s - Received an error response: %+v", req.GetMethod(), err)
 		var msg interface{}
 		if e := json.Unmarshal(response, &msg); e != nil {
-			return nil, fmt.Errorf("The error code was %d", resp.StatusCode)
+			return "", fmt.Errorf("The error code was %d", resp.StatusCode)
 		}
-		return nil, fmt.Errorf("%s", msg)
+		return "", fmt.Errorf("%s", msg)
 	}
 	if err != nil {
 		h.logger.Error("Http - %s - Error reading response: %+v", req.GetMethod(), err)
