@@ -7,19 +7,6 @@ import (
 	"github.schibsted.io/Yapo/goms/pkg/interfaces/loggers"
 )
 
-// Circuit breaker common constants & variables
-
-const (
-	// StateClosed represents Circuit breaker closed state
-	StateClosed = gobreaker.StateClosed
-
-	// StateHalfOpen represents Circuit breaker halft-open state
-	StateHalfOpen = gobreaker.StateHalfOpen
-
-	// StateOpen represents Circuit breaker open state
-	StateOpen = gobreaker.StateOpen
-)
-
 var (
 	// ErrTooManyRequests is returned when the CB state is half open and the requests count is over the cb maxRequests
 	ErrTooManyRequests = gobreaker.ErrTooManyRequests
@@ -48,7 +35,7 @@ func NewCircuitBreaker(name string, consecutiveFailures uint32, failureRatioTole
 		},
 		OnStateChange: func(name string, from gobreaker.State, to gobreaker.State) {
 			logger.Error("CircuitBreaker: Changing status %+v to %+v", from.String(), to.String())
-			if from == StateClosed {
+			if from == gobreaker.StateClosed { // represents Circuit breaker closed state
 				logger.Error("CircuitBreaker: Waiting for open state...")
 			}
 		},
@@ -63,6 +50,4 @@ type CircuitBreaker interface {
 	Execute(req func() (interface{}, error)) (interface{}, error)
 	// Name returns circuit breaker name
 	Name() string
-	// State returns the current status of the circuit breaker
-	State() gobreaker.State
 }
