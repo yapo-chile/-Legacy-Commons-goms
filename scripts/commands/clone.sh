@@ -6,7 +6,7 @@ if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
 . "$DIR/colors.sh"
 
 TEMPLATE=goms
-BRANCH=feat/circuit_breaker
+BRANCH=master
 GITHUB_ORG=github.schibsted.io/Yapo
 GITHUB_URL=git@github.schibsted.io:Yapo
 BASEPATH=${GOPATH}/src/${GITHUB_ORG}
