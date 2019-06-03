@@ -66,7 +66,6 @@ read -p "Would you like to add HTTP connections to your repo by default? [y/N] "
 if [[ "${RESPONSE}" =~ ^([nN][oO]?)?$ ]]
 then
 	find . -iname "*http*" | xargs rm
-	find . -iname "*Breaker*" | xargs rm
 	find . -iname "*abstract*" | xargs rm
 fi
 echo "${TEMPLATE}*" >> .gitignore
