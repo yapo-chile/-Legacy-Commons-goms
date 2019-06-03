@@ -13,19 +13,20 @@ COVER_FILE=${REPORT_ARTIFACTS}/cover.out
 TMP_COVER_FILE=${REPORT_ARTIFACTS}/cover.out.tmp
 COVERAGE_REPORT=${REPORT_ARTIFACTS}/coverage.xml
 JUNIT_REPORT=${REPORT_ARTIFACTS}/junit-report.xml
+EXCLUDE_FILE=./cover.exclude.directory.txt
 
 echoHeader "Running Unit Tests"
 
 function run_tests {
     # Get packages list except vendor and pact directories
-    packages=$(go list ./... | grep -v vendor | grep -v pact )
+    packages=$(go list ./... | join -v 2 cover.exclude.directory.txt - | grep -v vendor | grep -v pact )
     # Create cover output file
     echo "mode: count" > ${COVER_FILE}
     # Test all packages from the list
     for package in ${packages}; do
         echo "" > ${TMP_COVER_FILE}
-        go test -v -race -covermode="atomic" -coverprofile=${TMP_COVER_FILE} ${package} || status=$?
-        sed '/^mode: atomic$/d' ${TMP_COVER_FILE} >> ${COVER_FILE}
+        go test -v -covermode="count" -coverprofile=${TMP_COVER_FILE} ${package} || status=$?
+        sed '/^mode: count$/d' ${TMP_COVER_FILE} >> ${COVER_FILE}
     done
     sed -i.bak '/^$/d' ${COVER_FILE}
     return ${status:-0}

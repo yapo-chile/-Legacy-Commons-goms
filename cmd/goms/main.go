@@ -62,6 +62,43 @@ func main() {
 	fibonacciHandler := handlers.FibonacciHandler{
 		Interactor: &fibonacciInteractor,
 	}
+
+	// To handle http connections you can use an httpHandler or
+	// httpCircuitBreakerHandler which retries requests with it's client
+	// until it returns a valid answer and then continues normal execution
+	// OPTION: clasic HTTP
+	HTTPHandler := infrastructure.NewHTTPHandler(logger)
+	getHealthLogger := loggers.MakeGomsRepoLogger(logger)
+	getHealthInteractor := usecases.GetHealthcheckInteractor{
+		GomsRepository: repository.NewGomsRepository(
+			HTTPHandler,
+			conf.GomsClientConf.TimeOut,
+			conf.GomsClientConf.GetHealthcheckPath),
+		Logger: getHealthLogger,
+	}
+	getHealthHandler := handlers.GetHealthcheckHandler{
+		GetHealthcheckInteractor: &getHealthInteractor,
+	}
+
+	// OPTION: HTTP with Circuit Breaker
+	circuitBreaker := infrastructure.NewCircuitBreaker(
+		conf.CircuitBreakerConf.Name,
+		conf.CircuitBreakerConf.ConsecutiveFailure,
+		conf.CircuitBreakerConf.FailureRatio,
+		conf.CircuitBreakerConf.Timeout,
+		conf.CircuitBreakerConf.Interval,
+		logger,
+	)
+	HTTPCBHandler := infrastructure.NewHTTPCircuitBreakerHandler(circuitBreaker, logger, HTTPHandler)
+	getHealthCBHandler := handlers.GetHealthcheckHandler{
+		GetHealthcheckInteractor: &usecases.GetHealthcheckInteractor{
+			GomsRepository: repository.NewGomsRepository(
+				HTTPCBHandler,
+				conf.GomsClientConf.TimeOut,
+				conf.GomsClientConf.GetHealthcheckPath),
+			Logger: getHealthLogger,
+		},
+	}
 	// CLONE REMOVE END
 
 	// Setting up router
@@ -86,6 +123,18 @@ func main() {
 						Method:  "GET",
 						Pattern: "/fibonacci",
 						Handler: &fibonacciHandler,
+					},
+					{
+						Name:    "Retrieve healthcheck by doing a client request to itself",
+						Method:  "GET",
+						Pattern: "/http/healthcheck",
+						Handler: &getHealthHandler,
+					},
+					{
+						Name:    "Retrieve healthcheck by doing a client request to itself using Circuit Breaker",
+						Method:  "GET",
+						Pattern: "/httpcb/healthcheck",
+						Handler: &getHealthCBHandler,
 					},
 					// CLONE REMOVE END
 				},

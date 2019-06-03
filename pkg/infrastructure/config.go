@@ -42,12 +42,29 @@ type RuntimeConfig struct {
 	Port int    `env:"PORT" envDefault:"8080"`
 }
 
+// CircuitBreakerConf holds all configurations for circuit breaker
+type CircuitBreakerConf struct {
+	Name               string  `env:"NAME" envDefault:"HTTP_SEND"`
+	ConsecutiveFailure uint32  `env:"CONSECUTIVE_FAILURE" envDefault:"10"`
+	FailureRatio       float64 `env:"FAILURE_RATIO" envDefault:"0.5"`
+	Timeout            int     `env:"TIMEOUT" envDefault:"30"`
+	Interval           int     `env:"INTERVAL" envDefault:"30"`
+}
+
+// GomsClientConf holds configuration regarding to our http client (goms itself in this case)
+type GomsClientConf struct {
+	TimeOut            int    `env:"TIMEOUT" envDefault:"30"`
+	GetHealthcheckPath string `env:"HEALTH_PATH" envDefault:"/get/healthcheck"`
+}
+
 // Config holds all configuration for the service
 type Config struct {
-	ServiceConf    ServiceConf    `env:"SERVICE_"`
-	PrometheusConf PrometheusConf `env:"PROMETHEUS_"`
-	LoggerConf     LoggerConf     `env:"LOGGER_"`
-	Runtime        RuntimeConfig  `env:"APP_"`
+	ServiceConf        ServiceConf        `env:"SERVICE_"`
+	PrometheusConf     PrometheusConf     `env:"PROMETHEUS_"`
+	LoggerConf         LoggerConf         `env:"LOGGER_"`
+	Runtime            RuntimeConfig      `env:"APP_"`
+	CircuitBreakerConf CircuitBreakerConf `env:"CIRCUIT_BREAKER_"`
+	GomsClientConf     GomsClientConf     `env:"GOMS_"`
 }
 
 // LoadFromEnv loads the config data from the environment variables
@@ -105,6 +122,14 @@ func load(conf reflect.Value, envTag, envDefault string) {
 			case reflect.Int:
 				if value, err := strconv.Atoi(value); err == nil {
 					reflectedConf.Set(reflect.ValueOf(value))
+				}
+			case reflect.Float64:
+				if value, err := strconv.ParseFloat(value, 64); err == nil {
+					reflectedConf.Set(reflect.ValueOf(value))
+				}
+			case reflect.Uint32:
+				if value, err := strconv.ParseUint(value, 10, 32); err == nil {
+					reflectedConf.Set(reflect.ValueOf(uint32(value)))
 				}
 			case reflect.Bool:
 				if value, err := strconv.ParseBool(value); err == nil {
