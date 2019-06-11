@@ -1,10 +1,11 @@
 package handlers
 
 import (
-	"github.com/Yapo/goutils"
-	"github.com/stretchr/testify/assert"
 	"net/http"
 	"testing"
+
+	"github.com/Yapo/goutils"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestHealthHandlerInput(t *testing.T) {

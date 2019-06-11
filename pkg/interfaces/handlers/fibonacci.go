@@ -1,10 +1,11 @@
 package handlers
 
 import (
+	"net/http"
+
 	"github.com/Yapo/goutils"
 	"github.schibsted.io/Yapo/goms/pkg/domain"
 	"github.schibsted.io/Yapo/goms/pkg/usecases"
-	"net/http"
 )
 
 // FibonacciHandler implements the handler interface and responds to

@@ -14,7 +14,7 @@ tools=(
     github.com/axw/gocov/gocov
     github.com/AlekSi/gocov-xml
     github.com/Masterminds/glide
-    gopkg.in/alecthomas/gometalinter.v2
+    github.com/golangci/golangci-lint/cmd/golangci-lint
 )
 
 echoTitle "Installing missing tools"
@@ -22,10 +22,6 @@ echoTitle "Installing missing tools"
 for tool in ${tools[@]}; do
     go get -u -v ${tool}
 done
-
-echoTitle "Installing linters"
-# Install all available linters
-gometalinter.v2 --install
 
 echoTitle "Installing Glide dependencies"
 glide install

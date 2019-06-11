@@ -24,7 +24,11 @@ type HTTPCircuitBreakerHandler struct {
 }
 
 // NewHTTPCircuitBreakerHandler will create a new instance of a custom http request handler
-func NewHTTPCircuitBreakerHandler(circuitBreaker CircuitBreaker, logger loggers.Logger, h repository.HTTPHandler) repository.HTTPHandler {
+func NewHTTPCircuitBreakerHandler(
+	circuitBreaker CircuitBreaker,
+	logger loggers.Logger,
+	h repository.HTTPHandler,
+) repository.HTTPHandler {
 	return &HTTPCircuitBreakerHandler{
 		circuitBreaker: circuitBreaker,
 		logger:         logger,
@@ -33,7 +37,7 @@ func NewHTTPCircuitBreakerHandler(circuitBreaker CircuitBreaker, logger loggers.
 }
 
 // Send will execute the sending of a http request
-// but in this case it will wait until it obtains a succesful response
+// but in this case it will wait until it obtains a successful response
 // in order to continue it's execution
 func (h *HTTPCircuitBreakerHandler) Send(req repository.HTTPRequest) (interface{}, error) {
 	h.logger.Debug("HTTP - %s - Sending HTTP with circuit breaker request to: %+v", req.GetMethod(), req.GetPath())
@@ -61,7 +65,14 @@ func (h *HTTPCircuitBreakerHandler) NewRequest() repository.HTTPRequest {
 // Interval is the cyclic period of the closed state for the CircuitBreaker to clear the internal Counts.
 // If Interval is 0, the CircuitBreaker doesn't clear internal Counts during the closed state.
 // Timeout is the period of the open state, after which the state of the CircuitBreaker becomes half-open.
-func NewCircuitBreaker(name string, consecutiveFailures uint32, failureRatioTolerance float64, timeout, interval int, logger loggers.Logger) CircuitBreaker {
+func NewCircuitBreaker(
+	name string,
+	consecutiveFailures uint32,
+	failureRatioTolerance float64,
+	timeout,
+	interval int,
+	logger loggers.Logger,
+) CircuitBreaker {
 	settings := gobreaker.Settings{
 		Name:     name,
 		Timeout:  time.Duration(timeout) * (time.Second),
