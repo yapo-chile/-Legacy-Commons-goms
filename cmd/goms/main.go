@@ -99,6 +99,21 @@ func main() {
 			Logger: getHealthLogger,
 		},
 	}
+
+	// Initialize remote conf example
+	lastUpdate, errRconf := infrastructure.NewRconf(
+		conf.EtcdConf.Host,
+		conf.EtcdConf.LastUpdate,
+		conf.EtcdConf.Prefix,
+		logger,
+	)
+
+	if errRconf != nil {
+		logger.Error("Error loading remote conf")
+	} else {
+		logger.Info("Remote Conf Updated at %s", lastUpdate.Content.Node.Value)
+	}
+
 	// CLONE REMOVE END
 
 	// Setting up router

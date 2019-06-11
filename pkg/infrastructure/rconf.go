@@ -73,7 +73,7 @@ func NewRconf(host, path, prefix string, log RconfLogger) (*Rconf, error) {
 	rconf := &Rconf{Log: log, Content: &EtcdContent{}}
 
 	var netClient = &http.Client{
-		Timeout: time.Second * 10,
+		Timeout: time.Second * 100,
 	}
 	// Build URL
 	url := fmt.Sprintf("%s%s%s", host, prefix, path)

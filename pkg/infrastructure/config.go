@@ -57,6 +57,13 @@ type GomsClientConf struct {
 	GetHealthcheckPath string `env:"HEALTH_PATH" envDefault:"/get/healthcheck"`
 }
 
+// EtcdConf configure how to read configuration from remote Etcd service
+type EtcdConf struct {
+	Host       string `env:"HOST" envDefault:"http://lb:2397"`
+	LastUpdate string `env:"LAST_UPDATE" envDefault:"/last_update"`
+	Prefix     string `env:"PREFIX" envDefault:"/v2/keys"`
+}
+
 // Config holds all configuration for the service
 type Config struct {
 	ServiceConf        ServiceConf        `env:"SERVICE_"`
@@ -65,6 +72,7 @@ type Config struct {
 	Runtime            RuntimeConfig      `env:"APP_"`
 	CircuitBreakerConf CircuitBreakerConf `env:"CIRCUIT_BREAKER_"`
 	GomsClientConf     GomsClientConf     `env:"GOMS_"`
+	EtcdConf           EtcdConf           `env:"ETCD_"`
 }
 
 // LoadFromEnv loads the config data from the environment variables
