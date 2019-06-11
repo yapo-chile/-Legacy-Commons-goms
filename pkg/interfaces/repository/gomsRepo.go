@@ -37,16 +37,16 @@ func (repo *GomsRepository) GetHealthcheck() (string, error) {
 
 	response, err := repo.Handler.Send(request)
 	if err != nil {
-		return "", fmt.Errorf("There was an error obtaining healthcheck from Goms: %+v", err)
+		return "", fmt.Errorf("there was an error obtaining healthcheck from Goms: %+v", err)
 	}
 
 	var gomsresp GomsResponse
 	if response != "" {
 		if err = json.Unmarshal([]byte(response.(string)), &gomsresp); err != nil {
-			return "", fmt.Errorf("There was an error parsing goms response: %+v", err)
+			return "", fmt.Errorf("there was an error parsing goms response: %+v", err)
 		}
 		return gomsresp.Status, nil
 	}
 
-	return "", fmt.Errorf("Goms response received is empty")
+	return "", fmt.Errorf("goms response received is empty")
 }

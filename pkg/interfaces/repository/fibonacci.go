@@ -38,7 +38,7 @@ func (r *mapFibonacciRepository) Get(nth int) (domain.Fibonacci, error) {
 	defer r.mutex.RUnlock()
 	f, found := r.storage[nth]
 	if !found {
-		return -1, fmt.Errorf("Don't know the %dth Fibonacci, do you?", nth)
+		return -1, fmt.Errorf("don't know the %dth Fibonacci, do you?", nth)
 	}
 	return f, nil
 }
@@ -49,7 +49,7 @@ func (r *mapFibonacciRepository) Save(nth int, x domain.Fibonacci) error {
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
 	if nth != r.latest[1]+1 {
-		return fmt.Errorf("How do you know the %dth Fibonacci number?", nth)
+		return fmt.Errorf("how do you know the %dth Fibonacci number?", nth)
 	}
 	r.storage[nth] = x
 	r.latest[0]++

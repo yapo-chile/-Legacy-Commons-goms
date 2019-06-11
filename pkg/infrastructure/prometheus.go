@@ -125,8 +125,8 @@ func (*Prometheus) NewEventsCollector(name, help string) EventCollector {
 	return EventCollector{counterVec}
 }
 
-var notSnakeChars = regexp.MustCompile("[^a-zA-Z0-9_]+")
-var endStartUnderscore = regexp.MustCompile("^_|_$")
+var notSnakeChars = regexp.MustCompile("[^a-zA-Z0-9_]+") //nolint: gochecknoglobals
+var endStartUnderscore = regexp.MustCompile("^_|_$")     //nolint: gochecknoglobals
 
 // sanitizeMetricName sanitizes prometheus metric name
 func sanitizeMetricName(name string) string {

@@ -7,6 +7,7 @@ import (
 
 	"github.schibsted.io/Yapo/goms/pkg/infrastructure"
 	"github.schibsted.io/Yapo/goms/pkg/interfaces/handlers"
+
 	// CLONE REMOVE START
 	"github.schibsted.io/Yapo/goms/pkg/interfaces/loggers"
 	"github.schibsted.io/Yapo/goms/pkg/interfaces/repository"
@@ -14,9 +15,8 @@ import (
 	// CLONE REMOVE END
 )
 
-var shutdownSequence = infrastructure.NewShutdownSequence()
-
 func main() {
+	var shutdownSequence = infrastructure.NewShutdownSequence()
 	var conf infrastructure.Config
 	shutdownSequence.Listen()
 	infrastructure.LoadFromEnv(&conf)
@@ -66,7 +66,7 @@ func main() {
 	// To handle http connections you can use an httpHandler or
 	// httpCircuitBreakerHandler which retries requests with it's client
 	// until it returns a valid answer and then continues normal execution
-	// OPTION: clasic HTTP
+	// OPTION: classic HTTP
 	HTTPHandler := infrastructure.NewHTTPHandler(logger)
 	getHealthLogger := loggers.MakeGomsRepoLogger(logger)
 	getHealthInteractor := usecases.GetHealthcheckInteractor{

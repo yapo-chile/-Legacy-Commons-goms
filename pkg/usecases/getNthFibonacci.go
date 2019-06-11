@@ -8,7 +8,7 @@ import (
 
 // GetNthFibonacciUsecase states:
 // As a User, I would like to know which the Nth Fibonacci Number is.
-// GetNth should return that number to me, or an appropiate error if not possible.
+// GetNth should return that number to me, or an appropriate error if not possible.
 type GetNthFibonacciUsecase interface {
 	GetNth(n int) (domain.Fibonacci, error)
 }
@@ -33,7 +33,7 @@ func (interactor *FibonacciInteractor) GetNth(n int) (domain.Fibonacci, error) {
 	// Ensure correct input
 	if n <= 0 {
 		interactor.Logger.LogBadInput(n)
-		return -1, fmt.Errorf("There's no such thing as %dth Fibonacci", n)
+		return -1, fmt.Errorf("there's no such thing as %dth Fibonacci", n)
 	}
 	// Check if the repository already knows it
 	x, err := interactor.Repository.Get(n)

@@ -121,7 +121,11 @@ func TestJsonHandlerFuncOK(t *testing.T) {
 
 	ih.On("NewInputRequest", mock.AnythingOfType("*http.Request")).Return(&mMockInputRequest)
 	ih.On("Input").Return(input, response)
-	ih.On("SetInputRequest", mock.AnythingOfType("*handlers.MockInputRequest"), mock.AnythingOfType("*handlers.DummyInput"))
+	ih.On(
+		"SetInputRequest",
+		mock.AnythingOfType("*handlers.MockInputRequest"),
+		mock.AnythingOfType("*handlers.DummyInput"),
+	)
 
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest("GET", "/someurl", strings.NewReader("{}"))
@@ -156,7 +160,11 @@ func TestJsonHandlerFuncOK2(t *testing.T) {
 
 	ih.On("NewInputRequest", mock.AnythingOfType("*http.Request")).Return(&mMockInputRequest)
 	ih.On("Input").Return(input, response)
-	ih.On("SetInputRequest", mock.AnythingOfType("*handlers.MockInputRequest"), mock.AnythingOfType("*handlers.DummyInput"))
+	ih.On(
+		"SetInputRequest",
+		mock.AnythingOfType("*handlers.MockInputRequest"),
+		mock.AnythingOfType("*handlers.DummyInput"),
+	)
 
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest("GET", "/someurl?id=1,2", strings.NewReader("{}"))
@@ -194,7 +202,11 @@ func TestJsonHandlerFuncParseError(t *testing.T) {
 
 	ih.On("NewInputRequest", mock.AnythingOfType("*http.Request")).Return(&mMockInputRequest)
 	ih.On("Input").Return(input, response)
-	ih.On("SetInputRequest", mock.AnythingOfType("*handlers.MockInputRequest"), mock.AnythingOfType("*handlers.DummyInput"))
+	ih.On(
+		"SetInputRequest",
+		mock.AnythingOfType("*handlers.MockInputRequest"),
+		mock.AnythingOfType("*handlers.DummyInput"),
+	)
 
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest("POST", "/someurl", strings.NewReader("{"))
@@ -224,7 +236,11 @@ func TestJsonHandlerFuncPanic(t *testing.T) {
 	h.On("Input", mock.AnythingOfType("*handlers.MockInputRequest")).Return(input).Once()
 
 	ih.On("NewInputRequest", mock.AnythingOfType("*http.Request")).Return(&mMockInputRequest)
-	ih.On("SetInputRequest", mock.AnythingOfType("*handlers.MockInputRequest"), mock.AnythingOfType("*handlers.DummyInput"))
+	ih.On(
+		"SetInputRequest",
+		mock.AnythingOfType("*handlers.MockInputRequest"),
+		mock.AnythingOfType("*handlers.DummyInput"),
+	)
 
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest("GET", "/someurl", strings.NewReader("{"))

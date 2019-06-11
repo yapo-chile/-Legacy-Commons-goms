@@ -38,15 +38,16 @@ func (h *httpHandler) Send(req repository.HTTPRequest) (interface{}, error) {
 	resp, err := httpClient.Do(&req.(*request).innerRequest)
 	if err != nil {
 		h.logger.Error("Http - %s - Error sending HTTP request: %+v", req.GetMethod(), err)
-		return "", fmt.Errorf("Found error: %+v", err)
+		return "", fmt.Errorf("found error: %+v", err)
 	}
+	defer resp.Body.Close()
 
 	response, err := ioutil.ReadAll(resp.Body)
 	if isErrorCode(resp.StatusCode) {
 		h.logger.Error("Http - %s - Received an error response: %+v", req.GetMethod(), err)
 		var msg interface{}
 		if e := json.Unmarshal(response, &msg); e != nil {
-			return "", fmt.Errorf("The error code was %d", resp.StatusCode)
+			return "", fmt.Errorf("the error code was %d", resp.StatusCode)
 		}
 		return "", fmt.Errorf("%s", msg)
 	}
@@ -133,7 +134,7 @@ func (r *request) SetBody(body interface{}) repository.HTTPRequest {
 	r.innerRequest.Body = ioutil.NopCloser(reader)
 	r.innerRequest.ContentLength = int64(length)
 
-	// this will be usefull if we need to call GetBody(...)
+	// this will be useful if we need to call GetBody(...)
 	r.body = body
 	return r
 }

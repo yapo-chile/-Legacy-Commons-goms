@@ -19,7 +19,7 @@ func MakeYapoLogger(config *LoggerConf, metrics EventCollector) (loggers.Logger,
 	return log, err
 }
 
-// Init intialize the logger
+// Init initialize the logger
 func (y *yapoLogger) init(config *LoggerConf) error {
 	loggerConf := logger.LogConfig{
 		Syslog: logger.SyslogConfig{

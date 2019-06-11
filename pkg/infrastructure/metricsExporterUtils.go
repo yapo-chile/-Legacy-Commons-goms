@@ -32,7 +32,7 @@ func getEntityName() string {
 	return toSnakeCase(getEntity(entityNameFuncCallDeepness))
 }
 
-var loggerReplacer = regexp.MustCompile(`(_?log(ger)?_?)`)
+var loggerReplacer = regexp.MustCompile(`(_?log(ger)?_?)`) // nolint: gochecknoglobals
 
 // getEventName gets the event name to export to prometheus.
 // example: fiboRepo.logRepositoryError calls to logger.Error("...")
@@ -49,8 +49,8 @@ func getFuncName(deepness int) string {
 	return name
 }
 
-var entityRgx = regexp.MustCompile(`\(\*\w+\)`)
-var wordsOnly = regexp.MustCompile(`\w+`)
+var entityRgx = regexp.MustCompile(`\(\*\w+\)`) // nolint: gochecknoglobals
+var wordsOnly = regexp.MustCompile(`\w+`)       // nolint: gochecknoglobals
 
 func getEntity(deepness int) string {
 	nameFull := funcName(deepness, stackTraceInitialBufferCapacity)
@@ -61,7 +61,7 @@ func getEntity(deepness int) string {
 	return entityName
 }
 
-var camel = regexp.MustCompile("(^[^A-Z]*|[A-Z]*)([A-Z][^A-Z]+|$)")
+var camel = regexp.MustCompile("(^[^A-Z]*|[A-Z]*)([A-Z][^A-Z]+|$)") // nolint: gochecknoglobals
 
 func toSnakeCase(s string) string {
 	var a []string
