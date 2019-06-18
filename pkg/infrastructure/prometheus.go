@@ -40,7 +40,7 @@ func MakePrometheusExporter(port string, enabled bool) *Prometheus {
 				Name: "api_requests_total",
 				Help: "A counter for requests to the wrapped handler.",
 			},
-			[]string{"handler", "method"},
+			[]string{"handler", "code", "method"},
 		),
 		duration: prometheus.NewHistogramVec(
 			prometheus.HistogramOpts{
