@@ -1,5 +1,5 @@
 hash: bc3d62a067104151aba4fe8e249e7374d1a3ff5f45c0a57b62761cce8308decb
-updated: 2019-05-13T10:58:45.404968147-04:00
+updated: 2019-06-05T16:38:44.260363-04:00
 imports:
 - name: github.com/beorn7/perks
   version: 3a771d992973f24aa725d07868b467d1ddfceafb
@@ -46,7 +46,7 @@ imports:
   - nfs
   - xfs
 - name: github.com/sony/gobreaker
-  version: d928aaea92e15a2c8ab59efdfbb362844d8524e1
+  version: 21dbfda1fc5e89b91bd0c835a91c31fe4d461e88
 - name: github.com/stretchr/objx
   version: 8a3f7159479fbc75b30357fbc48f380b7320f08e
 - name: github.com/stretchr/testify
@@ -54,6 +54,12 @@ imports:
   subpackages:
   - assert
   - mock
+- name: github.com/tidwall/gjson
+  version: fb8e539484c9fb2df9f472bc0e3949a74c256f95
+- name: github.com/tidwall/match
+  version: 33827db735fff6510490d69a8622612558a557ed
+- name: github.com/tidwall/pretty
+  version: 1166b9ac2b65e46a43d8618d30d1554f4652d49b
 - name: github.com/Yapo/goutils
   version: 8563913313114ecb543b197533daa93aedb513e5
 - name: github.com/Yapo/logger
