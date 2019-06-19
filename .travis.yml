@@ -36,6 +36,10 @@ deploy:
     script: make docker-publish
     on:
       all_branches: true
+  - provider: script
+    script: make deploy-rancher
+    on:
+      tags: true
 
 notifications:
   webhooks:

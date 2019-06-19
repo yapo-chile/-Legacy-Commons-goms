@@ -5,7 +5,7 @@ GENPORTOFF?=0
 genport = $(shell expr ${GENPORTOFF} + \( $(shell id -u) - \( $(shell id -u) / 100 \) \* 100 \) \* 200 + 30100 + $(1))
 
 # BRANCH info from travis
-export BUILD_BRANCH=$(shell if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then echo "${TRAVIS_BRANCH}"; else echo "${TRAVIS_PULL_REQUEST_BRANCH}"; fi)
+export BUILD_BRANCH=$(shell if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then echo "${TRAVIS_BRANCH}" | sed 's/@.*//'; else echo "${TRAVIS_PULL_REQUEST_BRANCH}"; fi)
 
 # GIT variables
 export BRANCH=$(shell git branch | sed -n 's/^\* //p')
@@ -57,3 +57,7 @@ export GOMS_HEALTH_PATH=http://localhost:${SERVICE_PORT}/api/v1/healthcheck
 # Circuit breaker variables
 export CIRCUIT_BREAKER_FAILURE_RATIO=0.5
 export CIRCUIT_BREAKER_CONSECUTIVE_FAILURE=2
+
+# Rancher Deploy
+export RANCHER_DEPLOY_IMAGE=containers.schibsted.io/yapo/rancher-deploy:0.0.37
+export RANCHER_ENV_REPO=Yapo/rancher-deploy-envs
