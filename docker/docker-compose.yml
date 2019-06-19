@@ -1,6 +1,8 @@
 version: '3'
+# CLONE-RCONF REMOVE START
 volumes:
   etcd: {}
+# CLONE-RCONF REMOVE END
 services:
   goms:
     image: ${DOCKER_IMAGE}:local
@@ -8,6 +10,7 @@ services:
      - "${DOCKER_PORT}:8080"
     labels:
       prometheus.port: ${PROMETHEUS_PORT}
+    # CLONE-RCONF REMOVE START
     environment:
       ETCD_HOST: http://etcd:2379
     depends_on:
@@ -52,3 +55,4 @@ services:
     - -conf_dir=/opt/git2etcd/config
     depends_on:
     - etcd
+    # CLONE-RCONF REMOVE END

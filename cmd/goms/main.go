@@ -100,6 +100,9 @@ func main() {
 		},
 	}
 
+	// CLONE REMOVE END
+
+	// CLONE-RCONF REMOVE START
 	// Initialize remote conf example
 	lastUpdate, errRconf := infrastructure.NewRconf(
 		conf.EtcdConf.Host,
@@ -113,8 +116,8 @@ func main() {
 	} else {
 		logger.Info("Remote Conf Updated at %s", lastUpdate.Content.Node.Value)
 	}
+	// CLONE-RCONF REMOVE END
 
-	// CLONE REMOVE END
 
 	// Setting up router
 	maker := infrastructure.RouterMaker{
