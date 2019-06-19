@@ -53,7 +53,7 @@ echoTitle "Optionals for ${SERVICE}"
 read -p "Use remote conf with etcd? (yes/no)" ETCD
 if [[ "${ETCD}" == "yes" ]]
 then
-	echo "The etcd config will remain, ensure configure it"
+	echo "The etcd config will remain, make sure you configure it properly"
 else
 	echo "Removing etcd stuff"
     find cmd -name main.go | xargs sed -i.bak '/CLONE-RCONF REMOVE START/,/CLONE-RCONF REMOVE END/d'
