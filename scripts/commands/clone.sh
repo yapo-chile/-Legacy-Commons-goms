@@ -49,6 +49,18 @@ echoTitle "Renaming paths and variables ${TEMPLATE} -> ${SERVICE}"
 git grep -l ${TEMPLATE} | xargs sed -i.bak "s/${TEMPLATE}/${SERVICE}/g"
 find cmd -name main.go | xargs sed -i.bak '/CLONE REMOVE START/,/CLONE REMOVE END/d'
 
+echoTitle "Optionals for ${SERVICE}"
+read -p "Use remote conf with etcd? (yes/no)" ETCD
+if [[ "${ETCD}" == "yes" ]]
+then
+	echo "The etcd config will remain, make sure you configure it properly"
+else
+	echo "Removing etcd stuff"
+    find cmd -name main.go | xargs sed -i.bak '/CLONE-RCONF REMOVE START/,/CLONE-RCONF REMOVE END/d'
+    find docker -name docker-compose.yml | xargs sed -i.bak '/CLONE-RCONF REMOVE START/,/CLONE-RCONF REMOVE END/d'
+    find . -iname "*rconf*" | xargs rm
+fi
+
 for dir in $(find . -name "${TEMPLATE}" -type d); do
 	git mv ${dir} ${dir/${TEMPLATE}/${SERVICE}}
 done
