@@ -41,6 +41,10 @@ docker-stop: docker-compose-down
 clone:
 	@scripts/commands/clone.sh
 
+## Deploy project image on rancher
+deploy-rancher:
+	@scripts/commands/deploy-rancher.sh
+
 ## Run gofmt to reindent source
 fix-format:
 	@scripts/commands/fix-format.sh
