@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/Yapo/goutils"
-	"github.schibsted.io/Yapo/goms/pkg/domain"
-	"github.schibsted.io/Yapo/goms/pkg/usecases"
+	"github.mpi-internal.com/Yapo/goms/pkg/domain"
+	"github.mpi-internal.com/Yapo/goms/pkg/usecases"
 )
 
 // FibonacciHandler implements the handler interface and responds to

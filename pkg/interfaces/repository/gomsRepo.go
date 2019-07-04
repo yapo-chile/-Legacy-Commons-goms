@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.schibsted.io/Yapo/goms/pkg/usecases"
+	"github.mpi-internal.com/Yapo/goms/pkg/usecases"
 )
 
 // GomsRepository allows the interaction with goms service using http request

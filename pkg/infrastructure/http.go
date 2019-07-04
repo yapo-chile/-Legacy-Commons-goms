@@ -11,8 +11,8 @@ import (
 	"time"
 
 	"github.com/Yapo/logger"
-	"github.schibsted.io/Yapo/goms/pkg/interfaces/loggers"
-	"github.schibsted.io/Yapo/goms/pkg/interfaces/repository"
+	"github.mpi-internal.com/Yapo/goms/pkg/interfaces/loggers"
+	"github.mpi-internal.com/Yapo/goms/pkg/interfaces/repository"
 )
 
 type httpHandler struct {

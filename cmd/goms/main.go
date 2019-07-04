@@ -5,13 +5,13 @@ import (
 	"fmt"
 	"os"
 
-	"github.schibsted.io/Yapo/goms/pkg/infrastructure"
-	"github.schibsted.io/Yapo/goms/pkg/interfaces/handlers"
+	"github.mpi-internal.com/Yapo/goms/pkg/infrastructure"
+	"github.mpi-internal.com/Yapo/goms/pkg/interfaces/handlers"
 
 	// CLONE REMOVE START
-	"github.schibsted.io/Yapo/goms/pkg/interfaces/loggers"
-	"github.schibsted.io/Yapo/goms/pkg/interfaces/repository"
-	"github.schibsted.io/Yapo/goms/pkg/usecases"
+	"github.mpi-internal.com/Yapo/goms/pkg/interfaces/loggers"
+	"github.mpi-internal.com/Yapo/goms/pkg/interfaces/repository"
+	"github.mpi-internal.com/Yapo/goms/pkg/usecases"
 	// CLONE REMOVE END
 )
 

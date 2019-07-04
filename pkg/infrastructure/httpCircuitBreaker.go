@@ -4,8 +4,8 @@ import (
 	"time"
 
 	"github.com/sony/gobreaker"
-	"github.schibsted.io/Yapo/goms/pkg/interfaces/loggers"
-	"github.schibsted.io/Yapo/goms/pkg/interfaces/repository"
+	"github.mpi-internal.com/Yapo/goms/pkg/interfaces/loggers"
+	"github.mpi-internal.com/Yapo/goms/pkg/interfaces/repository"
 )
 
 var (

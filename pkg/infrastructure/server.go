@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.schibsted.io/Yapo/goms/pkg/interfaces/loggers"
+	"github.mpi-internal.com/Yapo/goms/pkg/interfaces/loggers"
 )
 
 // Server struct that implements http server to routes incoming requests

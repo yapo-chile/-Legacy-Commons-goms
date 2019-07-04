@@ -1,12 +1,12 @@
 # __SERVICE__
 
 <!-- Badger start badges -->
-[![Status of the build](https://badger.spt-engprod-pro.schibsted.io/badge/travis/Yapo/__SERVICE__)](https://travis.schibsted.io/Yapo/__SERVICE__)
-[![Testing Coverage](https://badger.spt-engprod-pro.schibsted.io/badge/coverage/Yapo/__SERVICE__)](https://reports.spt-engprod-pro.schibsted.io/#/Yapo/__SERVICE__?branch=master&type=push&daterange&daterange)
-[![Style/Linting issues](https://badger.spt-engprod-pro.schibsted.io/badge/issues/Yapo/__SERVICE__)](https://reports.spt-engprod-pro.schibsted.io/#/Yapo/__SERVICE__?branch=master&type=push&daterange&daterange)
-[![Badger](https://badger.spt-engprod-pro.schibsted.io/badge/flaky_tests/Yapo/__SERVICE__)](https://databulous.spt-engprod-pro.schibsted.io/test/flaky/Yapo/__SERVICE__)
-[![Badger](https://badger.spt-engprod-pro.schibsted.io/badge/quality_index/Yapo/__SERVICE__)](https://databulous.spt-engprod-pro.schibsted.io/quality/repo/Yapo/__SERVICE__)
-[![Badger](https://badger.spt-engprod-pro.schibsted.io/badge/engprod/Yapo/__SERVICE__)](https://github.schibsted.io/spt-engprod/badger)
+[![Status of the build](https://badger.spt-engprod-pro.mpi-internal.com/badge/travis/Yapo/__SERVICE__)](https://travis.mpi-internal.com/Yapo/__SERVICE__)
+[![Testing Coverage](https://badger.spt-engprod-pro.mpi-internal.com/badge/coverage/Yapo/__SERVICE__)](https://reports.spt-engprod-pro.mpi-internal.com/#/Yapo/__SERVICE__?branch=master&type=push&daterange&daterange)
+[![Style/Linting issues](https://badger.spt-engprod-pro.mpi-internal.com/badge/issues/Yapo/__SERVICE__)](https://reports.spt-engprod-pro.mpi-internal.com/#/Yapo/__SERVICE__?branch=master&type=push&daterange&daterange)
+[![Badger](https://badger.spt-engprod-pro.mpi-internal.com/badge/flaky_tests/Yapo/__SERVICE__)](https://databulous.spt-engprod-pro.mpi-internal.com/test/flaky/Yapo/__SERVICE__)
+[![Badger](https://badger.spt-engprod-pro.mpi-internal.com/badge/quality_index/Yapo/__SERVICE__)](https://databulous.spt-engprod-pro.mpi-internal.com/quality/repo/Yapo/__SERVICE__)
+[![Badger](https://badger.spt-engprod-pro.mpi-internal.com/badge/engprod/Yapo/__SERVICE__)](https://github.mpi-internal.com/spt-engprod/badger)
 <!-- Badger end badges -->
 
 __SERVICE__ needs a description here.
@@ -14,11 +14,11 @@ __SERVICE__ needs a description here.
 ## Checklist: Is my service ready?
 
 * [ ] Configure your github repository
-  - Open https://github.schibsted.io/Yapo/__SERVICE__/settings
+  - Open https://github.mpi-internal.com/Yapo/__SERVICE__/settings
   - Features: Wikis, Restrict editing, Issues, Projects
   - Merge button: Only allow merge commits
   - GitHub Pages: master branch / docs folder
-  - Open https://github.schibsted.io/Yapo/goms/settings/branches
+  - Open https://github.mpi-internal.com/Yapo/goms/settings/branches
   - Default branch: master
   - Protected branches: choose master
   - Protect this branch
@@ -31,7 +31,7 @@ __SERVICE__ needs a description here.
     + Include administrators
 * [ ] Enable TravisCI
   - Go to your service's github settings -> Hooks & Services -> Add Service -> Travis CI
-  - Fill in the form with the credentials you obtain from https://travis.schibsted.io/profile/
+  - Fill in the form with the credentials you obtain from https://travis.mpi-internal.com/profile/
   - Sync your repos and organizations on Travis
   - Create a pull request and make a push on it
   - The push should trigger a build. If it didn't, ensure that it is enabled on the travis service list
@@ -44,7 +44,7 @@ __SERVICE__ needs a description here.
 * [ ] Enable automatic deployment
   - Have your service created and deployed on a stack on Rancher
   - Modify `rancher/deploy/*.json` files to reflect new names
-  - Follow the instructions on https://github.schibsted.io/Yapo/rancher-deploy
+  - Follow the instructions on https://github.mpi-internal.com/Yapo/rancher-deploy
 * [ ] Delete this section
   - It's time for me to leave, I've done my part
   - It's time for you to start coding your new service and documenting your endpoints below
@@ -52,15 +52,15 @@ __SERVICE__ needs a description here.
 
 ## How to run __SERVICE__
 
-* Create the dir: `~/go/src/github.schibsted.io/Yapo`
+* Create the dir: `~/go/src/github.mpi-internal.com/Yapo`
 
 * Set the go path: `export GOPATH=~/go` or add the line on your file `.bash_rc`
 
 * Clone this repo:
 
   ```
-  $ cd ~/go/src/github.schibsted.io/Yapo
-  $ git clone git@github.schibsted.io:Yapo/__SERVICE__.git
+  $ cd ~/go/src/github.mpi-internal.com/Yapo
+  $ git clone git@github.mpi-internal.com:Yapo/__SERVICE__.git
   ```
 
 * On the top dir execute the make instruction to clean and start:
@@ -86,7 +86,7 @@ __SERVICE__ needs a description here.
     fix-format           Run gofmt to reindent source
     info                 Display basic service info
     docker-build         Create docker image based on docker/dockerfile
-    docker-publish       Push docker image to containers.schibsted.io
+    docker-publish       Push docker image to containers.mpi-internal.com
     docker-attach        Attach to this service's currently running docker container output stream
     docker-compose-up    Start all required docker containers for this service
     docker-compose-down  Stop all running docker containers for this service
