@@ -1,12 +1,12 @@
 # goms
 
 <!-- Badger start badges -->
-[![Status of the build](https://badger.spt-engprod-pro.schibsted.io/badge/travis/Yapo/goms)](https://travis.schibsted.io/Yapo/goms)
-[![Testing Coverage](https://badger.spt-engprod-pro.schibsted.io/badge/coverage/Yapo/goms)](https://reports.spt-engprod-pro.schibsted.io/#/Yapo/goms?branch=master&type=push&daterange&daterange)
-[![Style/Linting issues](https://badger.spt-engprod-pro.schibsted.io/badge/issues/Yapo/goms)](https://reports.spt-engprod-pro.schibsted.io/#/Yapo/goms?branch=master&type=push&daterange&daterange)
-[![Badger](https://badger.spt-engprod-pro.schibsted.io/badge/flaky_tests/Yapo/goms)](https://databulous.spt-engprod-pro.schibsted.io/test/flaky/Yapo/goms)
-[![Badger](https://badger.spt-engprod-pro.schibsted.io/badge/quality_index/Yapo/goms)](https://databulous.spt-engprod-pro.schibsted.io/quality/repo/Yapo/goms)
-[![Badger](https://badger.spt-engprod-pro.schibsted.io/badge/engprod/Yapo/goms)](https://github.schibsted.io/spt-engprod/badger)
+[![Status of the build](https://badger.spt-engprod-pro.mpi-internal.com/badge/travis/Yapo/goms)](https://travis.mpi-internal.com/Yapo/goms)
+[![Testing Coverage](https://badger.spt-engprod-pro.mpi-internal.com/badge/coverage/Yapo/goms)](https://reports.spt-engprod-pro.mpi-internal.com/#/Yapo/goms?branch=master&type=push&daterange&daterange)
+[![Style/Linting issues](https://badger.spt-engprod-pro.mpi-internal.com/badge/issues/Yapo/goms)](https://reports.spt-engprod-pro.mpi-internal.com/#/Yapo/goms?branch=master&type=push&daterange&daterange)
+[![Badger](https://badger.spt-engprod-pro.mpi-internal.com/badge/flaky_tests/Yapo/goms)](https://databulous.spt-engprod-pro.mpi-internal.com/test/flaky/Yapo/goms)
+[![Badger](https://badger.spt-engprod-pro.mpi-internal.com/badge/quality_index/Yapo/goms)](https://databulous.spt-engprod-pro.mpi-internal.com/quality/repo/Yapo/goms)
+[![Badger](https://badger.spt-engprod-pro.mpi-internal.com/badge/engprod/Yapo/goms)](https://github.mpi-internal.com/spt-engprod/badger)
 <!-- Badger end badges -->
 
 Goms is the official golang microservice template for Yapo.
@@ -15,7 +15,7 @@ Goms is the official golang microservice template for Yapo.
 
 * Goms was built following [Clean Architecture](https://www.amazon.com/Clean-Architecture-Craftsmans-Software-Structure/dp/0134494164) so, please, familiarize yourself with it and let's code great code!
 
-* Goms has great [test coverage](https://quality-gate.schibsted.io/#/Yapo/goms) and [examples](https://github.schibsted.io/Yapo/goms/search?l=Go&q=func+Test&type=&utf8=%E2%9C%93) of how good testing can be done. Please honor the effort and keep your test quality in the top tier.
+* Goms has great [test coverage](https://quality-gate.mpi-internal.com/#/Yapo/goms) and [examples](https://github.mpi-internal.com/Yapo/goms/search?l=Go&q=func+Test&type=&utf8=%E2%9C%93) of how good testing can be done. Please honor the effort and keep your test quality in the top tier.
 
 * Goms is not a silver bullet. If your service clearly doesn't fit in this template, let's have a [conversation](mailto:dev@schibsted.cl)
 
@@ -23,15 +23,15 @@ Goms is the official golang microservice template for Yapo.
 
 ## How to run the service
 
-* Create the dir: `~/go/src/github.schibsted.io/Yapo`
+* Create the dir: `~/go/src/github.mpi-internal.com/Yapo`
 
 * Set the go path: `export GOPATH=~/go` or add the line on your file `.bash_rc`
 
 * Clone this repo:
 
   ```
-  $ cd ~/go/src/github.schibsted.io/Yapo
-  $ git clone git@github.schibsted.io:Yapo/goms.git
+  $ cd ~/go/src/github.mpi-internal.com/Yapo
+  $ git clone git@github.mpi-internal.com:Yapo/goms.git
   ```
 
 * On the top dir execute the make instruction to clean and start:
@@ -57,7 +57,7 @@ Goms is the official golang microservice template for Yapo.
     fix-format           Run gofmt to reindent source
     info                 Display basic service info
     docker-build         Create docker image based on docker/dockerfile
-    docker-publish       Push docker image to containers.schibsted.io
+    docker-publish       Push docker image to containers.mpi-internal.com
     docker-attach        Attach to this service's currently running docker container output stream
     docker-compose-up    Start all required docker containers for this service
     docker-compose-down  Stop all running docker containers for this service
@@ -85,7 +85,7 @@ Goms is the official golang microservice template for Yapo.
 
 ## Creating a new service
 
-* Create a repo for your new service on: https://github.schibsted.io/Yapo
+* Create a repo for your new service on: https://github.mpi-internal.com/Yapo
 * Rename your goms dir to your service name:
   ```
   $ mv goms YourService
@@ -93,7 +93,7 @@ Goms is the official golang microservice template for Yapo.
 * Update origin: 
   ```
   # https://help.github.com/articles/changing-a-remote-s-url/
-  $ git remote set-url origin git@github.schibsted.io:Yapo/YourService.git
+  $ git remote set-url origin git@github.mpi-internal.com:Yapo/YourService.git
   ```
 
 * Replace every goms reference to your service's name:
@@ -120,7 +120,7 @@ Goms is the official golang microservice template for Yapo.
 
 * Enable TravisCI
   - Go to your service's github settings -> Hooks & Services -> Add Service -> Travis CI
-  - Fill in the form with the credentials you obtain from https://travis.schibsted.io/profile/
+  - Fill in the form with the credentials you obtain from https://travis.mpi-internal.com/profile/
   - Sync your repos and organizations on Travis
   - Make a push on your service
   - The push should trigger a build. If it didn't ensure that it is enabled on the travis service list

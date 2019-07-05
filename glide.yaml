@@ -1,4 +1,4 @@
-package: github.schibsted.io/Yapo/goms
+package: github.mpi-internal.com/Yapo/goms
 import:
 - package: github.com/Yapo/goutils
 - package: github.com/Yapo/logger

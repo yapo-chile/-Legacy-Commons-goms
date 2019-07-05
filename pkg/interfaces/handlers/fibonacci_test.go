@@ -8,7 +8,7 @@ import (
 	"github.com/Yapo/goutils"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"github.schibsted.io/Yapo/goms/pkg/domain"
+	"github.mpi-internal.com/Yapo/goms/pkg/domain"
 )
 
 type MockFibonacciInteractor struct {

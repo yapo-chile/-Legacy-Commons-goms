@@ -1,6 +1,6 @@
 package loggers
 
-import "github.schibsted.io/Yapo/goms/pkg/usecases"
+import "github.mpi-internal.com/Yapo/goms/pkg/usecases"
 
 type gomsRepositoryLogger struct {
 	logger Logger

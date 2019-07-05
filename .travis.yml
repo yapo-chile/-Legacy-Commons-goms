@@ -40,7 +40,3 @@ deploy:
     script: make deploy-rancher
     on:
       tags: true
-
-notifications:
-  webhooks:
-    - https://devhose.spt-engprod-pro.schibsted.io/devhose/travis

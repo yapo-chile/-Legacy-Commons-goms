@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.schibsted.io/Yapo/goms/pkg/domain"
+	"github.mpi-internal.com/Yapo/goms/pkg/domain"
 )
 
 func TestFibonacciRepositoryCreation(t *testing.T) {

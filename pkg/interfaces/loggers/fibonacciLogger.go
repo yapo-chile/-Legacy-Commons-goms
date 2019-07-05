@@ -1,8 +1,8 @@
 package loggers
 
 import (
-	"github.schibsted.io/Yapo/goms/pkg/domain"
-	"github.schibsted.io/Yapo/goms/pkg/usecases"
+	"github.mpi-internal.com/Yapo/goms/pkg/domain"
+	"github.mpi-internal.com/Yapo/goms/pkg/usecases"
 )
 
 type fibonacciPrometheusDefaultLogger struct {

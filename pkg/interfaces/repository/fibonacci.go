@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.schibsted.io/Yapo/goms/pkg/domain"
+	"github.mpi-internal.com/Yapo/goms/pkg/domain"
 )
 
 // mapFibonacciRepository is an implementation of domain.FibonacciRepository
