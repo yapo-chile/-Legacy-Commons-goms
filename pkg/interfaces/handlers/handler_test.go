@@ -181,7 +181,7 @@ func TestJsonHandlerFuncOKWithGetCacheOK(t *testing.T) {
 	}
 	h.On("Input", mock.AnythingOfType("*handlers.MockInputRequest")).Return(input)
 	var cache json.RawMessage
-	cache = []byte(`{"Y":"That's some bad hat, Harry"}` + "\n")
+	cache, _ = json.Marshal(response)
 	mCache.On("GetCache", input).Return(cache, nil)
 	ih.On("NewInputRequest", mock.AnythingOfType("*http.Request")).Return(&mMockInputRequest)
 	ih.On("Input").Return(input, response)
@@ -200,7 +200,7 @@ func TestJsonHandlerFuncOKWithGetCacheOK(t *testing.T) {
 	fn := MakeJSONHandlerFunc(&h, &l, &ih, &mCache, true)
 	fn(w, r)
 
-	assert.Equal(t, 200, w.Code)
+	assert.Equal(t, 42, w.Code)
 	assert.Equal(t, `{"Y":"That's some bad hat, Harry"}`+"\n", w.Body.String())
 	h.AssertExpectations(t)
 	ih.AssertExpectations(t)

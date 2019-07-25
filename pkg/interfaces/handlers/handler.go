@@ -107,18 +107,16 @@ func (jh *jsonHandler) run(w http.ResponseWriter, r *http.Request) {
 	if jh.cacheable {
 		cacheKey, _ := jh.inputHandler.Input()
 		if cache, e := jh.cacheHandler.GetCache(cacheKey); e == nil {
-			jh.logger.LogResponseFromCache(r)
-			response = &goutils.Response{
-				Code: http.StatusOK,
-				Body: cache,
+			if e := json.Unmarshal(cache, response); e == nil {
+				jh.logger.LogResponseFromCache(r)
+				return
 			}
-			return
 		}
 	}
 	// Do the Harlem Shake
 	response = jh.handler.Execute(jh.inputHandler.Input)
 	if jh.cacheable {
-		if dataRaw, e := json.Marshal(response.Body); e == nil {
+		if dataRaw, e := json.Marshal(response); e == nil {
 			if e := jh.cacheHandler.SetCache(input, dataRaw); e != nil {
 				jh.logger.LogErrorSettingCache(r, e)
 			}
