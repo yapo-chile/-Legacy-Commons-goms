@@ -61,3 +61,7 @@ export CIRCUIT_BREAKER_CONSECUTIVE_FAILURE=2
 # Rancher Deploy
 export RANCHER_DEPLOY_IMAGE=containers.mpi-internal.com/yapo/rancher-deploy:0.0.40
 export RANCHER_ENV_REPO=Yapo/rancher-deploy-envs
+
+# Cache variables
+export CACHE_HOST=0.0.0.0:6379
+export CACHE_MAX_AGE=5m
