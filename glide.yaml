@@ -2,6 +2,7 @@ package: github.mpi-internal.com/Yapo/goms
 import:
 - package: github.com/Yapo/goutils
 - package: github.com/Yapo/logger
+- package: github.com/go-redis/redis
 - package: github.com/gorilla/context
 - package: github.com/prometheus/client_golang
   subpackages:
@@ -11,4 +12,5 @@ import:
 - package: github.com/stretchr/testify
   subpackages:
   - mock
+- package: github.com/tidwall/gjson
 - package: gopkg.in/gorilla/mux.v1
