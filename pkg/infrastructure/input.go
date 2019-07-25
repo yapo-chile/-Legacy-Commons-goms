@@ -120,11 +120,13 @@ func (ih *inputHandler) Input() (handlers.HandlerInput, *goutils.Response) {
 	for _, source := range ih.inputRequest.sources {
 		switch source {
 		case BODY:
-			hasError = hasError ||
-				goutils.ParseJSONBody(
-					ih.inputRequest.httpRequest,
-					ih.inputRequest.output,
-				) != nil
+			rawBody, err := ioutil.ReadAll(ih.inputRequest.httpRequest.Body)
+			ih.inputRequest.httpRequest.Body = ioutil.NopCloser(bytes.NewBuffer(rawBody))
+			goutils.ParseJSONBody(
+				ih.inputRequest.httpRequest,
+				ih.inputRequest.output,
+			)
+			hasError = hasError || err != nil
 		case RAWBODY:
 			rawBody, err := ioutil.ReadAll(ih.inputRequest.httpRequest.Body)
 			ih.inputRequest.httpRequest.Body = ioutil.NopCloser(bytes.NewBuffer(rawBody))

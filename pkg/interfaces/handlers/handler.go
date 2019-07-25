@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"github.com/Yapo/goutils"
@@ -45,8 +46,9 @@ type InputRequest interface {
 
 // MakeJSONHandlerFunc wraps a Handler on a json-over-http context, returning
 // a standard http.HandlerFunc
-func MakeJSONHandlerFunc(h Handler, l JSONHandlerLogger, ih InputHandler) http.HandlerFunc {
-	jh := jsonHandler{handler: h, logger: l, inputHandler: ih}
+func MakeJSONHandlerFunc(h Handler, l JSONHandlerLogger, ih InputHandler,
+	cacheHandler CacheHandler, cacheable bool) http.HandlerFunc {
+	jh := jsonHandler{handler: h, logger: l, inputHandler: ih, cacheHandler: cacheHandler, cacheable: cacheable}
 	return jh.run
 }
 
@@ -55,6 +57,14 @@ type JSONHandlerLogger interface {
 	LogRequestStart(r *http.Request)
 	LogRequestEnd(*http.Request, *goutils.Response)
 	LogRequestPanic(*http.Request, *goutils.Response, interface{})
+	LogResponseFromCache(r *http.Request)
+	LogErrorSettingCache(r *http.Request, err error)
+}
+
+// CacheHandler implements cache control operations
+type CacheHandler interface {
+	SetCache(input interface{}, data json.RawMessage) error
+	GetCache(input interface{}) (json.RawMessage, error)
 }
 
 // jsonHandler provides an http.HandlerFunc that reads its input and formats
@@ -63,6 +73,8 @@ type jsonHandler struct {
 	handler      Handler
 	logger       JSONHandlerLogger
 	inputHandler InputHandler
+	cacheHandler CacheHandler
+	cacheable    bool
 }
 
 // run will prepare the input for the actual handler and format the response
@@ -92,7 +104,25 @@ func (jh *jsonHandler) run(w http.ResponseWriter, r *http.Request) {
 	// Setup before calling the actual handler
 	defer outputWriter()
 	defer errorHandler()
+	if jh.cacheable {
+		cacheKey, _ := jh.inputHandler.Input()
+		if cache, e := jh.cacheHandler.GetCache(cacheKey); e == nil {
+			jh.logger.LogResponseFromCache(r)
+			response = &goutils.Response{
+				Code: http.StatusOK,
+				Body: cache,
+			}
+			return
+		}
+	}
 	// Do the Harlem Shake
 	response = jh.handler.Execute(jh.inputHandler.Input)
+	if jh.cacheable {
+		if dataRaw, e := json.Marshal(response.Body); e == nil {
+			if e := jh.cacheHandler.SetCache(input, dataRaw); e != nil {
+				jh.logger.LogErrorSettingCache(r, e)
+			}
+		}
+	}
 	jh.logger.LogRequestEnd(r, response)
 }

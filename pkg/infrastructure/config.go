@@ -8,6 +8,7 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // ServiceConf holds configuration for this Service
@@ -34,6 +35,15 @@ type LoggerConf struct {
 type PrometheusConf struct {
 	Port    string `env:"PORT" envDefault:"8877"`
 	Enabled bool   `env:"ENABLED" envDefault:"false"`
+}
+
+// CacheConf holds configuration for endpoints cache
+type CacheConf struct {
+	Host     string        `env:"HOST" envDefault:"0.0.0.0:6379"`
+	Password string        `env:"PASSWORD"`
+	Prefix   string        `env:"PREFIX" envDefault:"cache"`
+	MaxAge   time.Duration `env:"MAX_AGE" envDefault:"1m"`
+	DB       int           `env:"DB"`
 }
 
 // RuntimeConfig config to start the app
@@ -68,6 +78,7 @@ type EtcdConf struct {
 type Config struct {
 	ServiceConf        ServiceConf        `env:"SERVICE_"`
 	PrometheusConf     PrometheusConf     `env:"PROMETHEUS_"`
+	CacheConf          CacheConf          `env:"CACHE_"`
 	LoggerConf         LoggerConf         `env:"LOGGER_"`
 	Runtime            RuntimeConfig      `env:"APP_"`
 	CircuitBreakerConf CircuitBreakerConf `env:"CIRCUIT_BREAKER_"`
@@ -130,6 +141,10 @@ func load(conf reflect.Value, envTag, envDefault string) {
 			case reflect.Int:
 				if value, err := strconv.Atoi(value); err == nil {
 					reflectedConf.Set(reflect.ValueOf(value))
+				}
+			case reflect.Int64:
+				if t, err := time.ParseDuration(value); err == nil {
+					reflectedConf.Set(reflect.ValueOf(t))
 				}
 			case reflect.Float64:
 				if value, err := strconv.ParseFloat(value, 64); err == nil {

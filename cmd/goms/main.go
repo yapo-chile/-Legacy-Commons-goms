@@ -46,6 +46,12 @@ func main() {
 
 	shutdownSequence.Push(prometheus)
 
+	cacheRedisHandler := infrastructure.NewRedisHandler(
+		conf.CacheConf.Host,
+		conf.CacheConf.Password,
+		conf.CacheConf.DB,
+	)
+
 	logger.Info("Initializing resources")
 
 	// HealthHandler
@@ -118,11 +124,11 @@ func main() {
 	}
 	// CLONE-RCONF REMOVE END
 
-
 	// Setting up router
 	maker := infrastructure.RouterMaker{
 		Logger:        logger,
 		WrapperFuncs:  []infrastructure.WrapperFunc{prometheus.TrackHandlerFunc},
+		CacheHandler:  infrastructure.NewCacheHandler(cacheRedisHandler, conf.CacheConf.Prefix, conf.CacheConf.MaxAge),
 		WithProfiling: conf.ServiceConf.Profiling,
 		Routes: infrastructure.Routes{
 			{
@@ -137,10 +143,11 @@ func main() {
 					},
 					// CLONE REMOVE START
 					{
-						Name:    "Retrieve the Nth Fibonacci with Clean Architecture",
-						Method:  "GET",
-						Pattern: "/fibonacci",
-						Handler: &fibonacciHandler,
+						Name:      "Retrieve the Nth Fibonacci with Clean Architecture",
+						Method:    "GET",
+						Pattern:   "/fibonacci",
+						Handler:   &fibonacciHandler,
+						Cacheable: true,
 					},
 					{
 						Name:    "Retrieve healthcheck by doing a client request to itself",

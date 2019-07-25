@@ -12,10 +12,11 @@ import (
 
 // Route stands for an http endpoint description
 type Route struct {
-	Name    string
-	Method  string
-	Pattern string
-	Handler handlers.Handler
+	Name      string
+	Method    string
+	Pattern   string
+	Handler   handlers.Handler
+	Cacheable bool
 }
 
 type routeGroups struct {
@@ -36,6 +37,7 @@ type RouterMaker struct {
 	WrapperFuncs  []WrapperFunc
 	WithProfiling bool
 	Routes        Routes
+	CacheHandler  handlers.CacheHandler
 }
 
 // NewRouter setups a Router based on the provided routes
@@ -46,7 +48,7 @@ func (maker *RouterMaker) NewRouter() http.Handler {
 		for _, route := range routeGroup.Groups {
 			hLogger := loggers.MakeJSONHandlerLogger(maker.Logger)
 			hInputHandler := NewInputHandler()
-			handler := handlers.MakeJSONHandlerFunc(route.Handler, hLogger, hInputHandler)
+			handler := handlers.MakeJSONHandlerFunc(route.Handler, hLogger, hInputHandler, maker.CacheHandler, route.Cacheable)
 			for _, wrapFunc := range maker.WrapperFuncs {
 				handler = wrapFunc(route.Pattern, handler)
 			}
