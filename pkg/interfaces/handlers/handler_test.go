@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -55,6 +57,20 @@ func (m *MockInputHandler) SetInputRequest(ri InputRequest, hi HandlerInput) {
 	m.Called(ri, hi)
 }
 
+type mockCacheHandler struct {
+	mock.Mock
+}
+
+func (m *mockCacheHandler) SetCache(input interface{}, data json.RawMessage) error {
+	args := m.Called(input, data)
+	return args.Error(0)
+}
+
+func (m *mockCacheHandler) GetCache(input interface{}) (json.RawMessage, error) {
+	args := m.Called(input)
+	return args.Get(0).(json.RawMessage), args.Error(1)
+}
+
 type MockPanicHandler struct {
 	mock.Mock
 }
@@ -80,6 +96,12 @@ func (m *MockLogger) LogRequestEnd(r *http.Request, response *goutils.Response) 
 }
 func (m *MockLogger) LogRequestPanic(r *http.Request, response *goutils.Response, err interface{}) {
 	m.Called(r, response, err)
+}
+func (m *MockLogger) LogResponseFromCache(r *http.Request) {
+	m.Called(r)
+}
+func (m *MockLogger) LogErrorSettingCache(r *http.Request, err error) {
+	m.Called(r, err)
 }
 
 type DummyInput struct {
@@ -108,6 +130,7 @@ type TestParamStruct struct {
 func TestJsonHandlerFuncOK(t *testing.T) {
 	h := MockHandler{}
 	ih := MockInputHandler{}
+	mCache := mockCacheHandler{}
 	mMockInputRequest := MockInputRequest{}
 	l := MockLogger{}
 	input := &DummyInput{}
@@ -133,7 +156,7 @@ func TestJsonHandlerFuncOK(t *testing.T) {
 	l.On("LogRequestStart", r)
 	l.On("LogRequestEnd", r, response)
 
-	fn := MakeJSONHandlerFunc(&h, &l, &ih)
+	fn := MakeJSONHandlerFunc(&h, &l, &ih, &mCache, false)
 	fn(w, r)
 
 	assert.Equal(t, 42, w.Code)
@@ -141,6 +164,93 @@ func TestJsonHandlerFuncOK(t *testing.T) {
 	h.AssertExpectations(t)
 	ih.AssertExpectations(t)
 	mMockInputRequest.AssertExpectations(t)
+	mCache.AssertExpectations(t)
+	l.AssertExpectations(t)
+}
+
+func TestJsonHandlerFuncOKWithGetCacheOK(t *testing.T) {
+	h := MockHandler{}
+	ih := MockInputHandler{}
+	mCache := mockCacheHandler{}
+	mMockInputRequest := MockInputRequest{}
+	l := MockLogger{}
+	input := &DummyInput{}
+	response := &goutils.Response{
+		Code: 42,
+		Body: DummyOutput{"That's some bad hat, Harry"},
+	}
+	h.On("Input", mock.AnythingOfType("*handlers.MockInputRequest")).Return(input)
+	var cache json.RawMessage
+	cache = []byte(`{"Y":"That's some bad hat, Harry"}` + "\n")
+	mCache.On("GetCache", input).Return(cache, nil)
+	ih.On("NewInputRequest", mock.AnythingOfType("*http.Request")).Return(&mMockInputRequest)
+	ih.On("Input").Return(input, response)
+	ih.On(
+		"SetInputRequest",
+		mock.AnythingOfType("*handlers.MockInputRequest"),
+		mock.AnythingOfType("*handlers.DummyInput"),
+	)
+
+	w := httptest.NewRecorder()
+	r := httptest.NewRequest("GET", "/someurl", strings.NewReader("{}"))
+
+	l.On("LogRequestStart", r)
+	l.On("LogResponseFromCache", r)
+
+	fn := MakeJSONHandlerFunc(&h, &l, &ih, &mCache, true)
+	fn(w, r)
+
+	assert.Equal(t, 200, w.Code)
+	assert.Equal(t, `{"Y":"That's some bad hat, Harry"}`+"\n", w.Body.String())
+	h.AssertExpectations(t)
+	ih.AssertExpectations(t)
+	mMockInputRequest.AssertExpectations(t)
+	mCache.AssertExpectations(t)
+	l.AssertExpectations(t)
+}
+
+func TestJsonHandlerFuncOKWithSetCacheError(t *testing.T) {
+	h := MockHandler{}
+	ih := MockInputHandler{}
+	mCache := mockCacheHandler{}
+	mMockInputRequest := MockInputRequest{}
+	l := MockLogger{}
+	input := &DummyInput{}
+	response := &goutils.Response{
+		Code: 42,
+		Body: DummyOutput{"That's some bad hat, Harry"},
+	}
+	getter := mock.AnythingOfType("handlers.InputGetter")
+	h.On("Input", mock.AnythingOfType("*handlers.MockInputRequest")).Return(input)
+	h.On("Execute", getter).Return(response).Once()
+	mCache.On("GetCache", input).Return(json.RawMessage{}, fmt.Errorf("CACHE NOT FOUND"))
+	e := fmt.Errorf("error setting cache")
+	mCache.On("SetCache", mock.AnythingOfType("*handlers.DummyInput"),
+		mock.AnythingOfType("json.RawMessage")).Return(e)
+	ih.On("NewInputRequest", mock.AnythingOfType("*http.Request")).Return(&mMockInputRequest)
+	ih.On("Input").Return(input, response)
+	ih.On(
+		"SetInputRequest",
+		mock.AnythingOfType("*handlers.MockInputRequest"),
+		mock.AnythingOfType("*handlers.DummyInput"),
+	)
+
+	w := httptest.NewRecorder()
+	r := httptest.NewRequest("GET", "/someurl", strings.NewReader("{}"))
+
+	l.On("LogRequestStart", r)
+	l.On("LogErrorSettingCache", r, e)
+	l.On("LogRequestEnd", r, response)
+
+	fn := MakeJSONHandlerFunc(&h, &l, &ih, &mCache, true)
+	fn(w, r)
+
+	assert.Equal(t, 42, w.Code)
+	assert.Equal(t, `{"Y":"That's some bad hat, Harry"}`+"\n", w.Body.String())
+	h.AssertExpectations(t)
+	ih.AssertExpectations(t)
+	mMockInputRequest.AssertExpectations(t)
+	mCache.AssertExpectations(t)
 	l.AssertExpectations(t)
 }
 
@@ -148,6 +258,7 @@ func TestJsonHandlerFuncOK2(t *testing.T) {
 	h := MockHandler{}
 	ih := MockInputHandler{}
 	mMockInputRequest := MockInputRequest{}
+	mCache := mockCacheHandler{}
 	l := MockLogger{}
 	input := &DummyInput{}
 	response := &goutils.Response{
@@ -175,7 +286,7 @@ func TestJsonHandlerFuncOK2(t *testing.T) {
 	l.On("LogRequestStart", r)
 	l.On("LogRequestEnd", r, response)
 
-	fn := MakeJSONHandlerFunc(&h, &l, &ih)
+	fn := MakeJSONHandlerFunc(&h, &l, &ih, &mCache, false)
 	fn(w, r)
 
 	assert.Equal(t, 42, w.Code)
@@ -183,6 +294,7 @@ func TestJsonHandlerFuncOK2(t *testing.T) {
 	h.AssertExpectations(t)
 	ih.AssertExpectations(t)
 	mMockInputRequest.AssertExpectations(t)
+	mCache.AssertExpectations(t)
 	l.AssertExpectations(t)
 }
 
@@ -190,6 +302,7 @@ func TestJsonHandlerFuncParseError(t *testing.T) {
 	h := MockHandler{}
 	ih := MockInputHandler{}
 	mMockInputRequest := MockInputRequest{}
+	mCache := mockCacheHandler{}
 	l := MockLogger{}
 	input := &DummyInput{}
 	getter := mock.AnythingOfType("handlers.InputGetter")
@@ -214,7 +327,7 @@ func TestJsonHandlerFuncParseError(t *testing.T) {
 	l.On("LogRequestStart", r)
 	l.On("LogRequestEnd", r, mock.AnythingOfType("*goutils.Response"))
 
-	fn := MakeJSONHandlerFunc(&h, &l, &ih)
+	fn := MakeJSONHandlerFunc(&h, &l, &ih, &mCache, false)
 	fn(w, r)
 
 	assert.Equal(t, http.StatusBadRequest, w.Code)
@@ -222,6 +335,7 @@ func TestJsonHandlerFuncParseError(t *testing.T) {
 	h.AssertExpectations(t)
 	ih.AssertExpectations(t)
 	mMockInputRequest.AssertExpectations(t)
+	mCache.AssertExpectations(t)
 	l.AssertExpectations(t)
 }
 
@@ -229,6 +343,7 @@ func TestJsonHandlerFuncPanic(t *testing.T) {
 	h := MockPanicHandler{}
 	ih := MockInputHandler{}
 	mMockInputRequest := MockInputRequest{}
+	mCache := mockCacheHandler{}
 	l := MockLogger{}
 	getter := mock.AnythingOfType("handlers.InputGetter")
 	input := &DummyInput{}
@@ -248,7 +363,7 @@ func TestJsonHandlerFuncPanic(t *testing.T) {
 	l.On("LogRequestStart", r)
 	l.On("LogRequestPanic", r, mock.AnythingOfType("*goutils.Response"), "dead")
 
-	fn := MakeJSONHandlerFunc(&h, &l, &ih)
+	fn := MakeJSONHandlerFunc(&h, &l, &ih, &mCache, false)
 	fn(w, r)
 
 	assert.Equal(t, http.StatusInternalServerError, w.Code)
@@ -256,5 +371,6 @@ func TestJsonHandlerFuncPanic(t *testing.T) {
 	h.AssertExpectations(t)
 	ih.AssertExpectations(t)
 	mMockInputRequest.AssertExpectations(t)
+	mCache.AssertExpectations(t)
 	l.AssertExpectations(t)
 }
