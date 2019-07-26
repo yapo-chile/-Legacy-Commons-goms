@@ -57,7 +57,7 @@ type JSONHandlerLogger interface {
 	LogRequestStart(r *http.Request)
 	LogRequestEnd(*http.Request, *goutils.Response)
 	LogRequestPanic(*http.Request, *goutils.Response, interface{})
-	LogResponseFromCache(r *http.Request)
+	LogResponseFromCache(*http.Request, *goutils.Response)
 	LogErrorSettingCache(r *http.Request, err error)
 }
 
@@ -108,7 +108,7 @@ func (jh *jsonHandler) run(w http.ResponseWriter, r *http.Request) {
 		cacheKey, _ := jh.inputHandler.Input()
 		if cache, e := jh.cacheHandler.GetCache(cacheKey); e == nil {
 			if e := json.Unmarshal(cache, response); e == nil {
-				jh.logger.LogResponseFromCache(r)
+				jh.logger.LogResponseFromCache(r, response)
 				return
 			}
 		}

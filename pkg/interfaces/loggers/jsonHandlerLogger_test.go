@@ -19,6 +19,6 @@ func TestJSONHandlerLogger(t *testing.T) {
 	l.LogRequestStart(r)
 	l.LogRequestEnd(r, &goutils.Response{})
 	l.LogRequestPanic(r, &goutils.Response{}, nil)
-	l.LogResponseFromCache(r)
+	l.LogResponseFromCache(r, &goutils.Response{})
 	l.LogErrorSettingCache(r, nil)
 }

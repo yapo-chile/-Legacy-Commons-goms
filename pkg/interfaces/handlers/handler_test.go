@@ -97,8 +97,8 @@ func (m *MockLogger) LogRequestEnd(r *http.Request, response *goutils.Response) 
 func (m *MockLogger) LogRequestPanic(r *http.Request, response *goutils.Response, err interface{}) {
 	m.Called(r, response, err)
 }
-func (m *MockLogger) LogResponseFromCache(r *http.Request) {
-	m.Called(r)
+func (m *MockLogger) LogResponseFromCache(r *http.Request, resp *goutils.Response) {
+	m.Called(r, resp)
 }
 func (m *MockLogger) LogErrorSettingCache(r *http.Request, err error) {
 	m.Called(r, err)
@@ -195,7 +195,7 @@ func TestJsonHandlerFuncOKWithGetCacheOK(t *testing.T) {
 	r := httptest.NewRequest("GET", "/someurl", strings.NewReader("{}"))
 
 	l.On("LogRequestStart", r)
-	l.On("LogResponseFromCache", r)
+	l.On("LogResponseFromCache", mock.AnythingOfType("*http.Request"), mock.AnythingOfType("*goutils.Response"))
 
 	fn := MakeJSONHandlerFunc(&h, &l, &ih, &mCache, true)
 	fn(w, r)

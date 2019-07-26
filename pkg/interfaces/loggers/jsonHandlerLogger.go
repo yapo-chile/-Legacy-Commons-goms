@@ -24,8 +24,8 @@ func (l *jsonHandlerDefaultLogger) LogRequestPanic(r *http.Request, response *go
 	l.logger.Error("> %s %s %s (%d): %s", r.RemoteAddr, r.Method, r.URL, response.Code, err)
 }
 
-func (l *jsonHandlerDefaultLogger) LogResponseFromCache(r *http.Request) {
-	l.logger.Info("< %s %s %s (cache)", r.RemoteAddr, r.Method, r.URL)
+func (l *jsonHandlerDefaultLogger) LogResponseFromCache(r *http.Request, response *goutils.Response) {
+	l.logger.Info("< %s %s %s (%d) (cache)", r.RemoteAddr, r.Method, r.URL, response.Code)
 }
 
 func (l *jsonHandlerDefaultLogger) LogErrorSettingCache(r *http.Request, err error) {
