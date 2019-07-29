@@ -37,7 +37,7 @@ type RouterMaker struct {
 	WrapperFuncs  []WrapperFunc
 	WithProfiling bool
 	Routes        Routes
-	CacheHandler  handlers.CacheHandler
+	CacheDriver   handlers.CacheDriver
 }
 
 // NewRouter setups a Router based on the provided routes
@@ -48,7 +48,7 @@ func (maker *RouterMaker) NewRouter() http.Handler {
 		for _, route := range routeGroup.Groups {
 			hLogger := loggers.MakeJSONHandlerLogger(maker.Logger)
 			hInputHandler := NewInputHandler()
-			handler := handlers.MakeJSONHandlerFunc(route.Handler, hLogger, hInputHandler, maker.CacheHandler, route.Cacheable)
+			handler := handlers.MakeJSONHandlerFunc(route.Handler, hLogger, hInputHandler, maker.CacheDriver, route.Cacheable)
 			for _, wrapFunc := range maker.WrapperFuncs {
 				handler = wrapFunc(route.Pattern, handler)
 			}

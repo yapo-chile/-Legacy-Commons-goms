@@ -9,7 +9,7 @@ import (
 	"github.mpi-internal.com/Yapo/goms/pkg/interfaces/handlers"
 )
 
-// cache is a handler to get cached request responses using redis
+// cache is a driver to get cached request responses using redis
 type cache struct {
 	handler RedisHandler
 	prefix  string

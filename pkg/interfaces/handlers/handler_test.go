@@ -57,16 +57,16 @@ func (m *MockInputHandler) SetInputRequest(ri InputRequest, hi HandlerInput) {
 	m.Called(ri, hi)
 }
 
-type mockCacheHandler struct {
+type mockCacheDriver struct {
 	mock.Mock
 }
 
-func (m *mockCacheHandler) SetCache(input interface{}, data json.RawMessage) error {
+func (m *mockCacheDriver) SetCache(input interface{}, data json.RawMessage) error {
 	args := m.Called(input, data)
 	return args.Error(0)
 }
 
-func (m *mockCacheHandler) GetCache(input interface{}) (json.RawMessage, error) {
+func (m *mockCacheDriver) GetCache(input interface{}) (json.RawMessage, error) {
 	args := m.Called(input)
 	return args.Get(0).(json.RawMessage), args.Error(1)
 }
@@ -130,7 +130,7 @@ type TestParamStruct struct {
 func TestJsonHandlerFuncOK(t *testing.T) {
 	h := MockHandler{}
 	ih := MockInputHandler{}
-	mCache := mockCacheHandler{}
+	mCache := mockCacheDriver{}
 	mMockInputRequest := MockInputRequest{}
 	l := MockLogger{}
 	input := &DummyInput{}
@@ -171,7 +171,7 @@ func TestJsonHandlerFuncOK(t *testing.T) {
 func TestJsonHandlerFuncOKWithGetCacheOK(t *testing.T) {
 	h := MockHandler{}
 	ih := MockInputHandler{}
-	mCache := mockCacheHandler{}
+	mCache := mockCacheDriver{}
 	mMockInputRequest := MockInputRequest{}
 	l := MockLogger{}
 	input := &DummyInput{}
@@ -212,7 +212,7 @@ func TestJsonHandlerFuncOKWithGetCacheOK(t *testing.T) {
 func TestJsonHandlerFuncOKWithSetCacheError(t *testing.T) {
 	h := MockHandler{}
 	ih := MockInputHandler{}
-	mCache := mockCacheHandler{}
+	mCache := mockCacheDriver{}
 	mMockInputRequest := MockInputRequest{}
 	l := MockLogger{}
 	input := &DummyInput{}
@@ -258,7 +258,7 @@ func TestJsonHandlerFuncOK2(t *testing.T) {
 	h := MockHandler{}
 	ih := MockInputHandler{}
 	mMockInputRequest := MockInputRequest{}
-	mCache := mockCacheHandler{}
+	mCache := mockCacheDriver{}
 	l := MockLogger{}
 	input := &DummyInput{}
 	response := &goutils.Response{
@@ -302,7 +302,7 @@ func TestJsonHandlerFuncParseError(t *testing.T) {
 	h := MockHandler{}
 	ih := MockInputHandler{}
 	mMockInputRequest := MockInputRequest{}
-	mCache := mockCacheHandler{}
+	mCache := mockCacheDriver{}
 	l := MockLogger{}
 	input := &DummyInput{}
 	getter := mock.AnythingOfType("handlers.InputGetter")
@@ -343,7 +343,7 @@ func TestJsonHandlerFuncPanic(t *testing.T) {
 	h := MockPanicHandler{}
 	ih := MockInputHandler{}
 	mMockInputRequest := MockInputRequest{}
-	mCache := mockCacheHandler{}
+	mCache := mockCacheDriver{}
 	l := MockLogger{}
 	getter := mock.AnythingOfType("handlers.InputGetter")
 	input := &DummyInput{}

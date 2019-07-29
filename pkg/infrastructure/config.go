@@ -117,48 +117,55 @@ func valueFromEnv(envTag, envDefault string) string {
 
 // load the variable defined in the envTag into Value
 func load(conf reflect.Value, envTag, envDefault string) {
-	if conf.Kind() == reflect.Ptr {
-		reflectedConf := reflect.Indirect(conf)
-		// Only attempt to set writeable variables
-		if reflectedConf.IsValid() && reflectedConf.CanSet() {
-			value := valueFromEnv(envTag, envDefault)
-			// Print message if config is missing
-			if envTag != "" && value == "" && !strings.HasSuffix(envTag, "_") {
-				fmt.Printf("Config for %s missing\n", envTag)
+	if conf.Kind() != reflect.Ptr {
+		return
+	}
+	reflectedConf := reflect.Indirect(conf)
+	// Only attempt to set writeable variables
+	if !reflectedConf.IsValid() || !reflectedConf.CanSet() {
+		return
+	}
+	value := valueFromEnv(envTag, envDefault)
+	// Print message if config is missing
+	if envTag != "" && value == "" && !strings.HasSuffix(envTag, "_") {
+		fmt.Printf("Config for %s missing\n", envTag)
+	}
+	set(reflectedConf, envTag, value)
+}
+
+// set sets loaded configuration from environment to conf structs or variables
+func set(reflectedConf reflect.Value, envTag, value string) {
+	switch reflectedConf.Kind() {
+	case reflect.Struct:
+		// Recursively load inner struct fields
+		for i := 0; i < reflectedConf.NumField(); i++ {
+			if tag, ok := reflectedConf.Type().Field(i).Tag.Lookup("env"); ok {
+				def, _ := reflectedConf.Type().Field(i).Tag.Lookup("envDefault")
+				load(reflectedConf.Field(i).Addr(), envTag+tag, def)
 			}
-			switch reflectedConf.Kind() {
-			case reflect.Struct:
-				// Recursively load inner struct fields
-				for i := 0; i < reflectedConf.NumField(); i++ {
-					if tag, ok := reflectedConf.Type().Field(i).Tag.Lookup("env"); ok {
-						def, _ := reflectedConf.Type().Field(i).Tag.Lookup("envDefault")
-						load(reflectedConf.Field(i).Addr(), envTag+tag, def)
-					}
-				}
-			// Here for each type we should make a cast of the env variable and then set the value
-			case reflect.String:
-				reflectedConf.SetString(value)
-			case reflect.Int:
-				if value, err := strconv.Atoi(value); err == nil {
-					reflectedConf.Set(reflect.ValueOf(value))
-				}
-			case reflect.Int64:
-				if t, err := time.ParseDuration(value); err == nil {
-					reflectedConf.Set(reflect.ValueOf(t))
-				}
-			case reflect.Float64:
-				if value, err := strconv.ParseFloat(value, 64); err == nil {
-					reflectedConf.Set(reflect.ValueOf(value))
-				}
-			case reflect.Uint32:
-				if value, err := strconv.ParseUint(value, 10, 32); err == nil {
-					reflectedConf.Set(reflect.ValueOf(uint32(value)))
-				}
-			case reflect.Bool:
-				if value, err := strconv.ParseBool(value); err == nil {
-					reflectedConf.Set(reflect.ValueOf(value))
-				}
-			}
+		}
+	// Here for each type we should make a cast of the env variable and then set the value
+	case reflect.String:
+		reflectedConf.SetString(value)
+	case reflect.Int:
+		if value, err := strconv.Atoi(value); err == nil {
+			reflectedConf.Set(reflect.ValueOf(value))
+		}
+	case reflect.Int64:
+		if t, err := time.ParseDuration(value); err == nil {
+			reflectedConf.Set(reflect.ValueOf(t))
+		}
+	case reflect.Float64:
+		if value, err := strconv.ParseFloat(value, 64); err == nil {
+			reflectedConf.Set(reflect.ValueOf(value))
+		}
+	case reflect.Uint32:
+		if value, err := strconv.ParseUint(value, 10, 32); err == nil {
+			reflectedConf.Set(reflect.ValueOf(uint32(value)))
+		}
+	case reflect.Bool:
+		if value, err := strconv.ParseBool(value); err == nil {
+			reflectedConf.Set(reflect.ValueOf(value))
 		}
 	}
 }
