@@ -29,6 +29,8 @@ const (
 	QUERY InputSource = "query"
 	// HEADERS defines the constant for the headers params
 	HEADERS InputSource = "headers"
+	// COOKIES defines the constant for the cookies params
+	COOKIES InputSource = "cookies"
 
 	// NotSeteable defines the error string of this error
 	NotSeteable string = "PROVIDED_INPUT_IS_NOT_SETEABLE"
@@ -80,6 +82,12 @@ func (ri *inputRequest) FromQuery() handlers.InputRequest {
 
 func (ri *inputRequest) FromHeaders() handlers.InputRequest {
 	ri.sources = append(ri.sources, HEADERS)
+	return ri
+}
+
+// FromCookies sets request cookies as handler input
+func (ri *inputRequest) FromCookies() handlers.InputRequest {
+	ri.sources = append(ri.sources, COOKIES)
 	return ri
 }
 
@@ -155,6 +163,13 @@ func (ih *inputHandler) Input() (handlers.HandlerInput, *goutils.Response) {
 					source,
 					reflectedOutput,
 				) != nil
+		case COOKIES:
+			hasError = hasError ||
+				ih.parseInput(
+					ih.httpCookiesToMap(ih.inputRequest.httpRequest.Cookies()),
+					source,
+					reflectedOutput,
+				) != nil
 		}
 	}
 
@@ -173,6 +188,14 @@ func (ih *inputHandler) httpValuesToMap(values map[string][]string) map[string]s
 	outValues := make(map[string]string)
 	for k, v := range values {
 		outValues[k] = strings.Join(v, ",")
+	}
+	return outValues
+}
+
+func (ih *inputHandler) httpCookiesToMap(cookies []*http.Cookie) map[string]string {
+	outValues := make(map[string]string)
+	for _, cookie := range cookies {
+		outValues[cookie.Name] = cookie.Value
 	}
 	return outValues
 }

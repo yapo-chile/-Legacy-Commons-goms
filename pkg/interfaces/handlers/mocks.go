@@ -44,3 +44,9 @@ func (m *MockInputRequest) FromHeaders() InputRequest {
 	args := m.Called()
 	return args.Get(0).(InputRequest)
 }
+
+// FromCookies is a mocked method
+func (m *MockInputRequest) FromCookies() InputRequest {
+	args := m.Called()
+	return args.Get(0).(InputRequest)
+}

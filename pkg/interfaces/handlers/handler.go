@@ -41,6 +41,7 @@ type InputRequest interface {
 	FromPath() InputRequest
 	FromQuery() InputRequest
 	FromHeaders() InputRequest
+	FromCookies() InputRequest
 }
 
 // MakeJSONHandlerFunc wraps a Handler on a json-over-http context, returning
