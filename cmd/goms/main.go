@@ -128,7 +128,7 @@ func main() {
 	maker := infrastructure.RouterMaker{
 		Logger:        logger,
 		WrapperFuncs:  []infrastructure.WrapperFunc{prometheus.TrackHandlerFunc},
-		CacheHandler:  infrastructure.NewCacheHandler(cacheRedisHandler, conf.CacheConf.Prefix, conf.CacheConf.MaxAge),
+		CacheDriver:   infrastructure.NewCacheDriver(cacheRedisHandler, conf.CacheConf.Prefix, conf.CacheConf.MaxAge),
 		WithProfiling: conf.ServiceConf.Profiling,
 		Routes: infrastructure.Routes{
 			{

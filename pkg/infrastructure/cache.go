@@ -1,7 +1,7 @@
 package infrastructure
 
 import (
-	"crypto/sha1"
+	"crypto/sha1" // nolint
 	"encoding/json"
 	"fmt"
 	"time"
@@ -16,8 +16,8 @@ type cache struct {
 	maxAge  time.Duration
 }
 
-// NewCacheHandler returns an instance of cache handler
-func NewCacheHandler(handler RedisHandler, prefix string, maxAge time.Duration) handlers.CacheHandler {
+// NewCacheDriver returns an instance of cache handler
+func NewCacheDriver(handler RedisHandler, prefix string, maxAge time.Duration) handlers.CacheDriver {
 	return &cache{
 		handler: handler,
 		prefix:  prefix,
@@ -31,8 +31,10 @@ func (c *cache) makeRedisKey(input interface{}) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	h := sha1.New()
-	h.Write(inputRaw) // nolint
+	h := sha1.New() // nolint
+	if _, err := h.Write(inputRaw); err != nil {
+		return "", err
+	}
 	key := fmt.Sprintf("%x", h.Sum(nil))
 	return c.prefix + key, nil
 }

@@ -47,8 +47,8 @@ type InputRequest interface {
 // MakeJSONHandlerFunc wraps a Handler on a json-over-http context, returning
 // a standard http.HandlerFunc
 func MakeJSONHandlerFunc(h Handler, l JSONHandlerLogger, ih InputHandler,
-	cacheHandler CacheHandler, cacheable bool) http.HandlerFunc {
-	jh := jsonHandler{handler: h, logger: l, inputHandler: ih, cacheHandler: cacheHandler, cacheable: cacheable}
+	cacheDriver CacheDriver, cacheable bool) http.HandlerFunc {
+	jh := jsonHandler{handler: h, logger: l, inputHandler: ih, cacheDriver: cacheDriver, cacheable: cacheable}
 	return jh.run
 }
 
@@ -61,8 +61,8 @@ type JSONHandlerLogger interface {
 	LogErrorSettingCache(r *http.Request, err error)
 }
 
-// CacheHandler implements cache control operations
-type CacheHandler interface {
+// CacheDriver implements cache control operations
+type CacheDriver interface {
 	SetCache(input interface{}, data json.RawMessage) error
 	GetCache(input interface{}) (json.RawMessage, error)
 }
@@ -73,7 +73,7 @@ type jsonHandler struct {
 	handler      Handler
 	logger       JSONHandlerLogger
 	inputHandler InputHandler
-	cacheHandler CacheHandler
+	cacheDriver  CacheDriver
 	cacheable    bool
 }
 
@@ -106,7 +106,7 @@ func (jh *jsonHandler) run(w http.ResponseWriter, r *http.Request) {
 	defer errorHandler()
 	if jh.cacheable {
 		cacheKey, _ := jh.inputHandler.Input()
-		if cache, e := jh.cacheHandler.GetCache(cacheKey); e == nil {
+		if cache, e := jh.cacheDriver.GetCache(cacheKey); e == nil {
 			if e := json.Unmarshal(cache, response); e == nil {
 				jh.logger.LogResponseFromCache(r, response)
 				return
@@ -117,7 +117,7 @@ func (jh *jsonHandler) run(w http.ResponseWriter, r *http.Request) {
 	response = jh.handler.Execute(jh.inputHandler.Input)
 	if jh.cacheable {
 		if dataRaw, e := json.Marshal(response); e == nil {
-			if e := jh.cacheHandler.SetCache(input, dataRaw); e != nil {
+			if e := jh.cacheDriver.SetCache(input, dataRaw); e != nil {
 				jh.logger.LogErrorSettingCache(r, e)
 			}
 		}
