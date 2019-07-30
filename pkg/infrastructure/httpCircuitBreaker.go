@@ -85,8 +85,8 @@ func NewCircuitBreaker(
 		},
 		OnStateChange: func(name string, from gobreaker.State, to gobreaker.State) {
 			logger.Error("CircuitBreaker: Changing status %+v to %+v", from.String(), to.String())
-			if from == gobreaker.StateClosed { // represents Circuit breaker closed state
-				logger.Error("CircuitBreaker: Waiting for open state...")
+			if from == gobreaker.StateOpen { // represents Circuit breaker opened state
+				logger.Error("CircuitBreaker: Waiting for closed state...")
 			}
 		},
 	}
