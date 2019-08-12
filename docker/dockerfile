@@ -1,11 +1,12 @@
-FROM golang:1.11 AS go
+FROM golang:1.11 AS gobuilder
 
 ARG APPFOLDER
 ARG APPNAME
 
-ADD ./ /go/src/github.mpi-internal.com/Yapo/${APPFOLDER}
-RUN make -C /go/src/github.mpi-internal.com/Yapo/${APPFOLDER} setup
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o /app.linux /go/src/github.mpi-internal.com/Yapo/${APPFOLDER}/cmd/${APPNAME}/main.go
+WORKDIR /go/src/github.mpi-internal.com/Yapo/${APPFOLDER}
+ADD ./ .
+RUN make setup
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o /app.linux cmd/${APPNAME}/main.go
 
 FROM alpine:3.8
 RUN apk update && apk add ca-certificates && rm -rf /var/cache/apk/*
@@ -15,6 +16,9 @@ ARG GIT_BRANCH
 ARG GIT_COMMIT_DATE
 ARG BUILD_CREATOR
 ARG APPNAME
+
+EXPOSE 8080
+WORKDIR /home/user/app/
 
 ENV PS1="\[\e[1;32m\]$APPNAME \[\e[1;31m\][`pwd`] # \[\e[0m\]"
 
@@ -26,7 +30,7 @@ LABEL branch=$GIT_BRANCH \
    build-creator=$BUILD_CREATOR \
    appname=$APPNAME
 
-COPY --from=go /app.linux /home/user/app/
+COPY --from=gobuilder /app.linux .
 RUN touch /home/user/app/$GIT_COMMIT
 
 # Package tzdata is needed before setting TZ ENV variable
@@ -34,8 +38,5 @@ RUN apk update && apk add ca-certificates && apk add -U tzdata
 ENV TZ America/Santiago
 # Copy zoneinfo file and then remove cache
 RUN cp /usr/share/zoneinfo/$TZ /etc/localtime && rm -rf /var/cache/apk/*
-
-EXPOSE 8080
-WORKDIR /home/user/app/
 
 CMD ["./app.linux"]
