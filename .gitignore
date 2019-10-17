@@ -20,3 +20,5 @@ goms-pact
 goms-pact.err
 goms-pact.out
 log/pact.log
+/goms*
+app.docker
