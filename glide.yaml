@@ -12,3 +12,7 @@ import:
   subpackages:
   - mock
 - package: gopkg.in/gorilla/mux.v1
+- package: github.com/pact-foundation/pact-go
+  subpackages:
+  - dsl
+  - types
