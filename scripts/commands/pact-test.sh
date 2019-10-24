@@ -28,13 +28,13 @@ echoTitle "Starting pact-go daemon in background"
 nohup pact/bin/pact-go daemon > daemon.out 2> daemon.err &
 PACT_PID=$!
 
-echoTitle "Starting search-ms mock in background"
+: ' echoTitle "Starting search-ms mock in background"
 nohup pact/bin/pact/bin/pact-stub-service pact/mocks/search-ms.json --port=${SEARCH_MS_PORT} &
 SEARCH_MS_PID=$!
 
 echoTitle "Starting touchstone-api mock in background"
 nohup pact/bin/pact/bin/pact-stub-service pact/mocks/touchstone.json --port=${TOUCHSTONE_PORT} &
-TOUCHSTONE_PID=$!
+TOUCHSTONE_PID=$! '
 
 echoTitle "Starting ${PACT_BINARY} in background"
 nohup ./${PACT_BINARY} > ${PACT_BINARY}.out 2> ${PACT_BINARY}.err &

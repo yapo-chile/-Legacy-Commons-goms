@@ -58,6 +58,9 @@ export GOMS_HEALTH_PATH=http://localhost:${SERVICE_PORT}/api/v1/healthcheck
 export CIRCUIT_BREAKER_FAILURE_RATIO=0.5
 export CIRCUIT_BREAKER_CONSECUTIVE_FAILURE=2
 
+# User config
+export PROFILE_HOST=http://10.15.1.78:7987
+
 # Rancher Deploy
 export RANCHER_DEPLOY_IMAGE=containers.mpi-internal.com/yapo/rancher-deploy:0.0.40
 export RANCHER_ENV_REPO=Yapo/rancher-deploy-envs
