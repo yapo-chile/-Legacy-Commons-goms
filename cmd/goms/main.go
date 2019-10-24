@@ -52,7 +52,8 @@ func main() {
 
 	// HealthHandler
 	var healthHandler handlers.HealthHandler
-
+	// To handle http connections you can use an httpHandler or
+	HTTPHandler := infrastructure.NewHTTPHandler(logger)
 	// CLONE REMOVE START
 	// FibonacciHandler
 	fibonacciLogger := loggers.MakeFibonacciLogger(logger)
@@ -64,12 +65,21 @@ func main() {
 	fibonacciHandler := handlers.FibonacciHandler{
 		Interactor: &fibonacciInteractor,
 	}
+	userProfileRepo := repository.NewUserProfileRepository(
+		HTTPHandler,
+		conf.ProfileConf.Host+conf.ProfileConf.UserDataPath,
+	)
+	userProfileInteractor := usecases.UserProfileInteractor{
+		UserProfileRepository: userProfileRepo,
+	}
+	userProfileHandler := handlers.UserProfileHandler{
+		Interactor: userProfileInteractor,
+	}
 
-	// To handle http connections you can use an httpHandler or
 	// httpCircuitBreakerHandler which retries requests with it's client
 	// until it returns a valid answer and then continues normal execution
 	// OPTION: classic HTTP
-	HTTPHandler := infrastructure.NewHTTPHandler(logger)
+
 	getHealthLogger := loggers.MakeGomsRepoLogger(logger)
 	getHealthInteractor := usecases.GetHealthcheckInteractor{
 		GomsRepository: repository.NewGomsRepository(
@@ -164,7 +174,13 @@ func main() {
 						Pattern: "/httpcb/healthcheck",
 						Handler: &getHealthCBHandler,
 					},
-					// CLONE REMOVE END
+					{
+						Name:    "Retrieve the user basic data",
+						Method:  "GET",
+						Pattern: "/getuserbasic",
+						Handler: &userProfileHandler,
+					},
+					// CLONE REMOVE END userProfileHandler
 				},
 			},
 		},
