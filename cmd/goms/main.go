@@ -72,6 +72,7 @@ func main() {
 	userProfileInteractor := usecases.UserProfileInteractor{
 		UserProfileRepository: userProfileRepo,
 	}
+	// userProfileHandler
 	userProfileHandler := handlers.UserProfileHandler{
 		Interactor: userProfileInteractor,
 	}
@@ -177,10 +178,10 @@ func main() {
 					{
 						Name:    "Retrieve the user basic data",
 						Method:  "GET",
-						Pattern: "/getuserbasic",
+						Pattern: "/user/basic-data",
 						Handler: &userProfileHandler,
 					},
-					// CLONE REMOVE END userProfileHandler
+					// CLONE REMOVE END
 				},
 			},
 		},

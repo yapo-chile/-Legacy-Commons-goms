@@ -8,8 +8,7 @@ import (
 )
 
 // UserProfileHandler implements the handler interface and responds to
-// /userProfile requests using an interactor. It's purpose is just to
-// demonstrate Clean Architecture with a practical scenario
+// userProfile requests using an interactor.
 type UserProfileHandler struct {
 	Interactor usecases.UserProfileInteractor
 }
@@ -18,8 +17,14 @@ type userProfileRequestInput struct {
 	Mail string `json:"Mail"`
 }
 
+//userProfileRequestOutput specifies the format of the handler output
 type userProfileRequestOutput struct {
-	UseraBasicData usecases.UserBasicData
+	Name    string `json:"Full name"`
+	Phone   string `json:"Cellphone"`
+	Gender  string `json:"Gender"`
+	Country string `json:"Country"`
+	Region  string `json:"Region"`
+	Commune string `json:"Commune"`
 }
 
 type userProfileRequestError goutils.GenericError
@@ -32,6 +37,7 @@ func (h *UserProfileHandler) Input(ir InputRequest) HandlerInput {
 	return &input
 }
 
+//Execute is the main function of the userProfile handler
 func (h *UserProfileHandler) Execute(ig InputGetter) *goutils.Response {
 	input, response := ig()
 	if response != nil {
@@ -39,7 +45,7 @@ func (h *UserProfileHandler) Execute(ig InputGetter) *goutils.Response {
 	}
 	in := input.(*userProfileRequestInput)
 
-	userBasic, err := h.Interactor.GetUser(in.Mail)
+	userBasicData, err := h.Interactor.GetUser(in.Mail)
 
 	if err != nil {
 		return &goutils.Response{
@@ -48,7 +54,20 @@ func (h *UserProfileHandler) Execute(ig InputGetter) *goutils.Response {
 	}
 
 	return &goutils.Response{
-		Body: userBasic,
+		Body: h.fillInternalOutput(userBasicData),
 		Code: http.StatusOK,
+	}
+}
+
+// fillInternalOutput parses the data retrieved from the handler to handler expected output
+func (h *UserProfileHandler) fillInternalOutput(userBasicData usecases.UserBasicData) userProfileRequestOutput {
+
+	return userProfileRequestOutput{
+		Name:    userBasicData.Name,
+		Phone:   userBasicData.Phone,
+		Gender:  userBasicData.Gender,
+		Country: userBasicData.Country,
+		Region:  userBasicData.Region,
+		Commune: userBasicData.Commune,
 	}
 }

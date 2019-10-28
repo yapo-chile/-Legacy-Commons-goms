@@ -9,7 +9,7 @@ type userProfilePrometheusDefaultLogger struct {
 }
 
 func (l *userProfilePrometheusDefaultLogger) LogBadInput(n string) {
-	l.logger.Error("GetNth doesn't like N < 1. Input: %d", n)
+	l.logger.Error("Wrong input type: %d", n)
 }
 
 func (l *userProfilePrometheusDefaultLogger) LogRepositoryError(i string, x usecases.UserBasicData, err error) {
