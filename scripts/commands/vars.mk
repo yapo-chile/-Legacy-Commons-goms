@@ -33,8 +33,8 @@ export LOGGER_STDLOG_ENABLED=true
 export LOGGER_LOG_LEVEL=0
 
 # Pact test variables
-export PACT_MAIN_FILE=cmd/${APPNAME}-pact/main.go
-export PACT_BINARY=${APPNAME}-pact
+export PACT_MAIN_FILE=cmd/${APPNAME}/main.go
+export PACT_BINARY=${APPNAME}
 
 # DOCKER variables
 export DOCKER_REGISTRY=containers.mpi-internal.com
@@ -64,3 +64,7 @@ export PROFILE_HOST=http://10.15.1.78:7987
 # Rancher Deploy
 export RANCHER_DEPLOY_IMAGE=containers.mpi-internal.com/yapo/rancher-deploy:0.0.40
 export RANCHER_ENV_REPO=Yapo/rancher-deploy-envs
+
+#Pact broker
+export PACT_BROKER_HOST=http://3.229.36.112
+export PACT_BROKER_PORT=80
