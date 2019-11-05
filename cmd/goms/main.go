@@ -69,12 +69,12 @@ func main() {
 		HTTPHandler,
 		conf.ProfileConf.Host+conf.ProfileConf.UserDataPath,
 	)
-	userProfileInteractor := usecases.UserProfileInteractor{
+	userProfileInteractor := usecases.GetUserDataInteractor{
 		UserProfileRepository: userProfileRepo,
 	}
 	// userProfileHandler
 	userProfileHandler := handlers.UserProfileHandler{
-		Interactor: userProfileInteractor,
+		Interactor: &userProfileInteractor,
 	}
 
 	// httpCircuitBreakerHandler which retries requests with it's client

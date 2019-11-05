@@ -7,10 +7,16 @@ import (
 	"github.mpi-internal.com/Yapo/goms/pkg/usecases"
 )
 
+// UserProfilePrometheusDefaultLogger is the handler used by the handler
+type UserProfilePrometheusDefaultLogger interface {
+	LogBadRequest(input interface{})
+	LogErrorGettingInternalData(err error)
+}
+
 // UserProfileHandler implements the handler interface and responds to
-// userProfile requests using an interactor.
 type UserProfileHandler struct {
-	Interactor usecases.UserProfileInteractor
+	Interactor UserProfileInteractor
+	Logger     UserProfilePrometheusDefaultLogger
 }
 
 type userProfileRequestInput struct {
@@ -19,7 +25,7 @@ type userProfileRequestInput struct {
 
 //userProfileRequestOutput specifies the format of the handler output
 type userProfileRequestOutput struct {
-	Name    string `json:"Full name"`
+	Name    string `json:"Fullname"`
 	Phone   string `json:"Cellphone"`
 	Gender  string `json:"Gender"`
 	Country string `json:"Country"`
@@ -27,7 +33,10 @@ type userProfileRequestOutput struct {
 	Commune string `json:"Commune"`
 }
 
-type userProfileRequestError goutils.GenericError
+//UserProfileInteractor is the interactor used by the handler
+type UserProfileInteractor interface {
+	GetUser(mail string) (usecases.UserBasicData, error)
+}
 
 // Input returns a fresh, empty instance of userProfileRequestInput
 func (h *UserProfileHandler) Input(ir InputRequest) HandlerInput {
@@ -41,6 +50,7 @@ func (h *UserProfileHandler) Input(ir InputRequest) HandlerInput {
 func (h *UserProfileHandler) Execute(ig InputGetter) *goutils.Response {
 	input, response := ig()
 	if response != nil {
+		h.Logger.LogBadRequest(response)
 		return response
 	}
 	in := input.(*userProfileRequestInput)
@@ -48,14 +58,15 @@ func (h *UserProfileHandler) Execute(ig InputGetter) *goutils.Response {
 	userBasicData, err := h.Interactor.GetUser(in.Mail)
 
 	if err != nil {
+		h.Logger.LogErrorGettingInternalData(err)
 		return &goutils.Response{
 			Code: http.StatusNoContent,
 		}
 	}
 
 	return &goutils.Response{
-		Body: h.fillInternalOutput(userBasicData),
 		Code: http.StatusOK,
+		Body: h.fillInternalOutput(userBasicData),
 	}
 }
 

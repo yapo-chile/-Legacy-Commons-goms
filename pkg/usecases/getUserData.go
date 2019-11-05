@@ -4,26 +4,25 @@ import (
 	"fmt"
 )
 
-// UserProfileInteractor defines the interactor
-type UserProfileInteractor struct {
+// GetUserDataInteractor defines the interactor
+type GetUserDataInteractor struct {
 	UserProfileRepository UserProfileRepository
+	Logger                GetUserPrometheusDefaultLogger
 }
 
 // UserProfilerometheusLogger logs UserProfilerometheusLogger events
-type UserProfilerometheusLogger interface {
-	LogBadInput(string)
-	LogRepositoryError(string, UserBasicData, error)
+type GetUserPrometheusDefaultLogger interface {
+	LogBadInput(mail string)
 }
 
 // GetUser retrieves the basic data of a user given a mail
 
-func (interactor *UserProfileInteractor) GetUser(mail string) (UserBasicData, error) {
+func (interactor *GetUserDataInteractor) GetUser(mail string) (UserBasicData, error) {
 
 	userProfile, err := interactor.UserProfileRepository.GetUserProfileData(mail)
-
 	if err != nil {
-		return userProfile, fmt.Errorf("Cannot retrieve the user's profile error %+v", err)
+		interactor.Logger.LogBadInput(mail)
+		return userProfile, fmt.Errorf("cannot retrieve the user's profile error %+v", err)
 	}
 	return userProfile, err
-
 }

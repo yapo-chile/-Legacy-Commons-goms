@@ -9,8 +9,7 @@ import (
 )
 
 const (
-	errorNoUserDataFound  string = "There was no user data found using the email: %s"
-	errorNoDataAccSession string = "There was an error getting data from profile: %s"
+	errorNoUserDataFound string = "there was no user data found using the email: %s"
 )
 
 // UserProfileRepository wrapper struct for the RedisHandler
