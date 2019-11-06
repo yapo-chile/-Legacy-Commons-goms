@@ -9,15 +9,17 @@ import (
 	"github.com/pact-foundation/pact-go/dsl"
 	"github.com/pact-foundation/pact-go/types"
 
-	"github.mpi-internal.com/Yapo/suggested-ads/pkg/infrastructure"
+	"github.mpi-internal.com/Yapo/goms/pkg/infrastructure"
 )
 
 var dir, _ = os.Getwd()
 var pactDir = fmt.Sprintf("%s/pacts", dir)
 
 type PactConf struct {
-	BrokerHost string `env:"BROKER_HOST" envDefault:"http://3.229.36.112"`
-	BrokerPort string `env:"BROKER_PORT" envDefault:"80"`
+	BrokerHost   string `env:"BROKER_HOST" envDefault:"http://3.229.36.112"`
+	BrokerPort   string `env:"BROKER_PORT" envDefault:"80"`
+	ProviderHost string `env:"PROVIDER_HOST" envDefault:"http://10.15.1.78"`
+	ProviderPort string `env:"PROVIDER_PORT" envDefault:"7987"`
 }
 
 // Example Provider Pact: How to run me!
@@ -34,13 +36,14 @@ func TestProvider(t *testing.T) {
 	}
 	files, err := IOReadDir(pactDir)
 	if err != nil {
-		panic(err)
+		fmt.Printf("Error in reading files. Error %+v", err)
+
 	}
 	for _, file := range files {
 
 		// Verify the Provider with local Pact Files
 		h := types.VerifyRequest{
-			ProviderBaseURL:       "http://10.15.1.78:7987",
+			ProviderBaseURL:       conf.ProviderHost + ":" + conf.ProviderPort,
 			PactURLs:              []string{file},
 			CustomProviderHeaders: []string{"Authorization: basic e5e5e5e5e5e5e5"},
 		}
