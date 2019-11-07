@@ -40,7 +40,6 @@ func TestProvider(t *testing.T) {
 
 	}
 	for _, file := range files {
-
 		// Verify the Provider with local Pact Files
 		h := types.VerifyRequest{
 			ProviderBaseURL:       conf.ProviderHost + ":" + conf.ProviderPort,
@@ -61,9 +60,7 @@ func TestProvider(t *testing.T) {
 		if err != nil {
 			fmt.Printf("Error with the Pact Broker server. Error %+v", err)
 		}
-
 	}
-
 	if err != nil {
 		fmt.Printf("Error listing files %q: %v\n", dir, err)
 		return
