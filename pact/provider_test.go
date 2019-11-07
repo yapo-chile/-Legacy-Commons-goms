@@ -27,7 +27,7 @@ type PactConf struct {
 // 2. cd <pact-go>/examples
 // 3. go test -v -run TestProvider
 func TestProvider(t *testing.T) {
-
+	fmt.Printf("Pact directory: %+v", pactDir)
 	var conf PactConf
 	infrastructure.LoadFromEnv(&conf)
 	var pact = &dsl.Pact{

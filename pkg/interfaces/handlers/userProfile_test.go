@@ -32,6 +32,7 @@ func (m *mockUserProfileInteractor) GetUser(mail string) (usecases.UserBasicData
 	args := m.Called(mail)
 	return args.Get(0).(usecases.UserBasicData), args.Error(1)
 }
+
 func TestUserProfileHandlerInput(t *testing.T) {
 	m := mockUserProfileInteractor{}
 	mMockInputRequest := MockInputRequest{}
