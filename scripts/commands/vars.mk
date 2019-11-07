@@ -68,5 +68,5 @@ export RANCHER_ENV_REPO=Yapo/rancher-deploy-envs
 #Pact broker
 export PACT_BROKER_HOST=http://3.229.36.112
 export PACT_BROKER_PORT=80
-export PROVIDER_HOST=http://10.15.1.78
-export PROVIDER_PORT=7987
+export PROVIDER_HOST=http://localhost
+export PROVIDER_PORT=8080

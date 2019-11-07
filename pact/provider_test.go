@@ -18,8 +18,8 @@ var pactDir = fmt.Sprintf("%s/pacts", dir)
 type PactConf struct {
 	BrokerHost   string `env:"BROKER_HOST" envDefault:"http://3.229.36.112"`
 	BrokerPort   string `env:"BROKER_PORT" envDefault:"80"`
-	ProviderHost string `env:"PROVIDER_HOST" envDefault:"http://10.15.1.78"`
-	ProviderPort string `env:"PROVIDER_PORT" envDefault:"7987"`
+	ProviderHost string `env:"PROVIDER_HOST" envDefault:"http://localhost"`
+	ProviderPort string `env:"PROVIDER_PORT" envDefault:"8080"`
 }
 
 // Example Provider Pact: How to run me!
