@@ -23,7 +23,7 @@ type userProfileRequestInput struct {
 	Mail string `json:"Mail"`
 }
 
-//userProfileRequestOutput specifies the format of the handler output
+// userProfileRequestOutput specifies the format of the handler output
 type userProfileRequestOutput struct {
 	Name    string `json:"Fullname"`
 	Phone   string `json:"Cellphone"`
@@ -33,7 +33,7 @@ type userProfileRequestOutput struct {
 	Commune string `json:"Commune"`
 }
 
-//UserProfileInteractor is the interactor used by the handler
+// UserProfileInteractor is the interactor used by the handler
 type UserProfileInteractor interface {
 	GetUser(mail string) (usecases.UserBasicData, error)
 }
@@ -46,7 +46,7 @@ func (h *UserProfileHandler) Input(ir InputRequest) HandlerInput {
 	return &input
 }
 
-//Execute is the main function of the userProfile handler
+// Execute is the main function of the userProfile handler
 func (h *UserProfileHandler) Execute(ig InputGetter) *goutils.Response {
 	input, response := ig()
 	if response != nil {
@@ -72,7 +72,6 @@ func (h *UserProfileHandler) Execute(ig InputGetter) *goutils.Response {
 
 // fillInternalOutput parses the data retrieved from the handler to handler expected output
 func (h *UserProfileHandler) fillInternalOutput(userBasicData usecases.UserBasicData) userProfileRequestOutput {
-
 	return userProfileRequestOutput{
 		Name:    userBasicData.Name,
 		Phone:   userBasicData.Phone,

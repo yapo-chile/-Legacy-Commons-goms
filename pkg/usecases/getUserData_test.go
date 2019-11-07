@@ -58,5 +58,4 @@ func TestGetUserError(t *testing.T) {
 	assert.Empty(t, output)
 	mLogger.AssertExpectations(t)
 	m.AssertExpectations(t)
-
 }

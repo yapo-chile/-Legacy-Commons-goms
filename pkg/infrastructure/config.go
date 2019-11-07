@@ -65,6 +65,7 @@ type EtcdConf struct {
 	Prefix     string `env:"PREFIX" envDefault:"/v2/keys"`
 }
 
+// ProfileConf holds configuration to send http request to profile
 // CorsConf holds cors headers
 type CorsConf struct {
 	Enabled bool   `env:"ENABLED" envDefault:"false"`

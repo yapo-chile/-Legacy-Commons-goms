@@ -8,6 +8,7 @@ import (
 	"github.com/Yapo/goutils"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+
 	"github.mpi-internal.com/Yapo/goms/pkg/usecases"
 )
 
@@ -46,6 +47,7 @@ func TestUserProfileHandlerInput(t *testing.T) {
 	assert.IsType(t, expected, input)
 	m.AssertExpectations(t)
 }
+
 func TestUserProfileHandlerDataRunOK(t *testing.T) {
 	mInteractor := &mockUserProfileInteractor{}
 	var userb usecases.UserBasicData
