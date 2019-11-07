@@ -16,12 +16,11 @@ type GetUserPrometheusDefaultLogger interface {
 }
 
 // GetUser retrieves the basic data of a user given a mail
-
 func (interactor *GetUserDataInteractor) GetUser(mail string) (UserBasicData, error) {
 	userProfile, err := interactor.UserProfileRepository.GetUserProfileData(mail)
 	if err != nil {
 		interactor.Logger.LogBadInput(mail)
 		return userProfile, fmt.Errorf("cannot retrieve the user's profile error %+v", err)
 	}
-	return userProfile, err
+	return userProfile, nil
 }
