@@ -8,6 +8,7 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // ServiceConf holds configuration for this Service
@@ -115,33 +116,45 @@ func load(conf reflect.Value, envTag, envDefault string) {
 			if envTag != "" && value == "" && !strings.HasSuffix(envTag, "_") {
 				fmt.Printf("Config for %s missing\n", envTag)
 			}
-			switch reflectedConf.Kind() {
-			case reflect.Struct:
+			switch reflectedConf.Interface().(type) {
+			case int:
+				if value, err := strconv.ParseInt(value, 10, 32); err == nil {
+					reflectedConf.Set(reflect.ValueOf(int(value)))
+				}
+			case int64:
+				if value, err := strconv.ParseInt(value, 10, 64); err == nil {
+					reflectedConf.Set(reflect.ValueOf(value))
+				}
+			case uint32:
+				if value, err := strconv.ParseUint(value, 10, 32); err == nil {
+					reflectedConf.Set(reflect.ValueOf(uint32(value)))
+				}
+			case float64:
+				if value, err := strconv.ParseFloat(value, 64); err == nil {
+					reflectedConf.Set(reflect.ValueOf(value))
+				}
+			case string:
+				reflectedConf.Set(reflect.ValueOf(value))
+			case bool:
+				if value, err := strconv.ParseBool(value); err == nil {
+					reflectedConf.Set(reflect.ValueOf(value))
+				}
+			case time.Time:
+				if value, err := time.Parse(time.RFC3339, value); err == nil {
+					reflectedConf.Set(reflect.ValueOf(value))
+				}
+			case time.Duration:
+				if t, err := time.ParseDuration(value); err == nil {
+					reflectedConf.Set(reflect.ValueOf(t))
+				}
+			}
+			if reflectedConf.Kind() == reflect.Struct {
 				// Recursively load inner struct fields
 				for i := 0; i < reflectedConf.NumField(); i++ {
 					if tag, ok := reflectedConf.Type().Field(i).Tag.Lookup("env"); ok {
 						def, _ := reflectedConf.Type().Field(i).Tag.Lookup("envDefault")
 						load(reflectedConf.Field(i).Addr(), envTag+tag, def)
 					}
-				}
-			// Here for each type we should make a cast of the env variable and then set the value
-			case reflect.String:
-				reflectedConf.SetString(value)
-			case reflect.Int:
-				if value, err := strconv.Atoi(value); err == nil {
-					reflectedConf.Set(reflect.ValueOf(value))
-				}
-			case reflect.Float64:
-				if value, err := strconv.ParseFloat(value, 64); err == nil {
-					reflectedConf.Set(reflect.ValueOf(value))
-				}
-			case reflect.Uint32:
-				if value, err := strconv.ParseUint(value, 10, 32); err == nil {
-					reflectedConf.Set(reflect.ValueOf(uint32(value)))
-				}
-			case reflect.Bool:
-				if value, err := strconv.ParseBool(value); err == nil {
-					reflectedConf.Set(reflect.ValueOf(value))
 				}
 			}
 		}
