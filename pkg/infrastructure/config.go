@@ -102,8 +102,9 @@ func (chc *CacheConf) InitEtag() int64 {
 
 // ProfileConf holds configuration to send http request to knocker
 type ProfileConf struct {
-	Host         string `env:"HOST" envDefault:"http://profile:8080"`
-	UserDataPath string `env:"USER_DATA_PATH" envDefault:"/api/v1/internal/user?tokens=%s"`
+	Host           string `env:"HOST" envDefault:"http://profile:8080"`
+	UserDataPath   string `env:"USER_DATA_PATH" envDefault:"/api/v1/internal/user?"`
+	UserDataTokens string `env:"USER_DATA_TOKENS" envDefault:"tokens=%s"`
 }
 
 // Config holds all configuration for the service

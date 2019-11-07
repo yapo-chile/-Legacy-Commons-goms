@@ -67,7 +67,7 @@ func main() {
 	}
 	userProfileRepo := repository.NewUserProfileRepository(
 		HTTPHandler,
-		conf.ProfileConf.Host+conf.ProfileConf.UserDataPath,
+		conf.ProfileConf.Host+conf.ProfileConf.UserDataPath+conf.ProfileConf.UserDataTokens,
 	)
 	userProfileInteractor := usecases.GetUserDataInteractor{
 		UserProfileRepository: userProfileRepo,
