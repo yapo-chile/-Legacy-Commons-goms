@@ -7,10 +7,12 @@ conf/conf.json
 logs/*
 reports/*
 vendor/*
-goms*
 pact/bin
 pact/log
 app.docker
 daemon.err
 daemon.out
 nohup.out
+goms.err
+goms.out
+goms

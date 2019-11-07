@@ -1,0 +1,60 @@
+{
+    "consumer": {
+         "name": "yapo"
+    },
+    "provider": {
+        "name": "goms"
+    },
+    "interactions": [
+        {
+            "description": "Check MS health",
+            "providerState": "",
+            "request": {
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                "method": "GET",
+                "path": "/api/v1/healthcheck"
+            },
+            "response": {
+                "status": 200,
+                "body": {
+                    "status": "OK"
+                },
+                "headers": {
+                    "Content-Type": "application/json"
+                }
+            }
+        },
+        {
+			"description": "Retrieve the user basic data",
+			"providerState": "",
+			"request": {
+				"headers": {"Content-Type": "application/json"},
+				"method": "GET",
+                "path": "/api/v1/user/basic-data"
+
+            },
+			"response": {
+				"status": 200,
+				"body": {
+                    "Fullname": "Pro Inmo JF",
+                    "Cellphone": "994576548",
+                    "Gender": "male",
+                    "Country": "Chile",
+                    "Region": "Región Metropolitana",
+                    "Commune": "Quinta Normal"
+				},
+				"headers": {
+					"Content-Type": "application/json"
+				}
+			}
+        }
+       
+    ],
+    "metadata": {
+        "pactSpecification": {
+             "version": "1.0.0"
+        }
+    }
+}
