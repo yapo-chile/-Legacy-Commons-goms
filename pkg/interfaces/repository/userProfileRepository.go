@@ -10,6 +10,7 @@ import (
 
 const (
 	errorNoUserDataFound string = "there was no user data found using the email: %s"
+	errorUnmarshal       string = "there was an error parsing the user data %s"
 )
 
 // UserProfileRepository wrapper struct for the RedisHandler
@@ -40,6 +41,9 @@ func (repo *UserProfileRepository) GetUserProfileData(email string) (usecases.Us
 		resp := fmt.Sprintf("%s", JSONResp)
 		var userData map[string]usecases.UserBasicData
 		err := json.Unmarshal([]byte(resp), &userData)
+		if err != nil {
+			return usecases.UserBasicData{}, fmt.Errorf(errorUnmarshal, email)
+		}
 		val, ok := userData[sha1Email]
 		if !ok {
 			return usecases.UserBasicData{}, fmt.Errorf(errorNoUserDataFound, email)

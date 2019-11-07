@@ -84,3 +84,25 @@ func TestUserDataRepositoryGetUserDataRequestError(t *testing.T) {
 	mHandler.AssertExpectations(t)
 	mRequest.AssertExpectations(t)
 }
+
+func TestUserDataRepositoryUnmarshalError(t *testing.T) {
+	mHandler := MockHTTPHandler{}
+	mRequest := MockRequest{}
+
+	mRequest.On("SetPath", mock.AnythingOfType("string")).Return(&mRequest)
+	mRequest.On("SetMethod", "GET").Return(&mRequest)
+
+	mHandler.On("NewRequest").Return(&mRequest)
+	mHandler.On("Send", &mRequest).Return(`{"9fbcd51ef0a2d6293730c6a60afee8c807677fb5":"uuid":"edgar"}}`, nil).Once()
+
+	expected := usecases.UserBasicData{}
+
+	repo := UserProfileRepository{
+		Handler: &mHandler,
+	}
+	resp, err := repo.GetUserProfileData("edgar@gmail.com")
+	assert.Equal(t, expected, resp)
+	assert.Error(t, err)
+	mHandler.AssertExpectations(t)
+	mRequest.AssertExpectations(t)
+}
