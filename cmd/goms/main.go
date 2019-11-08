@@ -18,6 +18,7 @@ import (
 func main() {
 	var shutdownSequence = infrastructure.NewShutdownSequence()
 	var conf infrastructure.Config
+	fmt.Printf("Etag:%d\n", conf.CacheConf.InitEtag())
 	shutdownSequence.Listen()
 	infrastructure.LoadFromEnv(&conf)
 	if jconf, err := json.MarshalIndent(conf, "", "    "); err == nil {
@@ -118,9 +119,16 @@ func main() {
 	}
 	// CLONE-RCONF REMOVE END
 
+	useBrowserCache := handlers.Cache{
+		MaxAge:  conf.CacheConf.MaxAge,
+		Etag:    conf.CacheConf.Etag,
+		Enabled: conf.CacheConf.Enabled,
+	}
 	// Setting up router
 	maker := infrastructure.RouterMaker{
 		Logger:        logger,
+		Cors:          conf.CorsConf,
+		Cache:         useBrowserCache,
 		WrapperFuncs:  []infrastructure.WrapperFunc{prometheus.TrackHandlerFunc},
 		WithProfiling: conf.ServiceConf.Profiling,
 		Routes: infrastructure.Routes{
@@ -129,10 +137,11 @@ func main() {
 				Prefix: "/api/v{version:[1-9][0-9]*}",
 				Groups: []infrastructure.Route{
 					{
-						Name:    "Check service health",
-						Method:  "GET",
-						Pattern: "/healthcheck",
-						Handler: &healthHandler,
+						Name:     "Check service health",
+						Method:   "GET",
+						Pattern:  "/healthcheck",
+						Handler:  &healthHandler,
+						UseCache: true,
 					},
 					// CLONE REMOVE START
 					{

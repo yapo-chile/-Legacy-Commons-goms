@@ -2,6 +2,8 @@ package handlers
 
 import (
 	"net/http"
+	"strconv"
+	"strings"
 
 	"github.com/Yapo/goutils"
 )
@@ -45,10 +47,22 @@ type InputRequest interface {
 	FromForm() InputRequest
 }
 
+// Cors methods to configure cache and cors
+type Cors interface {
+	GetHeaders() map[string]string
+}
+
+// Cache used to work with
+type Cache struct {
+	MaxAge  string
+	Etag    int64
+	Enabled bool
+}
+
 // MakeJSONHandlerFunc wraps a Handler on a json-over-http context, returning
 // a standard http.HandlerFunc
-func MakeJSONHandlerFunc(h Handler, l JSONHandlerLogger, ih InputHandler) http.HandlerFunc {
-	jh := jsonHandler{handler: h, logger: l, inputHandler: ih}
+func MakeJSONHandlerFunc(h Handler, l JSONHandlerLogger, ih InputHandler, crs Cors, cache *Cache) http.HandlerFunc {
+	jh := jsonHandler{handler: h, logger: l, inputHandler: ih, cors: crs, cache: cache}
 	return jh.run
 }
 
@@ -65,6 +79,29 @@ type jsonHandler struct {
 	handler      Handler
 	logger       JSONHandlerLogger
 	inputHandler InputHandler
+	cors         Cors
+	cache        *Cache
+}
+
+func (jh *jsonHandler) setupCors(w *http.ResponseWriter) {
+	for key, value := range jh.cors.GetHeaders() {
+		(*w).Header().Set("Access-Control-Allow-"+key, value)
+	}
+}
+
+func (jh *jsonHandler) inBrowserCache(w http.ResponseWriter, r *http.Request) bool {
+	if jh.cache.Enabled {
+		key := strconv.FormatInt(jh.cache.Etag, 10)
+		e := `"` + key + `"`
+		w.Header().Set("Etag", e)
+		w.Header().Set("Cache-Control", "max-age="+jh.cache.MaxAge)
+		if match := r.Header.Get("If-None-Match"); match != "" {
+			if strings.Contains(match, e) {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 // run will prepare the input for the actual handler and format the response
@@ -72,6 +109,7 @@ type jsonHandler struct {
 // http.HandlerFunc
 func (jh *jsonHandler) run(w http.ResponseWriter, r *http.Request) {
 	jh.logger.LogRequestStart(r)
+	jh.setupCors(&w)
 	// Default response
 	response := &goutils.Response{
 		Code: http.StatusInternalServerError,
@@ -94,7 +132,14 @@ func (jh *jsonHandler) run(w http.ResponseWriter, r *http.Request) {
 	// Setup before calling the actual handler
 	defer outputWriter()
 	defer errorHandler()
-	// Do the Harlem Shake
-	response = jh.handler.Execute(jh.inputHandler.Input)
+
+	if jh.inBrowserCache(w, r) {
+		response = &goutils.Response{
+			Code: http.StatusNotModified,
+		}
+	} else {
+		// Do the Harlem Shake
+		response = jh.handler.Execute(jh.inputHandler.Input)
+	}
 	jh.logger.LogRequestEnd(r, response)
 }

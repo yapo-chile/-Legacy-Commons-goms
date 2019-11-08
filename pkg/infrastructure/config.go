@@ -65,6 +65,40 @@ type EtcdConf struct {
 	Prefix     string `env:"PREFIX" envDefault:"/v2/keys"`
 }
 
+// CorsConf holds cors headers
+type CorsConf struct {
+	Enabled bool   `env:"ENABLED" envDefault:"false"`
+	Origin  string `env:"ORIGIN" envDefault:"*"`
+	Methods string `env:"METHODS" envDefault:"GET, OPTIONS"`
+	Headers string `env:"HEADERS" envDefault:"Accept,Content-Type,Content-Length,If-None-Match,Accept-Encoding,User-Agent"`
+}
+
+// GetHeaders return map of cors used
+func (cc CorsConf) GetHeaders() map[string]string {
+	if !cc.Enabled {
+		return map[string]string{}
+	}
+	return map[string]string{
+		"Origin":  cc.Origin,
+		"Methods": cc.Methods,
+		"Headers": cc.Headers,
+	}
+}
+
+// CacheConf Used to handle browser cache
+type CacheConf struct {
+	Enabled bool `env:"ENABLED" envDefault:"false"`
+	//Cache max age in secs(use browser cache)
+	MaxAge string `env:"MAX_AGE" envDefault:"2592000"`
+	Etag   int64
+}
+
+// InitEtag use current epoc to config etag
+func (chc *CacheConf) InitEtag() int64 {
+	chc.Etag = time.Now().Unix()
+	return chc.Etag
+}
+
 // Config holds all configuration for the service
 type Config struct {
 	ServiceConf        ServiceConf        `env:"SERVICE_"`
@@ -74,6 +108,8 @@ type Config struct {
 	CircuitBreakerConf CircuitBreakerConf `env:"CIRCUIT_BREAKER_"`
 	GomsClientConf     GomsClientConf     `env:"GOMS_"`
 	EtcdConf           EtcdConf           `env:"ETCD_"`
+	CorsConf           CorsConf           `env:"CORS_"`
+	CacheConf          CacheConf          `env:"CACHE_"`
 }
 
 // LoadFromEnv loads the config data from the environment variables
