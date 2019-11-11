@@ -73,7 +73,7 @@ func main() {
 		UserProfileRepository: userProfileRepo,
 	}
 	// userProfileHandler
-	userProfileHandler := handlers.UserProfileHandler{
+	getUserDataHandler := handlers.GetUserDataHandler{
 		Interactor: &userProfileInteractor,
 	}
 
@@ -179,7 +179,7 @@ func main() {
 						Name:    "Retrieve the user basic data",
 						Method:  "GET",
 						Pattern: "/user/basic-data",
-						Handler: &userProfileHandler,
+						Handler: &getUserDataHandler,
 					},
 					// CLONE REMOVE END
 				},

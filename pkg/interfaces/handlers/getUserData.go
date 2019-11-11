@@ -13,8 +13,8 @@ type UserProfilePrometheusDefaultLogger interface {
 	LogErrorGettingInternalData(err error)
 }
 
-// UserProfileHandler implements the handler interface and responds to
-type UserProfileHandler struct {
+// GetUserDataHandler implements the handler interface and responds to
+type GetUserDataHandler struct {
 	Interactor UserProfileInteractor
 	Logger     UserProfilePrometheusDefaultLogger
 }
@@ -39,7 +39,7 @@ type UserProfileInteractor interface {
 }
 
 // Input returns a fresh, empty instance of userProfileRequestInput
-func (h *UserProfileHandler) Input(ir InputRequest) HandlerInput {
+func (h *GetUserDataHandler) Input(ir InputRequest) HandlerInput {
 	input := userProfileRequestInput{}
 	ir.Set(&input).
 		FromJSONBody()
@@ -47,7 +47,7 @@ func (h *UserProfileHandler) Input(ir InputRequest) HandlerInput {
 }
 
 // Execute is the main function of the userProfile handler
-func (h *UserProfileHandler) Execute(ig InputGetter) *goutils.Response {
+func (h *GetUserDataHandler) Execute(ig InputGetter) *goutils.Response {
 	input, response := ig()
 	if response != nil {
 		h.Logger.LogBadRequest(response)
@@ -71,7 +71,7 @@ func (h *UserProfileHandler) Execute(ig InputGetter) *goutils.Response {
 }
 
 // fillInternalOutput parses the data retrieved from the handler to handler expected output
-func (h *UserProfileHandler) fillInternalOutput(userBasicData usecases.UserBasicData) userProfileRequestOutput {
+func (h *GetUserDataHandler) fillInternalOutput(userBasicData usecases.UserBasicData) userProfileRequestOutput {
 	return userProfileRequestOutput{
 		Name:    userBasicData.Name,
 		Phone:   userBasicData.Phone,

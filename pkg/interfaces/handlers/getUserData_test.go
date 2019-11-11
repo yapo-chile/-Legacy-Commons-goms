@@ -33,13 +33,13 @@ func (m *mockUserProfileInteractor) GetUser(mail string) (usecases.UserBasicData
 	return args.Get(0).(usecases.UserBasicData), args.Error(1)
 }
 
-func TestUserProfileHandlerInput(t *testing.T) {
+func TestGetUserDataHandlerInput(t *testing.T) {
 	m := mockUserProfileInteractor{}
 	mMockInputRequest := MockInputRequest{}
 	mMockInputRequest.On("Set", mock.AnythingOfType("*handlers.userProfileRequestInput")).Return(&mMockInputRequest)
 	mMockInputRequest.On("FromJSONBody").Return(&mMockInputRequest)
 
-	h := UserProfileHandler{
+	h := GetUserDataHandler{
 		Interactor: &m,
 	}
 	input := h.Input(&mMockInputRequest)
@@ -49,11 +49,11 @@ func TestUserProfileHandlerInput(t *testing.T) {
 	m.AssertExpectations(t)
 }
 
-func TestUserProfileHandlerDataRunOK(t *testing.T) {
+func TestGetUserDataHandlerDataRunOK(t *testing.T) {
 	mInteractor := &mockUserProfileInteractor{}
 	var userb usecases.UserBasicData
 	mInteractor.On("GetUser", "").Return(userb, nil)
-	h := UserProfileHandler{
+	h := GetUserDataHandler{
 		Interactor: mInteractor,
 	}
 	input := &userProfileRequestInput{
@@ -64,14 +64,7 @@ func TestUserProfileHandlerDataRunOK(t *testing.T) {
 
 	expected := &goutils.Response{
 		Code: http.StatusOK,
-		Body: userProfileRequestOutput{
-			Name:    "",
-			Phone:   "",
-			Gender:  "",
-			Country: "",
-			Region:  "",
-			Commune: "",
-		},
+		Body: userProfileRequestOutput{},
 	}
 	assert.Equal(t, expected, r)
 	mInteractor.AssertExpectations(t)
@@ -86,7 +79,7 @@ func TestInternalUserDataHandlerForInternalDataRunError(t *testing.T) {
 	mInteractor.On("GetUser", "").Return(userb, err)
 	mLogger.On("LogErrorGettingInternalData", err).Once()
 
-	h := UserProfileHandler{
+	h := GetUserDataHandler{
 		Interactor: mInteractor,
 		Logger:     mLogger,
 	}
@@ -110,7 +103,7 @@ func TestInternalUserDataHandlerForInternalDataBadRequest(t *testing.T) {
 
 	mLogger.On("LogBadRequest", mock.AnythingOfType("*goutils.Response")).Once()
 
-	h := UserProfileHandler{
+	h := GetUserDataHandler{
 		Interactor: mInteractor,
 		Logger:     mLogger,
 	}
