@@ -61,11 +61,6 @@ func TestProvider(t *testing.T) {
 			fmt.Printf("Error with the Pact Broker server. Error %+v", err)
 		}
 	}
-	if err != nil {
-		fmt.Printf("Error listing files %q: %v\n", dir, err)
-		return
-	}
-
 }
 func IOReadDir(root string) ([]string, error) {
 	var files []string

@@ -3,7 +3,7 @@ export PACT_TEST_ENABLED=true
 export PACT_DIRECTORY=./pact
 export PROFILE_MS_PORT=7987
 export SERVICE_HOST=:8090
-export PROFILE_API_PATH=http://localhost:${SEARCH_MS_PORT}/api/v1
+export PROFILE_API_PATH=http://localhost:${PROFILE_MS_PORT}/api/v1
 
 file=pact-go_$(uname -s)_amd64.tar.gz
 
