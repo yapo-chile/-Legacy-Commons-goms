@@ -16,7 +16,7 @@
                     "X-email": "poyainmo@mailinator.com"
                 },
 				"method": "GET",
-                "path": "/api/v1/user/basic-data"
+                "path": "/api/v1/internal/user?tokens="
 
             },
 			"response": {
