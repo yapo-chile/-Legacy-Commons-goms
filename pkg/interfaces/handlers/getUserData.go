@@ -7,7 +7,7 @@ import (
 	"github.mpi-internal.com/Yapo/goms/pkg/usecases"
 )
 
-// UserProfilePrometheusDefaultLogger is the handler used by the handler
+// UserProfilePrometheusDefaultLogger is the logger used by the handler
 type UserProfilePrometheusDefaultLogger interface {
 	LogBadRequest(input interface{})
 	LogErrorGettingInternalData(err error)
@@ -70,7 +70,7 @@ func (h *GetUserDataHandler) Execute(ig InputGetter) *goutils.Response {
 	}
 }
 
-// fillInternalOutput parses the data retrieved from the handler to handler expected output
+// fillInternalOutput parses the data retrieved from the handler to the expected output
 func (h *GetUserDataHandler) fillInternalOutput(userBasicData usecases.UserBasicData) userProfileRequestOutput {
 	return userProfileRequestOutput{
 		Name:    userBasicData.Name,
