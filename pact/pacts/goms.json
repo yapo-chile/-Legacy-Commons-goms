@@ -49,12 +49,12 @@
                "Content-Type":"application/json"
             },
             "body":{ 
-               "fullname":"Pro Inmo JF",
-               "cellphone":"994576548",
-               "gender":"male",
-               "country":"Chile",
-               "region":"Metropolitana",
-               "commune":"Quinta Normal"
+               "fullname": "Pro Inmo JF",
+               "cellphone": "994576548",
+               "gender": "male",
+               "country": "Chile",
+               "region": "Region Metropolitana",
+               "commune": "Quinta Normal"
             },
             "matchingRules": {
                "$.body.fullname": {

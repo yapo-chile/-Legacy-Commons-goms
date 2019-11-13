@@ -65,6 +65,7 @@ func TestProvider(t *testing.T) {
 		}
 	}
 }
+
 func IOReadDir(root string) ([]string, error) {
 	var files []string
 	fileInfo, err := ioutil.ReadDir(root)

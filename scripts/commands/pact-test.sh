@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 export PACT_TEST_ENABLED=true
-export PROFILE_MS_PORT=7987
+export PROFILE_MS_PORT=5555
+export PROFILE_HOST=http://localhost:${PROFILE_MS_PORT}
 
 
 file=pact-go_$(uname -s)_amd64.tar.gz
@@ -25,7 +26,7 @@ PACT_PID=$!
 echo ${PACT_PID}
 
 echoTitle "Starting profile-ms mock in background"
-nohup pact/bin/pact/bin/pact-stub-service pact/mocks/profile-ms.json --port=${PROFILE_MS_PORT} &
+nohup pact/bin/pact/bin/pact-stub-service pact/mocks/profile-ms.json --host="localhost" --port=${PROFILE_MS_PORT} &
 PROFILE_PID=$!
 
 echo ${PROFILE_PID}
@@ -36,7 +37,7 @@ MS_PID=$!
 
 echo ${MS_PID}
 
-#sleep 10
+sleep 10
 cd pact
 go test -v -run TestProvider
 
