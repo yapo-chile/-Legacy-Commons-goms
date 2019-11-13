@@ -171,25 +171,24 @@ Implements the Fibonacci Numbers with Clean Architecture
 }
 ```
 
-### GET  /api/v1/user/basic-data
+### GET  /api/v1/user/basic-data?mail=[user_mail]
 Returns the essential user data. It is in communication with the Profile Microservice. The main goal of this endpoint is to be used for a basic Pact Test.
 
 #### Request
-{
-	"mail": string - Ask for user mail
-}
+
+No additional parameters
 
 #### Response
 
 ```javascript
 200 OK
 {
-    "Fullname": Full name of the user,
-    "Cellphone": The user´s cellphone,
-    "Gender": The user gender,
-    "Country": The country where the user lives (Currently only Chile is Available),
-    "Region": The region where the user lives,
-    "Commune": The commune where the user lives,
+    "fullname": Full name of the user,
+    "cellphone": The user´s cellphone,
+    "gender": The user gender,
+    "country": The country where the user lives (Currently only Chile is Available),
+    "region": The region where the user lives,
+    "commune": The commune where the user lives,
 }
 ### Contact
 dev@schibsted.cl
