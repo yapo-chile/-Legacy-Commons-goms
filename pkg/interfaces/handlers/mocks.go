@@ -50,3 +50,9 @@ func (m *MockInputRequest) FromCookies() InputRequest {
 	args := m.Called()
 	return args.Get(0).(InputRequest)
 }
+
+// FromForm is a mocked method
+func (m *MockInputRequest) FromForm() InputRequest {
+	args := m.Called()
+	return args.Get(0).(InputRequest)
+}
