@@ -8,15 +8,11 @@
 	"interactions":[ 
 	   { 
 		  "description":"Retrieve the user basic data",
-		  "providerState":"",
+		  "providerState":"Return poyainmo data",
 		  "request":{ 
-			 "headers":{ 
-				"Content-Type":"application/json",
-				"Authorization":"67399ebd3f609aa40c80db4b7b2cd6a01ff7bb84",
-				"X-email":"poyainmo@mailinator.com"
-			 },
 			 "method":"GET",
-			 "path":"/api/v1/internal/user?tokens="
+			 "path":"/api/v1/internal/user/",
+			 "query":"tokens=4b9bc986430620c0960d0f23f0f7ce2035f6067d"
 		  },
 		  "response":{ 
 			 "status":200,
@@ -28,7 +24,7 @@
 				"communeId":334,
 				"role":"Profesional",
 				"country":"Chile",
-				"region":"Región Metropolitana",
+				"region":"Metropolitana",
 				"commune":"Quinta Normal",
 				"email":"poyainmo@mailinator.com",
 				"gender":"male",

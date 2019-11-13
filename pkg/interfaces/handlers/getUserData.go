@@ -20,17 +20,17 @@ type GetUserDataHandler struct {
 }
 
 type userProfileRequestInput struct {
-	Mail string `json:"Mail"`
+	Mail string `query:"mail"`
 }
 
 // userProfileRequestOutput specifies the format of the handler output
 type userProfileRequestOutput struct {
-	Name    string `json:"Fullname"`
-	Phone   string `json:"Cellphone"`
-	Gender  string `json:"Gender"`
-	Country string `json:"Country"`
-	Region  string `json:"Region"`
-	Commune string `json:"Commune"`
+	Name    string `json:"fullname"`
+	Phone   string `json:"cellphone"`
+	Gender  string `json:"gender"`
+	Country string `json:"country"`
+	Region  string `json:"region"`
+	Commune string `json:"commune"`
 }
 
 // UserProfileInteractor is the interactor used by the handler
@@ -42,7 +42,7 @@ type UserProfileInteractor interface {
 func (h *GetUserDataHandler) Input(ir InputRequest) HandlerInput {
 	input := userProfileRequestInput{}
 	ir.Set(&input).
-		FromJSONBody()
+		FromQuery()
 	return &input
 }
 

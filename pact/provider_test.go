@@ -33,6 +33,7 @@ func TestProvider(t *testing.T) {
 	var pact = &dsl.Pact{
 		Consumer: "goms",
 		Provider: "profile-ms",
+		Port:     6666,
 	}
 	files, err := IOReadDir(pactDir)
 	if err != nil {
@@ -43,22 +44,24 @@ func TestProvider(t *testing.T) {
 		// Verify the Provider with local Pact Files
 		h := types.VerifyRequest{
 			ProviderBaseURL:       conf.ProviderHost + ":" + conf.ProviderPort,
-			PactURLs:              []string{file},
+			PactURLs:              []string{pactDir + "/" + file},
 			CustomProviderHeaders: []string{"Authorization: basic e5e5e5e5e5e5e5"},
 		}
 		_, err := pact.VerifyProvider(t, h)
 		if err != nil {
-			fmt.Printf("Error verifying the provider.")
+			fmt.Printf("Error verifying the provider.Error %+v\n", err)
+			return
 		}
 		pactPublisher := &dsl.Publisher{}
 		err = pactPublisher.Publish(types.PublishRequest{
-			PactURLs:        []string{"./mocks"},
+			PactURLs:        []string{"./pacts/goms.json"},
 			PactBroker:      conf.BrokerHost + ":" + conf.BrokerPort,
 			ConsumerVersion: "1.0.0",
 			Tags:            []string{"goms"},
 		})
 		if err != nil {
-			fmt.Printf("Error with the Pact Broker server. Error %+v", err)
+			fmt.Printf("Error with the Pact Broker server. Error %+v\n", err)
+			return
 		}
 	}
 }

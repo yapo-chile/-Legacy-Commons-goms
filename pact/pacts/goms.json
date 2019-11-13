@@ -1,60 +1,87 @@
 { 
-    "consumer":{ 
-       "name":"yapo"
-    },
-    "provider":{ 
-       "name":"goms"
-    },
-    "interactions":[ 
-       { 
-          "description":"Check MS health",
-          "providerState":"",
-          "request":{ 
-             "headers":{ 
-                "Content-Type":"application/json"
-             },
-             "method":"GET",
-             "path":"/api/v1/healthcheck"
-          },
-          "response":{ 
-             "status":200,
-             "body":{ 
-                "status":"OK"
-             },
-             "headers":{ 
-                "Content-Type":"application/json"
+   "consumer":{ 
+      "name":"goms"
+   },
+   "provider":{ 
+      "name":"profile-ms"
+   },
+   "interactions":[ 
+      { 
+         "description":"Check MS health",
+         "providerState":"",
+         "request":{ 
+            "headers":{ 
+               "Content-Type":"application/json"
+            },
+            "method":"GET",
+            "path":"/api/v1/healthcheck"
+         },
+         "response":{ 
+            "status":200,
+            "body":{ 
+               "status":"OK"
+            },
+            "headers":{ 
+               "Content-Type":"application/json"
+            }
+         }
+      },
+      { 
+         "description":"Retrieve the user basic data",
+         "providerState":"Return poyainmo basic data",
+         "request":{ 
+            "method":"GET",
+            "path":"/api/v1/user/basic-data",
+            "headers":{ 
+               "Content-Type":"application/json"
+            },
+            "query":"mail=poyainmo@mailinator.com",
+            "matchingRules":{ 
+               "$.query.tokens":{ 
+                  "match":"regex",
+                  "regex":"^.*.$"
+               }
              }
-          }
-       },
-       { 
-          "description":"Retrieve the user basic data",
-          "providerState":"",
-          "request":{ 
-             "headers":{ 
-                "Content-Type":"application/json"
-             },
-             "method":"GET",
-             "path":"/api/v1/user/basic-data"
-          },
-          "response":{ 
-             "status":200,
-             "body":{ 
-                "Fullname":"Pro Inmo JF",
-                "Cellphone":"994576548",
-                "Gender":"male",
-                "Country":"Chile",
-                "Region":"Región Metropolitana",
-                "Commune":"Quinta Normal"
-             },
-             "headers":{ 
-                "Content-Type":"application/json"
+         },
+         "response":{ 
+            "status":200,
+            "headers":{ 
+               "Content-Type":"application/json"
+            },
+            "body":{ 
+               "fullname":"Pro Inmo JF",
+               "cellphone":"994576548",
+               "gender":"male",
+               "country":"Chile",
+               "region":"Metropolitana",
+               "commune":"Quinta Normal"
+            },
+            "matchingRules": {
+               "$.body.fullname": {
+                  "match": "type"
+                },
+               "$.body.cellphone": {
+                 "match": "type"
+               },
+               "$.body.gender": {
+                  "match": "type"
+                },
+               "$.body.country": {
+                  "match": "type"
+                },
+               "$.body.region": {
+                  "match": "type"
+                },
+               "$.body.commune": {
+                 "match": "type"
+               }
              }
-          }
-       }
-    ],
-    "metadata":{ 
-       "pactSpecification":{ 
-          "version":"1.0.0"
-       }
-    }
- }
+         }
+      }
+   ],
+   "metadata":{ 
+      "pactSpecification":{ 
+         "version":"1.0.0"
+      }
+   }
+}

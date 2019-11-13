@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
 export PACT_TEST_ENABLED=true
-export PACT_DIRECTORY=./pact
 export PROFILE_MS_PORT=7987
-export SERVICE_HOST=:8090
-export PROFILE_API_PATH=http://localhost:${PROFILE_MS_PORT}/api/v1
+
 
 file=pact-go_$(uname -s)_amd64.tar.gz
 
@@ -33,7 +31,7 @@ PROFILE_PID=$!
 echo ${PROFILE_PID}
 
 echoTitle "Starting ${PACT_BINARY} in background"
-nohup ./${PACT_BINARY} > ${PACT_BINARY}.out 2> ${PACT_BINARY}.err &
+nohup  ./${PACT_BINARY} > ${PACT_BINARY}.out 2> ${PACT_BINARY}.err &
 MS_PID=$!
 
 echo ${MS_PID}

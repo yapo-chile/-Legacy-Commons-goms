@@ -17,3 +17,10 @@ daemon.err
 daemon.out
 nohup.out
 suggested-ads*
+goms-pact
+
+goms-pact.err
+
+goms-pact.out
+
+log/

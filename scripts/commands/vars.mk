@@ -23,10 +23,10 @@ export REPORT_ARTIFACTS=reports
 export APPNAME=goms
 export APPFOLDER=goms
 export YO=`whoami`
-export SERVICE_PORT=$(call genport,2)
-export SERVICE_HOST=:${SERVICE_PORT}
+export SERVICE_PORT=8080
+export SERVICE_HOST=:localhost
 export SERVER_ROOT=${PWD}
-export BASE_URL="http://${SERVICE_HOST}"
+export BASE_URL="http://"${SERVICE_HOST}":"${SERVICE_PORT}"
 export MAIN_FILE=cmd/${APPNAME}/main.go
 export LOGGER_SYSLOG_ENABLED=false
 export LOGGER_STDLOG_ENABLED=true
@@ -34,7 +34,9 @@ export LOGGER_LOG_LEVEL=0
 
 # Pact test variables
 export PACT_MAIN_FILE=cmd/${APPNAME}/main.go
-export PACT_BINARY=${APPNAME}
+export PACT_BINARY=${APPNAME}-pact
+export PACT_DIRECTORY=pact
+export PACT_TEST_ENABLED=false
 
 # DOCKER variables
 export DOCKER_REGISTRY=containers.mpi-internal.com

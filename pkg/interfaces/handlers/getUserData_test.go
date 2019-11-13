@@ -37,7 +37,7 @@ func TestGetUserDataHandlerInput(t *testing.T) {
 	m := mockUserProfileInteractor{}
 	mMockInputRequest := MockInputRequest{}
 	mMockInputRequest.On("Set", mock.AnythingOfType("*handlers.userProfileRequestInput")).Return(&mMockInputRequest)
-	mMockInputRequest.On("FromJSONBody").Return(&mMockInputRequest)
+	mMockInputRequest.On("FromQuery").Return(&mMockInputRequest)
 
 	h := GetUserDataHandler{
 		Interactor: &m,
