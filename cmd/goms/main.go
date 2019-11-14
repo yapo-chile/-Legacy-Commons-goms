@@ -118,7 +118,6 @@ func main() {
 	}
 	// CLONE-RCONF REMOVE END
 
-
 	// Setting up router
 	maker := infrastructure.RouterMaker{
 		Logger:        logger,

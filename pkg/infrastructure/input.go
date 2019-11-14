@@ -3,8 +3,10 @@ package infrastructure
 import (
 	"bytes"
 	"errors"
+	"io"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"reflect"
 	"strconv"
 	"strings"
@@ -31,6 +33,8 @@ const (
 	HEADERS InputSource = "headers"
 	// COOKIES defines the constant for the cookies params
 	COOKIES InputSource = "cookies"
+	// FORM defines the constant for the FORM params
+	FORM InputSource = "form"
 
 	// NotSeteable defines the error string of this error
 	NotSeteable string = "PROVIDED_INPUT_IS_NOT_SETEABLE"
@@ -88,6 +92,12 @@ func (ri *inputRequest) FromHeaders() handlers.InputRequest {
 // FromCookies sets request cookies as handler input
 func (ri *inputRequest) FromCookies() handlers.InputRequest {
 	ri.sources = append(ri.sources, COOKIES)
+	return ri
+}
+
+// FromForm sets request form as handler input
+func (ri *inputRequest) FromForm() handlers.InputRequest {
+	ri.sources = append(ri.sources, FORM)
 	return ri
 }
 
@@ -170,6 +180,13 @@ func (ih *inputHandler) Input() (handlers.HandlerInput, *goutils.Response) {
 					source,
 					reflectedOutput,
 				) != nil
+		case FORM:
+			hasError = hasError ||
+				ih.parseInput(
+					ih.formToMap(ih.inputRequest.httpRequest.Body),
+					source,
+					reflectedOutput,
+				) != nil
 		}
 	}
 
@@ -198,6 +215,16 @@ func (ih *inputHandler) httpCookiesToMap(cookies []*http.Cookie) map[string]stri
 		outValues[cookie.Name] = cookie.Value
 	}
 	return outValues
+}
+
+func (ih *inputHandler) formToMap(values io.Reader) map[string]string {
+	rawBody, _ := ioutil.ReadAll(values)
+	params, _ := url.ParseQuery(string(rawBody))
+	mapBody := make(map[string]string)
+	for key, value := range params {
+		mapBody[key] = value[0]
+	}
+	return mapBody
 }
 
 func (ih *inputHandler) parseInput(vars map[string]string, inputTag InputSource, input reflect.Value) error {
