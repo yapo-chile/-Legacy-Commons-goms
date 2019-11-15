@@ -1,54 +1,53 @@
-{ 
-   "consumer":{ 
-      "name":"goms"
+{
+   "consumer": {
+      "name": "goms"
    },
-   "provider":{ 
-      "name":"profile-ms"
+   "provider": {
+      "name": "profile-ms"
    },
-   "interactions":[ 
-      { 
-         "description":"Check MS health",
-         "providerState":"",
-         "request":{ 
-            "headers":{ 
-               "Content-Type":"application/json"
+   "interactions": [{
+         "description": "Check MS health",
+         "providerState": "",
+         "request": {
+            "headers": {
+               "Content-Type": "application/json"
             },
-            "method":"GET",
-            "path":"/api/v1/healthcheck"
+            "method": "GET",
+            "path": "/api/v1/healthcheck"
          },
-         "response":{ 
-            "status":200,
-            "body":{ 
-               "status":"OK"
+         "response": {
+            "status": 200,
+            "body": {
+               "status": "OK"
             },
-            "headers":{ 
-               "Content-Type":"application/json"
+            "headers": {
+               "Content-Type": "application/json"
             }
          }
       },
-      { 
-         "description":"Retrieve the user basic data",
-         "providerState":"Return poyainmo basic data",
-         "request":{ 
-            "method":"GET",
-            "path":"/api/v1/user/basic-data",
-            "headers":{ 
-               "Content-Type":"application/json"
+      {
+         "description": "Retrieve the user basic data",
+         "providerState": "Return poyainmo basic data",
+         "request": {
+            "method": "GET",
+            "path": "/api/v1/user/basic-data",
+            "headers": {
+               "Content-Type": "application/json"
             },
-            "query":"mail=poyainmo@mailinator.com",
-            "matchingRules":{ 
-               "$.query.tokens":{ 
-                  "match":"regex",
-                  "regex":"^.*.$"
+            "query": "mail=poyainmo@mailinator.com",
+            "matchingRules": {
+               "$.query.tokens": {
+                  "match": "regex",
+                  "regex": "^.*.$"
                }
-             }
+            }
          },
-         "response":{ 
-            "status":200,
-            "headers":{ 
-               "Content-Type":"application/json"
+         "response": {
+            "status": 200,
+            "headers": {
+               "Content-Type": "application/json"
             },
-            "body":{ 
+            "body": {
                "fullname": "Pro Inmo JF",
                "cellphone": "994576548",
                "gender": "male",
@@ -59,29 +58,29 @@
             "matchingRules": {
                "$.body.fullname": {
                   "match": "type"
-                },
+               },
                "$.body.cellphone": {
-                 "match": "type"
+                  "match": "type"
                },
                "$.body.gender": {
                   "match": "type"
-                },
+               },
                "$.body.country": {
                   "match": "type"
-                },
+               },
                "$.body.region": {
                   "match": "type"
-                },
+               },
                "$.body.commune": {
-                 "match": "type"
+                  "match": "type"
                }
-             }
+            }
          }
       }
    ],
-   "metadata":{ 
-      "pactSpecification":{ 
-         "version":"1.0.0"
+   "metadata": {
+      "pactSpecification": {
+         "version": "1.0.0"
       }
    }
 }

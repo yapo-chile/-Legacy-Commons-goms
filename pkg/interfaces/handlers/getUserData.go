@@ -7,24 +7,24 @@ import (
 	"github.mpi-internal.com/Yapo/goms/pkg/usecases"
 )
 
-// UserProfilePrometheusDefaultLogger is the logger used by the handler
-type UserProfilePrometheusDefaultLogger interface {
+// GetUserDataHandlerPrometheusDefaultLogger is the logger used by the handler
+type GetUserDataHandlerPrometheusDefaultLogger interface {
 	LogBadRequest(input interface{})
 	LogErrorGettingInternalData(err error)
 }
 
 // GetUserDataHandler implements the handler interface and responds to
 type GetUserDataHandler struct {
-	Interactor UserProfileInteractor
-	Logger     UserProfilePrometheusDefaultLogger
+	Interactor GetUserDataInteractor
+	Logger     GetUserDataHandlerPrometheusDefaultLogger
 }
 
-type userProfileRequestInput struct {
+type getUserDataRequestInput struct {
 	Mail string `query:"mail"`
 }
 
-// userProfileRequestOutput specifies the format of the handler output
-type userProfileRequestOutput struct {
+// getUserDataRequestOutput specifies the format of the handler output
+type getUserDataRequestOutput struct {
 	Name    string `json:"fullname"`
 	Phone   string `json:"cellphone"`
 	Gender  string `json:"gender"`
@@ -33,27 +33,27 @@ type userProfileRequestOutput struct {
 	Commune string `json:"commune"`
 }
 
-// UserProfileInteractor is the interactor used by the handler
-type UserProfileInteractor interface {
+// GetUserDataInteractor is the interactor used by the handler
+type GetUserDataInteractor interface {
 	GetUser(mail string) (usecases.UserBasicData, error)
 }
 
-// Input returns a fresh, empty instance of userProfileRequestInput
+// Input returns a fresh, empty instance of getUserDataRequestInput
 func (h *GetUserDataHandler) Input(ir InputRequest) HandlerInput {
-	input := userProfileRequestInput{}
+	input := getUserDataRequestInput{}
 	ir.Set(&input).
 		FromQuery()
 	return &input
 }
 
-// Execute is the main function of the userProfile handler
+// Execute is the main function of the getUserData handler
 func (h *GetUserDataHandler) Execute(ig InputGetter) *goutils.Response {
 	input, response := ig()
 	if response != nil {
 		h.Logger.LogBadRequest(response)
 		return response
 	}
-	in := input.(*userProfileRequestInput)
+	in := input.(*getUserDataRequestInput)
 
 	userBasicData, err := h.Interactor.GetUser(in.Mail)
 
@@ -71,8 +71,8 @@ func (h *GetUserDataHandler) Execute(ig InputGetter) *goutils.Response {
 }
 
 // fillInternalOutput parses the data retrieved from the handler to the expected output
-func (h *GetUserDataHandler) fillInternalOutput(userBasicData usecases.UserBasicData) userProfileRequestOutput {
-	return userProfileRequestOutput{
+func (h *GetUserDataHandler) fillInternalOutput(userBasicData usecases.UserBasicData) getUserDataRequestOutput {
+	return getUserDataRequestOutput{
 		Name:    userBasicData.Name,
 		Phone:   userBasicData.Phone,
 		Gender:  userBasicData.Gender,
