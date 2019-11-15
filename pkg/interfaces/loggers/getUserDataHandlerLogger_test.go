@@ -4,9 +4,9 @@ import (
 	"testing"
 )
 
-func TestUserProfileLogger(t *testing.T) {
+func TestGetUserDataHandlerLogger(t *testing.T) {
 	m := &loggerMock{t: t}
-	l := MakeUserProfilePrometheusDefaultLogger(m)
+	l := MakeGetUserDataHandlerLogger(m)
 	l.LogBadRequest(nil)
 	l.LogErrorGettingInternalData(nil)
 	m.AssertExpectations(t)
