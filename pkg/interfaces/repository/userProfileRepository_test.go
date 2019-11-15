@@ -41,7 +41,7 @@ func TestUserDataRepositoryGetUserDataOK(t *testing.T) {
 	mRequest.AssertExpectations(t)
 }
 
-func TestUserDataRepositoryGetUserDataNoData(t *testing.T) {
+func TestUserDataRepositoryGetUserDataError(t *testing.T) {
 	mHandler := MockHTTPHandler{}
 	mRequest := MockRequest{}
 
