@@ -36,7 +36,7 @@ func (m *mockUserProfileInteractor) GetUser(mail string) (usecases.UserBasicData
 func TestGetUserDataHandlerInput(t *testing.T) {
 	m := mockUserProfileInteractor{}
 	mMockInputRequest := MockInputRequest{}
-	mMockInputRequest.On("Set", mock.AnythingOfType("*handlers.userProfileRequestInput")).Return(&mMockInputRequest)
+	mMockInputRequest.On("Set", mock.AnythingOfType("*handlers.getUserDataRequestInput")).Return(&mMockInputRequest)
 	mMockInputRequest.On("FromQuery").Return(&mMockInputRequest)
 
 	h := GetUserDataHandler{
@@ -44,7 +44,7 @@ func TestGetUserDataHandlerInput(t *testing.T) {
 	}
 	input := h.Input(&mMockInputRequest)
 
-	var expected *userProfileRequestInput
+	var expected *getUserDataRequestInput
 	assert.IsType(t, expected, input)
 	m.AssertExpectations(t)
 }
@@ -56,7 +56,7 @@ func TestGetUserDataHandlerDataRunOK(t *testing.T) {
 	h := GetUserDataHandler{
 		Interactor: mInteractor,
 	}
-	input := &userProfileRequestInput{
+	input := &getUserDataRequestInput{
 		Mail: "",
 	}
 	getter := MakeMockInputGetter(input, nil)
@@ -64,7 +64,7 @@ func TestGetUserDataHandlerDataRunOK(t *testing.T) {
 
 	expected := &goutils.Response{
 		Code: http.StatusOK,
-		Body: userProfileRequestOutput{},
+		Body: getUserDataRequestOutput{},
 	}
 	assert.Equal(t, expected, r)
 	mInteractor.AssertExpectations(t)
@@ -83,7 +83,7 @@ func TestInternalUserDataHandlerForInternalDataRunError(t *testing.T) {
 		Interactor: mInteractor,
 		Logger:     mLogger,
 	}
-	input := &userProfileRequestInput{
+	input := &getUserDataRequestInput{
 		Mail: "",
 	}
 	getter := MakeMockInputGetter(input, nil)
@@ -107,7 +107,7 @@ func TestInternalUserDataHandlerForInternalDataBadRequest(t *testing.T) {
 		Interactor: mInteractor,
 		Logger:     mLogger,
 	}
-	input := &userProfileRequestInput{
+	input := &getUserDataRequestInput{
 		Mail: "",
 	}
 	getter := MakeMockInputGetter(input, &goutils.Response{

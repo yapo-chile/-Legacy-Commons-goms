@@ -65,16 +65,19 @@ func main() {
 	fibonacciHandler := handlers.FibonacciHandler{
 		Interactor: &fibonacciInteractor,
 	}
+	//
+	getUserDataHandlerLogger := loggers.MakeGetUserDataHandlerLogger(logger)
 	userProfileRepo := repository.NewUserProfileRepository(
 		HTTPHandler,
 		conf.ProfileConf.Host+conf.ProfileConf.UserDataPath+conf.ProfileConf.UserDataTokens,
 	)
-	userProfileInteractor := usecases.GetUserDataInteractor{
+	getUserDataInteractor := usecases.GetUserDataInteractor{
 		UserProfileRepository: userProfileRepo,
 	}
-	// userProfileHandler
+
 	getUserDataHandler := handlers.GetUserDataHandler{
-		Interactor: &userProfileInteractor,
+		Interactor: &getUserDataInteractor,
+		Logger:     getUserDataHandlerLogger,
 	}
 
 	// httpCircuitBreakerHandler which retries requests with it's client
