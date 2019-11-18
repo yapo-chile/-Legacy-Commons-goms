@@ -1,8 +1,10 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"testing"
 
@@ -57,17 +59,52 @@ func TestProvider(t *testing.T) {
 func TestSendBroker(t *testing.T) {
 	pactPublisher := &dsl.Publisher{}
 	var conf PactConf
+	var conf2 infrastructure.Config
+	type JSONTemp struct {
+		Provider string
+	}
+	var contractJSON JSONTemp
+
 	infrastructure.LoadFromEnv(&conf)
-	err := pactPublisher.Publish(types.PublishRequest{
+	infrastructure.LoadFromEnv(&conf)
+	prometheus := infrastructure.MakePrometheusExporter(
+		conf2.PrometheusConf.Port,
+		conf2.PrometheusConf.Enabled,
+	)
+	logger, err := infrastructure.MakeYapoLogger(&conf2.LoggerConf,
+		prometheus.NewEventsCollector(
+			"goms_service_events_total",
+			"events tracker counter for goms service",
+		),
+	)
+	HTTPHandler := infrastructure.NewHTTPHandler(logger)
+	httprequest := HTTPHandler.NewRequest().
+		SetMethod("GET").
+		SetPath("http://3.229.36.112/pacts/provider/profile-ms/consumer/goms/latest")
+	publishedContract, err := HTTPHandler.Send(httprequest)
+	resp := fmt.Sprintf("%s", publishedContract)
+	err = json.Unmarshal([]byte(resp), &contractJSON)
+	fmt.Printf("Request preview %+v\n", contractJSON.Provider)
+
+	if err != nil {
+		fmt.Printf("Error with request preview %+v\n", err)
+	}
+
+	err = pactPublisher.Publish(types.PublishRequest{
 		PactURLs:        []string{"./pacts/goms.json"},
 		PactBroker:      conf.BrokerHost + ":" + conf.BrokerPort,
-		ConsumerVersion: "1.0.0",
+		ConsumerVersion: "2.0.0",
 		Tags:            []string{"goms"},
 	})
 	if err != nil {
 		fmt.Printf("Error with the Pact Broker server. Error %+v\n", err)
 		return
 	}
+
+	if err != nil {
+		log.Fatalln(err)
+	}
+
 }
 
 func IOReadDir(root string) ([]string, error) {
