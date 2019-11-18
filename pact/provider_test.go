@@ -52,17 +52,21 @@ func TestProvider(t *testing.T) {
 			fmt.Printf("Error verifying the provider.Error %+v\n", err)
 			return
 		}
-		pactPublisher := &dsl.Publisher{}
-		err = pactPublisher.Publish(types.PublishRequest{
-			PactURLs:        []string{"./pacts/goms.json"},
-			PactBroker:      conf.BrokerHost + ":" + conf.BrokerPort,
-			ConsumerVersion: "1.0.0",
-			Tags:            []string{"goms"},
-		})
-		if err != nil {
-			fmt.Printf("Error with the Pact Broker server. Error %+v\n", err)
-			return
-		}
+	}
+}
+func TestSendBroker(t *testing.T) {
+	pactPublisher := &dsl.Publisher{}
+	var conf PactConf
+	infrastructure.LoadFromEnv(&conf)
+	err := pactPublisher.Publish(types.PublishRequest{
+		PactURLs:        []string{"./pacts/goms.json"},
+		PactBroker:      conf.BrokerHost + ":" + conf.BrokerPort,
+		ConsumerVersion: "1.0.0",
+		Tags:            []string{"goms"},
+	})
+	if err != nil {
+		fmt.Printf("Error with the Pact Broker server. Error %+v\n", err)
+		return
 	}
 }
 
