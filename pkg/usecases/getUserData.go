@@ -7,11 +7,11 @@ import (
 // GetUserDataInteractor defines the interactor
 type GetUserDataInteractor struct {
 	UserProfileRepository UserProfileRepository
-	Logger                GetUserPrometheusDefaultLogger
+	Logger                GetUserDataPrometheusDefaultLogger
 }
 
-// UserProfilerometheusLogger logs UserProfilerometheusLogger events
-type GetUserPrometheusDefaultLogger interface {
+// GetUserDataPrometheusDefaultLogger logs getUserData events
+type GetUserDataPrometheusDefaultLogger interface {
 	LogBadInput(mail string)
 }
 

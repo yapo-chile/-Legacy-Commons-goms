@@ -12,15 +12,15 @@ import (
 	"github.mpi-internal.com/Yapo/goms/pkg/usecases"
 )
 
-type mockUserProfilePrometheusDefaultLogger struct {
+type mockGetUserDataHandlerPrometheusDefaultLogger struct {
 	mock.Mock
 }
 
-func (m *mockUserProfilePrometheusDefaultLogger) LogBadRequest(input interface{}) {
+func (m *mockGetUserDataHandlerPrometheusDefaultLogger) LogBadRequest(input interface{}) {
 	m.Called(input)
 }
 
-func (m *mockUserProfilePrometheusDefaultLogger) LogErrorGettingInternalData(err error) {
+func (m *mockGetUserDataHandlerPrometheusDefaultLogger) LogErrorGettingInternalData(err error) {
 	m.Called(err)
 }
 
@@ -72,7 +72,7 @@ func TestGetUserDataHandlerDataRunOK(t *testing.T) {
 
 func TestInternalUserDataHandlerForInternalDataRunError(t *testing.T) {
 	mInteractor := &mockUserProfileInteractor{}
-	mLogger := &mockUserProfilePrometheusDefaultLogger{}
+	mLogger := &mockGetUserDataHandlerPrometheusDefaultLogger{}
 	err := fmt.Errorf("err")
 	var userb usecases.UserBasicData
 
@@ -99,7 +99,7 @@ func TestInternalUserDataHandlerForInternalDataRunError(t *testing.T) {
 
 func TestInternalUserDataHandlerForInternalDataBadRequest(t *testing.T) {
 	mInteractor := &mockUserProfileInteractor{}
-	mLogger := &mockUserProfilePrometheusDefaultLogger{}
+	mLogger := &mockGetUserDataHandlerPrometheusDefaultLogger{}
 
 	mLogger.On("LogBadRequest", mock.AnythingOfType("*goutils.Response")).Once()
 

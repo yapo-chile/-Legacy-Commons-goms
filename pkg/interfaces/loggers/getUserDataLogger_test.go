@@ -6,7 +6,7 @@ import (
 
 func TestGetUserDataLogger(t *testing.T) {
 	m := &loggerMock{t: t}
-	l := MakeGetUserDataLogger(m)
+	l := MakeGetUserLogger(m)
 	l.LogBadInput("")
 	m.AssertExpectations(t)
 }

@@ -17,11 +17,11 @@ func (m *MockUserProfileRepository) GetUserProfileData(mail string) (UserBasicDa
 	return args.Get(0).(UserBasicData), args.Error(1)
 }
 
-type mockGetUserPrometheusDefaultLogger struct {
+type mockGetUserDataPrometheusDefaultLogger struct {
 	mock.Mock
 }
 
-func (m *mockGetUserPrometheusDefaultLogger) LogBadInput(mail string) {
+func (m *mockGetUserDataPrometheusDefaultLogger) LogBadInput(mail string) {
 	m.Called(mail)
 }
 
@@ -42,7 +42,7 @@ func TestGetUserOk(t *testing.T) {
 }
 func TestGetUserError(t *testing.T) {
 	m := MockUserProfileRepository{}
-	mLogger := &mockGetUserPrometheusDefaultLogger{}
+	mLogger := &mockGetUserDataPrometheusDefaultLogger{}
 	var userb UserBasicData
 
 	mLogger.On("LogBadInput", "")
