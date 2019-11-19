@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"time"
+	"regexp"
 
 	"github.mpi-internal.com/Yapo/goms/pkg/infrastructure"
 	"github.mpi-internal.com/Yapo/goms/pkg/interfaces/handlers"
@@ -68,6 +68,8 @@ func main() {
 	//
 	getUserDataHandlerLogger := loggers.MakeGetUserDataHandlerLogger(logger)
 	getUserDataPrometheusDefaultLogger := loggers.MakeGetUserDataLogger(logger)
+	emailValidate := regexp.MustCompile("^[\\w_+-]+(\\.[\\w_+-]+)*\\.?@([\\w_+-]+\\.)+[\\w]{2,4}$")
+
 	userProfileRepo := repository.NewUserProfileRepository(
 		HTTPHandler,
 		conf.ProfileConf.Host+conf.ProfileConf.UserDataPath+conf.ProfileConf.UserDataTokens,
@@ -78,8 +80,9 @@ func main() {
 	}
 
 	getUserDataHandler := handlers.GetUserDataHandler{
-		Interactor: &getUserDataInteractor,
-		Logger:     getUserDataHandlerLogger,
+		Interactor:    &getUserDataInteractor,
+		Logger:        getUserDataHandlerLogger,
+		EmailValidate: emailValidate,
 	}
 
 	// httpCircuitBreakerHandler which retries requests with it's client

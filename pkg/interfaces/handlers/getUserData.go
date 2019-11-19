@@ -18,8 +18,9 @@ type GetUserDataHandlerPrometheusDefaultLogger interface {
 
 // GetUserDataHandler implements the handler interface and responds to
 type GetUserDataHandler struct {
-	Interactor GetUserDataInteractor
-	Logger     GetUserDataHandlerPrometheusDefaultLogger
+	Interactor    GetUserDataInteractor
+	EmailValidate *regexp.Regexp
+	Logger        GetUserDataHandlerPrometheusDefaultLogger
 }
 
 type getUserDataRequestInput struct {
@@ -57,13 +58,11 @@ func (h *GetUserDataHandler) Execute(ig InputGetter) *goutils.Response {
 		return response
 	}
 	in := input.(*getUserDataRequestInput)
-
-	err := validateMail(in.Mail)
+	err := h.validateMail(in.Mail)
 	if err != nil {
 		h.Logger.LogBadRequest(err)
 		return &goutils.Response{
 			Code: http.StatusBadRequest,
-			Body: err,
 		}
 	}
 	userBasicData, err := h.Interactor.GetUser(in.Mail)
@@ -93,13 +92,11 @@ func (h *GetUserDataHandler) fillInternalOutput(userBasicData usecases.UserBasic
 }
 
 // validateMail validates if the mail is valid or invalid
-func validateMail(mail string) error {
-	var emailValidate = regexp.MustCompile("^[\\w_+-]+(\\.[\\w_+-]+)*\\.?@([\\w_+-]+\\.)+[\\w]{2,4}$")
+func (h *GetUserDataHandler) validateMail(mail string) error {
 	if len(strings.TrimSpace(mail)) == 0 {
 		return fmt.Errorf("Email is empty")
 	}
-
-	if emailValidate.MatchString(mail) == false {
+	if h.EmailValidate.MatchString(mail) == false {
 		return fmt.Errorf("Email is invalid")
 	}
 
