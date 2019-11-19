@@ -5,6 +5,7 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -371,8 +372,7 @@ func TestJsonHandlerFuncCache(t *testing.T) {
 
 	mC := MockCors{}
 	mC.On("GetHeaders").Return(map[string]string{})
-
-	cache := &Cache{Enabled: true, MaxAge: "123", Etag: int64(123)}
+	cache := &Cache{Enabled: true, MaxAge: 123 * time.Microsecond * 1000000, Etag: int64(123)}
 	fn := MakeJSONHandlerFunc(&h, &l, &ih, &mC, cache)
 	r.Header.Add("If-None-Match", "\"123\"")
 	fn(w, r)
