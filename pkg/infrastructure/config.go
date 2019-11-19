@@ -89,7 +89,7 @@ func (cc CorsConf) GetHeaders() map[string]string {
 type CacheConf struct {
 	Enabled bool `env:"ENABLED" envDefault:"false"`
 	//Cache max age in secs(use browser cache)
-	MaxAge string `env:"MAX_AGE" envDefault:"2592000"`
+	MaxAge time.Duration `env:"MAX_AGE" envDefault:"720h"`
 	Etag   int64
 }
 

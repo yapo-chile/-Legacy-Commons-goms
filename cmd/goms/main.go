@@ -137,18 +137,18 @@ func main() {
 				Prefix: "/api/v{version:[1-9][0-9]*}",
 				Groups: []infrastructure.Route{
 					{
-						Name:     "Check service health",
-						Method:   "GET",
-						Pattern:  "/healthcheck",
-						Handler:  &healthHandler,
-						UseCache: true,
+						Name:    "Check service health",
+						Method:  "GET",
+						Pattern: "/healthcheck",
+						Handler: &healthHandler,
 					},
 					// CLONE REMOVE START
 					{
-						Name:    "Retrieve the Nth Fibonacci with Clean Architecture",
-						Method:  "GET",
-						Pattern: "/fibonacci",
-						Handler: &fibonacciHandler,
+						Name:     "Retrieve the Nth Fibonacci with Clean Architecture",
+						Method:   "GET",
+						Pattern:  "/fibonacci",
+						Handler:  &fibonacciHandler,
+						UseCache: true,
 					},
 					{
 						Name:    "Retrieve healthcheck by doing a client request to itself",
