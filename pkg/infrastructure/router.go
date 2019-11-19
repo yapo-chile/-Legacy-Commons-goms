@@ -3,6 +3,7 @@ package infrastructure
 import (
 	"net/http"
 	"net/http/pprof"
+	"time"
 
 	"github.com/gorilla/context"
 	"github.mpi-internal.com/Yapo/goms/pkg/interfaces/handlers"
@@ -12,11 +13,12 @@ import (
 
 // Route stands for an http endpoint description
 type Route struct {
-	Name     string
-	Method   string
-	Pattern  string
-	Handler  handlers.Handler
-	UseCache bool
+	Name      string
+	Method    string
+	Pattern   string
+	Handler   handlers.Handler
+	UseCache  bool
+	TimeCache time.Duration
 }
 
 type routeGroups struct {
@@ -51,7 +53,13 @@ func (maker *RouterMaker) NewRouter() http.Handler {
 			hInputHandler := NewInputHandler()
 			cache := &handlers.Cache{}
 			if route.UseCache {
-				cache = &maker.Cache
+				cache.Enabled = maker.Cache.Enabled
+				cache.Etag = maker.Cache.Etag
+				cache.MaxAge = maker.Cache.MaxAge
+				if route.TimeCache > 0 {
+					// Replace default max age
+					cache.MaxAge = route.TimeCache
+				}
 			}
 			handler := handlers.MakeJSONHandlerFunc(route.Handler, hLogger, hInputHandler, maker.Cors, cache)
 			for _, wrapFunc := range maker.WrapperFuncs {

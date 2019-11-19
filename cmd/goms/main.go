@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"time"
 
 	"github.mpi-internal.com/Yapo/goms/pkg/infrastructure"
 	"github.mpi-internal.com/Yapo/goms/pkg/interfaces/handlers"
@@ -144,11 +145,12 @@ func main() {
 					},
 					// CLONE REMOVE START
 					{
-						Name:     "Retrieve the Nth Fibonacci with Clean Architecture",
-						Method:   "GET",
-						Pattern:  "/fibonacci",
-						Handler:  &fibonacciHandler,
-						UseCache: true,
+						Name:      "Retrieve the Nth Fibonacci with Clean Architecture",
+						Method:    "GET",
+						Pattern:   "/fibonacci",
+						Handler:   &fibonacciHandler,
+						UseCache:  true,
+						TimeCache: 60 * time.Minute,
 					},
 					{
 						Name:    "Retrieve healthcheck by doing a client request to itself",
