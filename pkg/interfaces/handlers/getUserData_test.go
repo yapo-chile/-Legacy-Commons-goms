@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"net/http"
+	"regexp"
 	"testing"
 
 	"github.com/Yapo/goutils"
@@ -52,12 +53,14 @@ func TestGetUserDataHandlerInput(t *testing.T) {
 func TestGetUserDataHandlerDataRunOK(t *testing.T) {
 	mInteractor := &mockUserProfileInteractor{}
 	var userb usecases.UserBasicData
-	mInteractor.On("GetUser", "").Return(userb, nil)
+	emailV := regexp.MustCompile("@")
+	mInteractor.On("GetUser", "hola@mail.com").Return(userb, nil)
 	h := GetUserDataHandler{
-		Interactor: mInteractor,
+		Interactor:    mInteractor,
+		EmailValidate: emailV,
 	}
 	input := &getUserDataRequestInput{
-		Mail: "",
+		Mail: "hola@mail.com",
 	}
 	getter := MakeMockInputGetter(input, nil)
 	r := h.Execute(getter)
@@ -75,16 +78,18 @@ func TestInternalUserDataHandlerForInternalDataRunError(t *testing.T) {
 	mLogger := &mockGetUserDataHandlerPrometheusDefaultLogger{}
 	err := fmt.Errorf("err")
 	var userb usecases.UserBasicData
+	emailV := regexp.MustCompile("@")
 
-	mInteractor.On("GetUser", "").Return(userb, err)
+	mInteractor.On("GetUser", "hola@mail.com").Return(userb, err)
 	mLogger.On("LogErrorGettingInternalData", err).Once()
 
 	h := GetUserDataHandler{
-		Interactor: mInteractor,
-		Logger:     mLogger,
+		Interactor:    mInteractor,
+		EmailValidate: emailV,
+		Logger:        mLogger,
 	}
 	input := &getUserDataRequestInput{
-		Mail: "",
+		Mail: "hola@mail.com",
 	}
 	getter := MakeMockInputGetter(input, nil)
 	r := h.Execute(getter)
@@ -108,11 +113,63 @@ func TestInternalUserDataHandlerForInternalDataBadRequest(t *testing.T) {
 		Logger:     mLogger,
 	}
 	input := &getUserDataRequestInput{
-		Mail: "",
+		Mail: "mail@chao.cl",
 	}
 	getter := MakeMockInputGetter(input, &goutils.Response{
 		Code: http.StatusBadRequest,
 	})
+	r := h.Execute(getter)
+
+	expected := &goutils.Response{
+		Code: http.StatusBadRequest,
+	}
+	assert.Equal(t, expected, r)
+	mLogger.AssertExpectations(t)
+	mInteractor.AssertExpectations(t)
+}
+
+func TestGetUserDataHandlerEmptyMail(t *testing.T) {
+	mInteractor := &mockUserProfileInteractor{}
+	mLogger := &mockGetUserDataHandlerPrometheusDefaultLogger{}
+
+	emailV := regexp.MustCompile("@")
+
+	mLogger.On("LogBadRequest", fmt.Errorf("Email is empty")).Once()
+	h := GetUserDataHandler{
+		Interactor:    mInteractor,
+		EmailValidate: emailV,
+		Logger:        mLogger,
+	}
+	input := &getUserDataRequestInput{
+		Mail: "",
+	}
+	getter := MakeMockInputGetter(input, nil)
+	r := h.Execute(getter)
+
+	expected := &goutils.Response{
+		Code: http.StatusBadRequest,
+	}
+	assert.Equal(t, expected, r)
+	mLogger.AssertExpectations(t)
+	mInteractor.AssertExpectations(t)
+}
+
+func TestGetUserDataHandlerBadMail(t *testing.T) {
+	mInteractor := &mockUserProfileInteractor{}
+	mLogger := &mockGetUserDataHandlerPrometheusDefaultLogger{}
+
+	emailV := regexp.MustCompile("@")
+
+	mLogger.On("LogBadRequest", fmt.Errorf("Email is invalid")).Once()
+	h := GetUserDataHandler{
+		Interactor:    mInteractor,
+		EmailValidate: emailV,
+		Logger:        mLogger,
+	}
+	input := &getUserDataRequestInput{
+		Mail: "asdfg",
+	}
+	getter := MakeMockInputGetter(input, nil)
 	r := h.Execute(getter)
 
 	expected := &goutils.Response{
