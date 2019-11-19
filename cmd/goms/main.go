@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"time"
 
 	"github.mpi-internal.com/Yapo/goms/pkg/infrastructure"
 	"github.mpi-internal.com/Yapo/goms/pkg/interfaces/handlers"
@@ -18,6 +19,7 @@ import (
 func main() {
 	var shutdownSequence = infrastructure.NewShutdownSequence()
 	var conf infrastructure.Config
+	fmt.Printf("Etag:%d\n", conf.CacheConf.InitEtag())
 	shutdownSequence.Listen()
 	infrastructure.LoadFromEnv(&conf)
 	if jconf, err := json.MarshalIndent(conf, "", "    "); err == nil {
@@ -118,9 +120,16 @@ func main() {
 	}
 	// CLONE-RCONF REMOVE END
 
+	useBrowserCache := handlers.Cache{
+		MaxAge:  conf.CacheConf.MaxAge,
+		Etag:    conf.CacheConf.Etag,
+		Enabled: conf.CacheConf.Enabled,
+	}
 	// Setting up router
 	maker := infrastructure.RouterMaker{
 		Logger:        logger,
+		Cors:          conf.CorsConf,
+		Cache:         useBrowserCache,
 		WrapperFuncs:  []infrastructure.WrapperFunc{prometheus.TrackHandlerFunc},
 		WithProfiling: conf.ServiceConf.Profiling,
 		Routes: infrastructure.Routes{
@@ -136,10 +145,12 @@ func main() {
 					},
 					// CLONE REMOVE START
 					{
-						Name:    "Retrieve the Nth Fibonacci with Clean Architecture",
-						Method:  "GET",
-						Pattern: "/fibonacci",
-						Handler: &fibonacciHandler,
+						Name:      "Retrieve the Nth Fibonacci with Clean Architecture",
+						Method:    "GET",
+						Pattern:   "/fibonacci",
+						Handler:   &fibonacciHandler,
+						UseCache:  true,
+						TimeCache: 60 * time.Minute,
 					},
 					{
 						Name:    "Retrieve healthcheck by doing a client request to itself",

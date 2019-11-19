@@ -3,6 +3,7 @@ package infrastructure
 import (
 	"net/http"
 	"net/http/pprof"
+	"time"
 
 	"github.com/gorilla/context"
 	"github.mpi-internal.com/Yapo/goms/pkg/interfaces/handlers"
@@ -12,10 +13,12 @@ import (
 
 // Route stands for an http endpoint description
 type Route struct {
-	Name    string
-	Method  string
-	Pattern string
-	Handler handlers.Handler
+	Name      string
+	Method    string
+	Pattern   string
+	Handler   handlers.Handler
+	UseCache  bool
+	TimeCache time.Duration
 }
 
 type routeGroups struct {
@@ -36,6 +39,8 @@ type RouterMaker struct {
 	WrapperFuncs  []WrapperFunc
 	WithProfiling bool
 	Routes        Routes
+	Cors          handlers.Cors
+	Cache         handlers.Cache
 }
 
 // NewRouter setups a Router based on the provided routes
@@ -46,7 +51,17 @@ func (maker *RouterMaker) NewRouter() http.Handler {
 		for _, route := range routeGroup.Groups {
 			hLogger := loggers.MakeJSONHandlerLogger(maker.Logger)
 			hInputHandler := NewInputHandler()
-			handler := handlers.MakeJSONHandlerFunc(route.Handler, hLogger, hInputHandler)
+			cache := &handlers.Cache{}
+			if route.UseCache {
+				cache.Enabled = maker.Cache.Enabled
+				cache.Etag = maker.Cache.Etag
+				cache.MaxAge = maker.Cache.MaxAge
+				if route.TimeCache > 0 {
+					// Replace default max age
+					cache.MaxAge = route.TimeCache
+				}
+			}
+			handler := handlers.MakeJSONHandlerFunc(route.Handler, hLogger, hInputHandler, maker.Cors, cache)
 			for _, wrapFunc := range maker.WrapperFuncs {
 				handler = wrapFunc(route.Pattern, handler)
 			}

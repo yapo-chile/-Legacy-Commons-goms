@@ -5,6 +5,7 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -105,9 +106,19 @@ type TestParamStruct struct {
 	Param2 TestParamInt `get:"param6"`
 }
 
+type MockCors struct {
+	mock.Mock
+}
+
+func (mc *MockCors) GetHeaders() map[string]string {
+	args := mc.Called()
+	return args.Get(0).(map[string]string)
+}
+
 func TestJsonHandlerFuncOK(t *testing.T) {
 	h := MockHandler{}
 	ih := MockInputHandler{}
+
 	mMockInputRequest := MockInputRequest{}
 	l := MockLogger{}
 	input := &DummyInput{}
@@ -133,7 +144,10 @@ func TestJsonHandlerFuncOK(t *testing.T) {
 	l.On("LogRequestStart", r)
 	l.On("LogRequestEnd", r, response)
 
-	fn := MakeJSONHandlerFunc(&h, &l, &ih)
+	cache := Cache{}
+	mC := MockCors{}
+	mC.On("GetHeaders").Return(map[string]string{})
+	fn := MakeJSONHandlerFunc(&h, &l, &ih, &mC, &cache)
 	fn(w, r)
 
 	assert.Equal(t, 42, w.Code)
@@ -142,6 +156,7 @@ func TestJsonHandlerFuncOK(t *testing.T) {
 	ih.AssertExpectations(t)
 	mMockInputRequest.AssertExpectations(t)
 	l.AssertExpectations(t)
+	mC.AssertExpectations(t)
 }
 
 func TestJsonHandlerFuncOK2(t *testing.T) {
@@ -175,7 +190,11 @@ func TestJsonHandlerFuncOK2(t *testing.T) {
 	l.On("LogRequestStart", r)
 	l.On("LogRequestEnd", r, response)
 
-	fn := MakeJSONHandlerFunc(&h, &l, &ih)
+	mC := MockCors{}
+	mC.On("GetHeaders").Return(map[string]string{})
+
+	cache := &Cache{}
+	fn := MakeJSONHandlerFunc(&h, &l, &ih, &mC, cache)
 	fn(w, r)
 
 	assert.Equal(t, 42, w.Code)
@@ -184,6 +203,7 @@ func TestJsonHandlerFuncOK2(t *testing.T) {
 	ih.AssertExpectations(t)
 	mMockInputRequest.AssertExpectations(t)
 	l.AssertExpectations(t)
+	mC.AssertExpectations(t)
 }
 
 func TestJsonHandlerFuncParseError(t *testing.T) {
@@ -214,7 +234,11 @@ func TestJsonHandlerFuncParseError(t *testing.T) {
 	l.On("LogRequestStart", r)
 	l.On("LogRequestEnd", r, mock.AnythingOfType("*goutils.Response"))
 
-	fn := MakeJSONHandlerFunc(&h, &l, &ih)
+	mC := MockCors{}
+	mC.On("GetHeaders").Return(map[string]string{})
+
+	cache := &Cache{}
+	fn := MakeJSONHandlerFunc(&h, &l, &ih, &mC, cache)
 	fn(w, r)
 
 	assert.Equal(t, http.StatusBadRequest, w.Code)
@@ -223,6 +247,7 @@ func TestJsonHandlerFuncParseError(t *testing.T) {
 	ih.AssertExpectations(t)
 	mMockInputRequest.AssertExpectations(t)
 	l.AssertExpectations(t)
+	mC.AssertExpectations(t)
 }
 
 func TestJsonHandlerFuncPanic(t *testing.T) {
@@ -248,7 +273,11 @@ func TestJsonHandlerFuncPanic(t *testing.T) {
 	l.On("LogRequestStart", r)
 	l.On("LogRequestPanic", r, mock.AnythingOfType("*goutils.Response"), "dead")
 
-	fn := MakeJSONHandlerFunc(&h, &l, &ih)
+	mC := MockCors{}
+	mC.On("GetHeaders").Return(map[string]string{})
+
+	cache := &Cache{}
+	fn := MakeJSONHandlerFunc(&h, &l, &ih, &mC, cache)
 	fn(w, r)
 
 	assert.Equal(t, http.StatusInternalServerError, w.Code)
@@ -257,4 +286,107 @@ func TestJsonHandlerFuncPanic(t *testing.T) {
 	ih.AssertExpectations(t)
 	mMockInputRequest.AssertExpectations(t)
 	l.AssertExpectations(t)
+	mC.AssertExpectations(t)
+}
+func TestJsonHandlerFuncHeaders(t *testing.T) {
+	h := MockHandler{}
+	ih := MockInputHandler{}
+	mMockInputRequest := MockInputRequest{}
+	l := MockLogger{}
+	input := &DummyInput{}
+	response := &goutils.Response{
+		Code: 42,
+		Body: DummyOutput{"That's some bad hat, Harry"},
+	}
+	getter := mock.AnythingOfType("handlers.InputGetter")
+	h.On("Execute", getter).Return(response).Once()
+	h.On("Input", mock.AnythingOfType("*handlers.MockInputRequest")).Return(input).Once()
+
+	ih.On("NewInputRequest", mock.AnythingOfType("*http.Request")).Return(&mMockInputRequest)
+	ih.On("Input").Return(input, response)
+	ih.On(
+		"SetInputRequest",
+		mock.AnythingOfType("*handlers.MockInputRequest"),
+		mock.AnythingOfType("*handlers.DummyInput"),
+	)
+
+	w := httptest.NewRecorder()
+	r := httptest.NewRequest("GET", "/someurl?id=1,2", strings.NewReader("{}"))
+	r = mux.SetURLVars(r, map[string]string{
+		"id": "1, 2",
+	})
+
+	l.On("LogRequestStart", r)
+	l.On("LogRequestEnd", r, response)
+
+	mC := MockCors{}
+	headers := map[string]string{
+		"Origin":  "myorigin",
+		"Methods": "mistherious",
+	}
+	mC.On("GetHeaders").Return(headers)
+
+	cache := &Cache{}
+	fn := MakeJSONHandlerFunc(&h, &l, &ih, &mC, cache)
+	fn(w, r)
+
+	expectedHeaders := http.Header(http.Header{
+		"Access-Control-Allow-Methods": []string{"mistherious"},
+		"Access-Control-Allow-Origin":  []string{"myorigin"},
+		"Content-Type":                 []string{"application/json"}})
+
+	assert.Equal(t, expectedHeaders, w.HeaderMap)
+	assert.Equal(t, 42, w.Code)
+	h.AssertExpectations(t)
+	ih.AssertExpectations(t)
+	mMockInputRequest.AssertExpectations(t)
+	l.AssertExpectations(t)
+	mC.AssertExpectations(t)
+}
+func TestJsonHandlerFuncCache(t *testing.T) {
+	h := MockHandler{}
+	ih := MockInputHandler{}
+	mMockInputRequest := MockInputRequest{}
+	l := MockLogger{}
+	input := &DummyInput{}
+	response := &goutils.Response{
+		Code: 304,
+	}
+	h.On("Input", mock.AnythingOfType("*handlers.MockInputRequest")).Return(input).Once()
+
+	ih.On("NewInputRequest", mock.AnythingOfType("*http.Request")).Return(&mMockInputRequest)
+	ih.On(
+		"SetInputRequest",
+		mock.AnythingOfType("*handlers.MockInputRequest"),
+		mock.AnythingOfType("*handlers.DummyInput"),
+	)
+
+	w := httptest.NewRecorder()
+	r := httptest.NewRequest("GET", "/someurl?id=1,2", strings.NewReader("{}"))
+	r = mux.SetURLVars(r, map[string]string{
+		"id": "1, 2",
+	})
+
+	l.On("LogRequestStart", r)
+	l.On("LogRequestEnd", r, response)
+
+	mC := MockCors{}
+	mC.On("GetHeaders").Return(map[string]string{})
+	cache := &Cache{Enabled: true, MaxAge: 123 * time.Microsecond * 1000000, Etag: int64(123)}
+	fn := MakeJSONHandlerFunc(&h, &l, &ih, &mC, cache)
+	r.Header.Add("If-None-Match", "\"123\"")
+	fn(w, r)
+
+	expectedHeaders := http.Header(http.Header{
+		"Cache-Control": []string{"max-age=123"},
+		"Etag":          []string{"\"123\""},
+		"Content-Type":  []string{"application/json"}})
+
+	assert.Equal(t, expectedHeaders, w.HeaderMap)
+	assert.Equal(t, 304, w.Code)
+	h.AssertExpectations(t)
+	ih.AssertExpectations(t)
+	mMockInputRequest.AssertExpectations(t)
+	l.AssertExpectations(t)
+	mC.AssertExpectations(t)
 }
