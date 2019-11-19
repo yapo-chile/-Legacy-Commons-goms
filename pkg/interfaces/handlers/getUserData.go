@@ -1,7 +1,10 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
+	"regexp"
+	"strings"
 
 	"github.com/Yapo/goutils"
 	"github.mpi-internal.com/Yapo/goms/pkg/usecases"
@@ -55,8 +58,15 @@ func (h *GetUserDataHandler) Execute(ig InputGetter) *goutils.Response {
 	}
 	in := input.(*getUserDataRequestInput)
 
+	err := validateMail(in.Mail)
+	if err != nil {
+		h.Logger.LogBadRequest(err)
+		return &goutils.Response{
+			Code: http.StatusBadRequest,
+			Body: err,
+		}
+	}
 	userBasicData, err := h.Interactor.GetUser(in.Mail)
-
 	if err != nil {
 		h.Logger.LogErrorGettingInternalData(err)
 		return &goutils.Response{
@@ -80,4 +90,18 @@ func (h *GetUserDataHandler) fillInternalOutput(userBasicData usecases.UserBasic
 		Region:  userBasicData.Region,
 		Commune: userBasicData.Commune,
 	}
+}
+
+// validateMail validates if the mail is valid or invalid
+func validateMail(mail string) error {
+	var emailValidate = regexp.MustCompile("^[\\w_+-]+(\\.[\\w_+-]+)*\\.?@([\\w_+-]+\\.)+[\\w]{2,4}$")
+	if len(strings.TrimSpace(mail)) == 0 {
+		return fmt.Errorf("Email is empty")
+	}
+
+	if emailValidate.MatchString(mail) == false {
+		return fmt.Errorf("Email is invalid")
+	}
+
+	return nil
 }

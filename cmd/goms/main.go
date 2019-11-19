@@ -67,12 +67,14 @@ func main() {
 	}
 	//
 	getUserDataHandlerLogger := loggers.MakeGetUserDataHandlerLogger(logger)
+	getUserDataPrometheusDefaultLogger := loggers.MakeGetUserDataLogger(logger)
 	userProfileRepo := repository.NewUserProfileRepository(
 		HTTPHandler,
 		conf.ProfileConf.Host+conf.ProfileConf.UserDataPath+conf.ProfileConf.UserDataTokens,
 	)
 	getUserDataInteractor := usecases.GetUserDataInteractor{
 		UserProfileRepository: userProfileRepo,
+		Logger:                getUserDataPrometheusDefaultLogger,
 	}
 
 	getUserDataHandler := handlers.GetUserDataHandler{
