@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"reflect"
 	"strconv"
 	"testing"
 
@@ -78,10 +79,14 @@ func TestSendBroker(t *testing.T) {
 
 	oldPactResponse, currentVer, err := getContractInfo(conf.BrokerHost +
 		"/pacts/provider/profile-ms/consumer/goms/latest")
-
+	fmt.Printf("old contract %+v\n", oldPactResponse)
+	fmt.Printf("old ver %+v\n", currentVer)
+	fmt.Printf("%+v\n", err)
+	os.Exit(3)
 	if err != nil {
 		fmt.Printf("Error getting old contract %+v\n", err)
 	}
+
 	newPactResponse, err := getJSONPactFile(pactDir)
 	if err != nil {
 		fmt.Printf("Error getting pact response to send %+v\n", err)
@@ -91,6 +96,11 @@ func TestSendBroker(t *testing.T) {
 	}
 	fmt.Printf("Old pact %+v\n", oldPactResponse)
 	fmt.Printf("New pact %+v\n", newPactResponse)
+	if reflect.DeepEqual(oldPactResponse, newPactResponse) {
+		fmt.Printf("yes")
+	} else {
+		fmt.Printf("no")
+	}
 
 	err = pactPublisher.Publish(types.PublishRequest{
 		PactURLs:        []string{"./pacts/goms.json"},
