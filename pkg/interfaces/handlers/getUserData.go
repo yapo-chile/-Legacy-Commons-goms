@@ -94,10 +94,10 @@ func (h *GetUserDataHandler) fillInternalOutput(userBasicData usecases.UserBasic
 // validateMail validates if the mail is valid or invalid
 func (h *GetUserDataHandler) validateMail(mail string) error {
 	if len(strings.TrimSpace(mail)) == 0 {
-		return fmt.Errorf("Email is empty")
+		return fmt.Errorf("Email is empty\n")
 	}
 	if h.EmailValidate.MatchString(mail) == false {
-		return fmt.Errorf("Email is invalid")
+		return fmt.Errorf("Email is invalid\n")
 	}
 
 	return nil

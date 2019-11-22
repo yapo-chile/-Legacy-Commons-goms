@@ -13,7 +13,7 @@ type GetUserDataInteractor struct {
 func (interactor *GetUserDataInteractor) GetUser(mail string) (UserBasicData, error) {
 	userProfile, err := interactor.UserProfileRepository.GetUserProfileData(mail)
 	if err != nil {
-		return userProfile, fmt.Errorf("cannot retrieve the user's profile error %+v", err)
+		return userProfile, fmt.Errorf("cannot retrieve the user's profile")
 	}
 	return userProfile, nil
 }

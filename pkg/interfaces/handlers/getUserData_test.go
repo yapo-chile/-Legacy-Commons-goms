@@ -134,7 +134,7 @@ func TestGetUserDataHandlerEmptyMail(t *testing.T) {
 
 	emailV := regexp.MustCompile("@")
 
-	mLogger.On("LogBadRequest", fmt.Errorf("Email is empty")).Once()
+	mLogger.On("LogBadRequest", fmt.Errorf("Email is empty\n")).Once()
 	h := GetUserDataHandler{
 		Interactor:    mInteractor,
 		EmailValidate: emailV,
@@ -160,7 +160,7 @@ func TestGetUserDataHandlerBadMail(t *testing.T) {
 
 	emailV := regexp.MustCompile("@")
 
-	mLogger.On("LogBadRequest", fmt.Errorf("Email is invalid")).Once()
+	mLogger.On("LogBadRequest", fmt.Errorf("Email is invalid\n")).Once()
 	h := GetUserDataHandler{
 		Interactor:    mInteractor,
 		EmailValidate: emailV,

@@ -13,7 +13,7 @@ func (l *getUserDataHandlerPrometheusDefaultLogger) LogBadRequest(input interfac
 }
 
 func (l *getUserDataHandlerPrometheusDefaultLogger) LogErrorGettingInternalData(err error) {
-	l.logger.Error("Error getting internal data %+v ", err)
+	l.logger.Error("Error getting internal data: %+v ", err)
 }
 
 // MakeGetUserDataHandlerLogger sets up a InternalUserDataHandlerLogger instrumented
