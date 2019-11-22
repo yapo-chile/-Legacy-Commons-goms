@@ -68,7 +68,6 @@ func main() {
 	}
 	//
 	getUserDataHandlerLogger := loggers.MakeGetUserDataHandlerLogger(logger)
-	getUserDataPrometheusDefaultLogger := loggers.MakeGetUserDataLogger(logger)
 
 	emailValidate := regexp.MustCompile("^[\\w_+-]+(\\.[\\w_+-]+)*\\.?@([\\w_+-]+\\.)+[\\w]{2,4}$")
 	userProfileRepo := repository.NewUserProfileRepository(
@@ -77,7 +76,6 @@ func main() {
 	)
 	getUserDataInteractor := usecases.GetUserDataInteractor{
 		UserProfileRepository: userProfileRepo,
-		Logger:                getUserDataPrometheusDefaultLogger,
 	}
 
 	getUserDataHandler := handlers.GetUserDataHandler{

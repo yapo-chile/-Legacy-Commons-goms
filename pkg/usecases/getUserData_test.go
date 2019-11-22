@@ -17,14 +17,6 @@ func (m *MockUserProfileRepository) GetUserProfileData(mail string) (UserBasicDa
 	return args.Get(0).(UserBasicData), args.Error(1)
 }
 
-type mockGetUserDataPrometheusDefaultLogger struct {
-	mock.Mock
-}
-
-func (m *mockGetUserDataPrometheusDefaultLogger) LogBadInput(mail string) {
-	m.Called(mail)
-}
-
 func TestGetUserOk(t *testing.T) {
 	m := MockUserProfileRepository{}
 	var userb UserBasicData
@@ -42,20 +34,15 @@ func TestGetUserOk(t *testing.T) {
 }
 func TestGetUserError(t *testing.T) {
 	m := MockUserProfileRepository{}
-	mLogger := &mockGetUserDataPrometheusDefaultLogger{}
 	var userb UserBasicData
-
-	mLogger.On("LogBadInput", "")
 	m.On("GetUserProfileData", "").Return(userb, fmt.Errorf("error"))
 
 	i := GetUserDataInteractor{
 		UserProfileRepository: &m,
-		Logger:                mLogger,
 	}
 
 	output, err := i.GetUser("")
 	assert.Error(t, err)
 	assert.Empty(t, output)
-	mLogger.AssertExpectations(t)
 	m.AssertExpectations(t)
 }
