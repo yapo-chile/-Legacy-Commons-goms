@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"regexp"
 	"time"
 
 	"github.mpi-internal.com/Yapo/goms/pkg/infrastructure"
@@ -52,7 +53,8 @@ func main() {
 
 	// HealthHandler
 	var healthHandler handlers.HealthHandler
-
+	// To handle http connections you can use an httpHandler
+	HTTPHandler := infrastructure.NewHTTPHandler(logger)
 	// CLONE REMOVE START
 	// FibonacciHandler
 	fibonacciLogger := loggers.MakeFibonacciLogger(logger)
@@ -64,12 +66,28 @@ func main() {
 	fibonacciHandler := handlers.FibonacciHandler{
 		Interactor: &fibonacciInteractor,
 	}
+	//
+	getUserDataHandlerLogger := loggers.MakeGetUserDataHandlerLogger(logger)
 
-	// To handle http connections you can use an httpHandler or
+	emailValidate := regexp.MustCompile("^[\\w_+-]+(\\.[\\w_+-]+)*\\.?@([\\w_+-]+\\.)+[\\w]{2,4}$")
+	userProfileRepo := repository.NewUserProfileRepository(
+		HTTPHandler,
+		conf.ProfileConf.Host+conf.ProfileConf.UserDataPath+conf.ProfileConf.UserDataTokens,
+	)
+	getUserDataInteractor := usecases.GetUserDataInteractor{
+		UserProfileRepository: userProfileRepo,
+	}
+
+	getUserDataHandler := handlers.GetUserDataHandler{
+		Interactor:    &getUserDataInteractor,
+		Logger:        getUserDataHandlerLogger,
+		EmailValidate: emailValidate,
+	}
+
 	// httpCircuitBreakerHandler which retries requests with it's client
 	// until it returns a valid answer and then continues normal execution
 	// OPTION: classic HTTP
-	HTTPHandler := infrastructure.NewHTTPHandler(logger)
+
 	getHealthLogger := loggers.MakeGomsRepoLogger(logger)
 	getHealthInteractor := usecases.GetHealthcheckInteractor{
 		GomsRepository: repository.NewGomsRepository(
@@ -163,6 +181,12 @@ func main() {
 						Method:  "GET",
 						Pattern: "/httpcb/healthcheck",
 						Handler: &getHealthCBHandler,
+					},
+					{
+						Name:    "Retrieve the user basic data",
+						Method:  "GET",
+						Pattern: "/user/basic-data",
+						Handler: &getUserDataHandler,
 					},
 					// CLONE REMOVE END
 				},

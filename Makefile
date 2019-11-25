@@ -19,7 +19,15 @@ checkstyle:
 ## Install golang system level dependencies
 setup:
 	@scripts/commands/setup.sh
+	
+## Compile and build the executable file for pact tests
+pact-build:
+	scripts/commands/pact-build.sh
 
+## Execute pact tests
+pact-test: pact-build
+	scripts/commands/pact-test.sh
+	
 ## Compile the code
 build:
 	@scripts/commands/build.sh

@@ -7,5 +7,16 @@ conf/conf.json
 logs/*
 reports/*
 vendor/*
-goms*
+pact/bin
+pact/log
 app.docker
+goms
+goms.err
+goms.out
+daemon.err
+daemon.out
+nohup.out
+goms-pact
+goms-pact.err
+goms-pact.out
+log/pact.log

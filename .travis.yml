@@ -14,7 +14,11 @@ if: tags IS blank
 # set -e enabled in bash.
 install:
   # run the initial setup
-  - make setup
+  # Installing pact-go dependencies
+  - curl -LO https://github.com/pact-foundation/pact-ruby-standalone/releases/download/v1.70.2/pact-1.70.2-linux-x86_64.tar.gz
+  - tar xzf pact-1.70.2-linux-x86_64.tar.gz -C $HOME --strip-components 1
+  - export PATH=$PATH:$HOME/pact/bin
+  - make setup    
   # Export the current branch according to travis (including pr builds) 
   - export BUILD_BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
 
@@ -23,6 +27,7 @@ install:
 script:
   # Generate coverage and checkstyle report
   - make test
+  - make pact-test
   - make docker-build
 
 after_failure:
@@ -37,6 +42,6 @@ deploy:
     on:
       all_branches: true
   - provider: script
-    script: make deploy-rancher
+    script: make deploy-rancher    
     on:
       tags: true

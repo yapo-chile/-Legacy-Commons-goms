@@ -65,6 +65,7 @@ type EtcdConf struct {
 	Prefix     string `env:"PREFIX" envDefault:"/v2/keys"`
 }
 
+// ProfileConf holds configuration to send http request to profile
 // CorsConf holds cors headers
 type CorsConf struct {
 	Enabled bool   `env:"ENABLED" envDefault:"false"`
@@ -99,6 +100,13 @@ func (chc *CacheConf) InitEtag() int64 {
 	return chc.Etag
 }
 
+// ProfileConf holds configuration to send http request to Profile
+type ProfileConf struct {
+	Host           string `env:"HOST" envDefault:"http://profile:8080"`
+	UserDataPath   string `env:"USER_DATA_PATH" envDefault:"/api/v1/internal/user?"`
+	UserDataTokens string `env:"USER_DATA_TOKENS" envDefault:"tokens=%s"`
+}
+
 // Config holds all configuration for the service
 type Config struct {
 	ServiceConf        ServiceConf        `env:"SERVICE_"`
@@ -110,6 +118,7 @@ type Config struct {
 	EtcdConf           EtcdConf           `env:"ETCD_"`
 	CorsConf           CorsConf           `env:"CORS_"`
 	CacheConf          CacheConf          `env:"CACHE_"`
+	ProfileConf        ProfileConf        `env:"PROFILE_"`
 }
 
 // LoadFromEnv loads the config data from the environment variables
