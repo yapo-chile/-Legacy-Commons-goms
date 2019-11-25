@@ -40,10 +40,9 @@ echo ${MS_PID}
 sleep 10
 cd pact
 go test -v -run TestProvider
-
+if [[ -n "$TRAVIS" ]]; then
   go test -v -run TestSendBroker
-
-
+fi
 echoTitle "Killing daemons"
 kill -9 ${PACT_PID} 
 kill -9 ${PROFILE_PID} 

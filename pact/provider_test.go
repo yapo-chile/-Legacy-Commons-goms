@@ -72,51 +72,47 @@ func TestProvider(t *testing.T) {
 func TestSendBroker(t *testing.T) {
 	pactPublisher := &dsl.Publisher{}
 	var conf PactConf
-	newVer := 0.0
+	newVer := 1.0
+	sendCond := false
 	//var contractJSON JSONTemp
 
 	infrastructure.LoadFromEnv(&conf)
 
-	oldPactResponse, currentVer, err := getContractInfo(conf.BrokerHost +
+	oldPactResponse, currentVer, errOld := getContractInfo(conf.BrokerHost +
 		"/pacts/provider/profile-ms/consumer/goms/latest")
-	fmt.Printf("old contract %+v\n", oldPactResponse)
-	fmt.Printf("old ver %+v\n", currentVer)
-	fmt.Printf("%+v\n", err)
-	os.Exit(3)
-	if err != nil {
-		fmt.Printf("Error getting old contract %+v\n", err)
+	if errOld != nil {
+		if errOld.Error() != "the error code was 404" {
+			fmt.Printf("Error getting the contract from the broker: +%v\n", errOld)
+			return
+		}
 	}
 
-	newPactResponse, err := getJSONPactFile(pactDir)
-	if err != nil {
-		fmt.Printf("Error getting pact response to send %+v\n", err)
-	}
-	if oldPactResponse != nil {
-		newVer = currentVer + 0.1
-	}
-	fmt.Printf("Old pact %+v\n", oldPactResponse)
-	fmt.Printf("New pact %+v\n", newPactResponse)
-	if reflect.DeepEqual(oldPactResponse, newPactResponse) {
-		fmt.Printf("yes")
-	} else {
-		fmt.Printf("no")
-	}
-
-	err = pactPublisher.Publish(types.PublishRequest{
-		PactURLs:        []string{"./pacts/goms.json"},
-		PactBroker:      conf.BrokerHost + ":" + conf.BrokerPort,
-		ConsumerVersion: fmt.Sprintf("%.1f", newVer),
-		Tags:            []string{"goms"},
-	})
-	if err != nil {
-		fmt.Printf("Error with the Pact Broker server. Error %+v\n", err)
+	newPactResponse, errNew := getJSONPactFile(pactDir)
+	if errNew != nil {
+		fmt.Printf("Error getting the contract from the file: +%v\n", errNew)
 		return
 	}
 
-	if err != nil {
-		log.Fatalln(err)
+	if oldPactResponse == nil {
+		sendCond = true
+	} else if reflect.DeepEqual(oldPactResponse, newPactResponse) == false {
+		sendCond = true
+		newVer = currentVer + 0.1
 	}
 
+	if sendCond {
+		err := pactPublisher.Publish(types.PublishRequest{
+			PactURLs:        []string{"./pacts/goms.json"},
+			PactBroker:      conf.BrokerHost + ":" + conf.BrokerPort,
+			ConsumerVersion: fmt.Sprintf("%.1f", newVer),
+			Tags:            []string{"goms"},
+		})
+		if err != nil {
+			fmt.Printf("Error with the Pact Broker server. Error %+v\n", err)
+			log.Fatalln(err)
+			return
+		}
+	}
 }
 
 func IOReadDir(root string) ([]string, error) {
@@ -164,14 +160,14 @@ func getContractInfo(url string) (interface{}, float64, error) {
 	var result JSONTemp
 	json.Unmarshal([]byte(resp), &result)
 
-	pactRsponse := result.Interactions[1].(map[string]interface{})["response"]
-
+	pactResponse := result.Interactions[1].(map[string]interface{})
+	delete(pactResponse, "_id")
 	versionFloat, err := strconv.ParseFloat(result.Links.Details.Name, 64)
 	if err != nil {
 
 		return nil, -1, err
 	}
-	return pactRsponse, versionFloat, nil
+	return pactResponse, versionFloat, nil
 
 }
 func getJSONPactFile(pactDir string) (interface{}, error) {
@@ -186,6 +182,6 @@ func getJSONPactFile(pactDir string) (interface{}, error) {
 	}
 	resp := fmt.Sprintf("%s", pactFileToSend)
 	json.Unmarshal([]byte(resp), &result)
-	pactResponse := result.Interactions[1].(map[string]interface{})["response"]
+	pactResponse := result.Interactions[1].(map[string]interface{})
 	return pactResponse, err
 }
