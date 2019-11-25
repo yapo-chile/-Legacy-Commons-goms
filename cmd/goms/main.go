@@ -53,7 +53,7 @@ func main() {
 
 	// HealthHandler
 	var healthHandler handlers.HealthHandler
-	// To handle http connections you can use an httpHandler or
+	// To handle http connections you can use an httpHandler
 	HTTPHandler := infrastructure.NewHTTPHandler(logger)
 	// CLONE REMOVE START
 	// FibonacciHandler
