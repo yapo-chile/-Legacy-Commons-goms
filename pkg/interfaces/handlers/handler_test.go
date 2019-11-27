@@ -144,7 +144,7 @@ func TestJsonHandlerFuncOK(t *testing.T) {
 	l.On("LogRequestStart", r)
 	l.On("LogRequestEnd", r, response)
 
-	cache := Cache{}
+	cache := InBrowserCache{}
 	mC := MockCors{}
 	mC.On("GetHeaders").Return(map[string]string{})
 	fn := MakeJSONHandlerFunc(&h, &l, &ih, &mC, &cache)
@@ -193,7 +193,7 @@ func TestJsonHandlerFuncOK2(t *testing.T) {
 	mC := MockCors{}
 	mC.On("GetHeaders").Return(map[string]string{})
 
-	cache := &Cache{}
+	cache := &InBrowserCache{}
 	fn := MakeJSONHandlerFunc(&h, &l, &ih, &mC, cache)
 	fn(w, r)
 
@@ -237,7 +237,7 @@ func TestJsonHandlerFuncParseError(t *testing.T) {
 	mC := MockCors{}
 	mC.On("GetHeaders").Return(map[string]string{})
 
-	cache := &Cache{}
+	cache := &InBrowserCache{}
 	fn := MakeJSONHandlerFunc(&h, &l, &ih, &mC, cache)
 	fn(w, r)
 
@@ -276,7 +276,7 @@ func TestJsonHandlerFuncPanic(t *testing.T) {
 	mC := MockCors{}
 	mC.On("GetHeaders").Return(map[string]string{})
 
-	cache := &Cache{}
+	cache := &InBrowserCache{}
 	fn := MakeJSONHandlerFunc(&h, &l, &ih, &mC, cache)
 	fn(w, r)
 
@@ -326,7 +326,7 @@ func TestJsonHandlerFuncHeaders(t *testing.T) {
 	}
 	mC.On("GetHeaders").Return(headers)
 
-	cache := &Cache{}
+	cache := &InBrowserCache{}
 	fn := MakeJSONHandlerFunc(&h, &l, &ih, &mC, cache)
 	fn(w, r)
 
@@ -372,7 +372,7 @@ func TestJsonHandlerFuncCache(t *testing.T) {
 
 	mC := MockCors{}
 	mC.On("GetHeaders").Return(map[string]string{})
-	cache := &Cache{Enabled: true, MaxAge: 123 * time.Microsecond * 1000000, Etag: int64(123)}
+	cache := &InBrowserCache{Enabled: true, MaxAge: 123 * time.Microsecond * 1000000, Etag: int64(123)}
 	fn := MakeJSONHandlerFunc(&h, &l, &ih, &mC, cache)
 	r.Header.Add("If-None-Match", "\"123\"")
 	fn(w, r)

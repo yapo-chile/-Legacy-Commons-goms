@@ -82,8 +82,8 @@ func (cc CorsConf) GetHeaders() map[string]string {
 	}
 }
 
-// CacheConf Used to handle browser cache
-type CacheConf struct {
+// InBrowserCacheConf Used to handle browser cache
+type InBrowserCacheConf struct {
 	Enabled bool `env:"ENABLED" envDefault:"false"`
 	//Cache max age in secs(use browser cache)
 	MaxAge time.Duration `env:"MAX_AGE" envDefault:"720h"`
@@ -91,7 +91,7 @@ type CacheConf struct {
 }
 
 // InitEtag use current epoc to config etag
-func (chc *CacheConf) InitEtag() int64 {
+func (chc *InBrowserCacheConf) InitEtag() int64 {
 	chc.Etag = time.Now().Unix()
 	return chc.Etag
 }
@@ -112,7 +112,7 @@ type Config struct {
 	GomsClientConf     GomsClientConf     `env:"GOMS_"`
 	EtcdConf           EtcdConf           `env:"ETCD_"`
 	CorsConf           CorsConf           `env:"CORS_"`
-	CacheConf          CacheConf          `env:"CACHE_"`
+	InBrowserCacheConf InBrowserCacheConf `env:"BROWSER_CACHE_"`
 	ProfileConf        ProfileConf        `env:"PROFILE_"`
 }
 
