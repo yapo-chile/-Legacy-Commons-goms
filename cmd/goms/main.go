@@ -149,7 +149,7 @@ func main() { //nolint: funlen
 	}
 	// CLONE-RCONF REMOVE END
 
-	useBrowserCache := handlers.InBrowserCache{
+	useBrowserCache := infrastructure.InBrowserCache{
 		MaxAge:  conf.InBrowserCacheConf.MaxAge,
 		Etag:    conf.InBrowserCacheConf.Etag,
 		Enabled: conf.InBrowserCacheConf.Enabled,

@@ -40,7 +40,7 @@ type RouterMaker struct {
 	WithProfiling  bool
 	Routes         Routes
 	Cors           handlers.Cors
-	InBrowserCache handlers.InBrowserCache
+	InBrowserCache InBrowserCache
 }
 
 // NewRouter setups a Router based on the provided routes
@@ -51,15 +51,14 @@ func (maker *RouterMaker) NewRouter() http.Handler {
 		for _, route := range routeGroup.Groups {
 			hLogger := loggers.MakeJSONHandlerLogger(maker.Logger)
 			hInputHandler := NewInputHandler()
-			cache := &handlers.InBrowserCache{}
+			cache := &InBrowserCache{}
 			if route.UseCache {
-				cache.Enabled = maker.InBrowserCache.Enabled
-				cache.Etag = maker.InBrowserCache.Etag
-				cache.MaxAge = maker.InBrowserCache.MaxAge
-				if route.TimeCache > 0 {
-					// Replace default max age
-					cache.MaxAge = route.TimeCache
-				}
+				cache = NewBrowserCache(
+					maker.InBrowserCache.Enabled,
+					maker.InBrowserCache.Etag,
+					maker.InBrowserCache.MaxAge,
+					route.TimeCache,
+				)
 			}
 			handler := handlers.MakeJSONHandlerFunc(route.Handler, hLogger, hInputHandler, maker.Cors, cache)
 			for _, wrapFunc := range maker.WrapperFuncs {

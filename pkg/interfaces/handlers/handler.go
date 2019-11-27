@@ -1,11 +1,7 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
-	"strconv"
-	"strings"
-	"time"
 
 	"github.com/Yapo/goutils"
 )
@@ -59,21 +55,15 @@ type Cors interface {
 	GetHeaders() map[string]string
 }
 
-// InBrowserCache used to work with
-type InBrowserCache struct {
-	// MaxAge is used to know how much time the response is valid at
-	// browser level
-	MaxAge time.Duration
-	// Etag contains the identifier of current running version
-	Etag int64
-	// Enable allows use or ignore the feature
-	Enabled bool
+// Cache defube method to handle and validate cache
+type Cache interface {
+	Validate(w http.ResponseWriter, r *http.Request) bool
 }
 
 // MakeJSONHandlerFunc wraps a Handler on a json-over-http context, returning
 // a standard http.HandlerFunc
-func MakeJSONHandlerFunc(h Handler, l JSONHandlerLogger, ih InputHandler, crs Cors, cache *InBrowserCache) http.HandlerFunc {
-	jh := jsonHandler{handler: h, logger: l, inputHandler: ih, cors: crs, browserCache: cache}
+func MakeJSONHandlerFunc(h Handler, l JSONHandlerLogger, ih InputHandler, crs Cors, cache Cache) http.HandlerFunc {
+	jh := jsonHandler{handler: h, logger: l, inputHandler: ih, cors: crs, cache: cache}
 	return jh.run
 }
 
@@ -91,29 +81,13 @@ type jsonHandler struct {
 	logger       JSONHandlerLogger
 	inputHandler InputHandler
 	cors         Cors
-	browserCache *InBrowserCache
+	cache        Cache
 }
 
 func (jh *jsonHandler) setupCors(w *http.ResponseWriter) {
 	for key, value := range jh.cors.GetHeaders() {
 		(*w).Header().Set("Access-Control-Allow-"+key, value)
 	}
-}
-
-func (jh *jsonHandler) inBrowserCache(w http.ResponseWriter, r *http.Request) bool {
-	if jh.browserCache.Enabled {
-		key := strconv.FormatInt(jh.browserCache.Etag, 10)
-		seconds := fmt.Sprintf("%.0f", jh.browserCache.MaxAge.Seconds())
-		e := `"` + key + `"`
-		w.Header().Set("Etag", e)
-		w.Header().Set("Cache-Control", "max-age="+seconds)
-		if match := r.Header.Get("If-None-Match"); match != "" {
-			if strings.Contains(match, e) {
-				return true
-			}
-		}
-	}
-	return false
 }
 
 // run will prepare the input for the actual handler and format the response
@@ -145,7 +119,7 @@ func (jh *jsonHandler) run(w http.ResponseWriter, r *http.Request) {
 	defer outputWriter()
 	defer errorHandler()
 
-	if jh.inBrowserCache(w, r) {
+	if jh.cache.Validate(w, r) {
 		response = &goutils.Response{
 			Code: http.StatusNotModified,
 		}
