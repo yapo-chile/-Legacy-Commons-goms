@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"os"
 	"reflect"
 	"strconv"
 	"testing"
@@ -16,23 +15,28 @@ import (
 	"github.mpi-internal.com/Yapo/goms/pkg/infrastructure"
 )
 
-var dir, _ = os.Getwd()
-var pactDir = fmt.Sprintf("%s/pacts", dir)
-
 type PactConf struct {
 	BrokerHost   string `env:"BROKER_HOST" envDefault:"http://3.229.36.112"`
 	BrokerPort   string `env:"BROKER_PORT" envDefault:"80"`
 	ProviderHost string `env:"PROVIDER_HOST" envDefault:"http://localhost"`
 	ProviderPort string `env:"PROVIDER_PORT" envDefault:"8080"`
+	PactPath     string `env:"PACTS_PATH" envDefault:"./pacts"`
 }
+
+// Detail has the consumer version details of a pact test
 type Detail struct {
 	Title string `json:"title"`
 	Name  string `json:"name"`
 	Href  string `json:"href"`
 }
+
+// ConsumerVersion represents the data of the consumer version of a pact test
 type ConsumerVersion struct {
 	Details Detail `json:"pb:consumer-version"`
 }
+
+// JSONTemp stores the variables from the json of the pact test
+// that we are going to use
 type JSONTemp struct {
 	Links        ConsumerVersion `json:"_links"`
 	Interactions []interface{}   `json:"interactions"`
@@ -43,14 +47,14 @@ type JSONTemp struct {
 // 2. cd <pact-go>/examples
 // 3. go test -v -run TestProvider
 func TestProvider(t *testing.T) {
-	fmt.Printf("Pact directory: %+v", pactDir)
 	var conf PactConf
+	fmt.Printf("Pact directory: %+v", conf.PactPath)
 	infrastructure.LoadFromEnv(&conf)
 	var pact = &dsl.Pact{
 		Consumer: "goms",
 		Provider: "profile-ms",
 	}
-	files, err := IOReadDir(pactDir)
+	files, err := IOReadDir(conf.PactPath)
 	if err != nil {
 		fmt.Printf("Error in reading files. Error %+v", err)
 
@@ -59,7 +63,7 @@ func TestProvider(t *testing.T) {
 		// Verify the Provider with local Pact Files
 		h := types.VerifyRequest{
 			ProviderBaseURL:       conf.ProviderHost + ":" + conf.ProviderPort,
-			PactURLs:              []string{pactDir + "/" + file},
+			PactURLs:              []string{conf.PactPath + "/" + file},
 			CustomProviderHeaders: []string{"Authorization: basic e5e5e5e5e5e5e5"},
 		}
 		_, err := pact.VerifyProvider(t, h)
@@ -74,7 +78,6 @@ func TestSendBroker(t *testing.T) {
 	var conf PactConf
 	newVer := 1.0
 	sendCond := false
-	//var contractJSON JSONTemp
 
 	infrastructure.LoadFromEnv(&conf)
 
@@ -87,7 +90,7 @@ func TestSendBroker(t *testing.T) {
 		}
 	}
 
-	newPactResponse, errNew := getJSONPactFile(pactDir)
+	newPactResponse, errNew := getJSONPactFile(conf)
 	if errNew != nil {
 		fmt.Printf("Error getting the contract from the file: +%v\n", errNew)
 		return
@@ -95,7 +98,7 @@ func TestSendBroker(t *testing.T) {
 
 	if oldPactResponse == nil {
 		sendCond = true
-	} else if reflect.DeepEqual(oldPactResponse, newPactResponse) == false {
+	} else if !reflect.DeepEqual(oldPactResponse, newPactResponse) {
 		sendCond = true
 		newVer = currentVer + 0.1
 	}
@@ -127,25 +130,21 @@ func IOReadDir(root string) ([]string, error) {
 	}
 	return files, nil
 }
+
 func getContractInfo(url string) (interface{}, float64, error) {
+	var confContracts infrastructure.Config
 
-	var conf2 infrastructure.Config
-
-	infrastructure.LoadFromEnv(&conf2)
+	infrastructure.LoadFromEnv(&confContracts)
 	prometheus := infrastructure.MakePrometheusExporter(
-		conf2.PrometheusConf.Port,
-		conf2.PrometheusConf.Enabled,
+		confContracts.PrometheusConf.Port,
+		confContracts.PrometheusConf.Enabled,
 	)
-	logger, _ := infrastructure.MakeYapoLogger(&conf2.LoggerConf,
+	logger, _ := infrastructure.MakeYapoLogger(&confContracts.LoggerConf,
 		prometheus.NewEventsCollector(
 			"goms_service_events_total",
 			"events tracker counter for goms service",
 		),
 	)
-
-	headers := make(map[string]string)
-	headers["Content-Type"] = "application/json"
-
 	HTTPHandler := infrastructure.NewHTTPHandler(logger)
 	httprequest := HTTPHandler.NewRequest().
 		SetMethod("GET").
@@ -158,30 +157,35 @@ func getContractInfo(url string) (interface{}, float64, error) {
 	resp := fmt.Sprintf("%s", publishedContract)
 
 	var result JSONTemp
-	json.Unmarshal([]byte(resp), &result)
+	err = json.Unmarshal([]byte(resp), &result)
 
+	if (err != nil) || (len(result.Interactions) < 1) {
+		return nil, -1, err
+	}
 	pactResponse := result.Interactions[1].(map[string]interface{})
 	delete(pactResponse, "_id")
 	versionFloat, err := strconv.ParseFloat(result.Links.Details.Name, 64)
 	if err != nil {
-
 		return nil, -1, err
 	}
 	return pactResponse, versionFloat, nil
-
 }
-func getJSONPactFile(pactDir string) (interface{}, error) {
+
+func getJSONPactFile(conf PactConf) (interface{}, error) {
 	var result JSONTemp
-	file, err := IOReadDir(pactDir)
+	file, err := IOReadDir(conf.PactPath)
 	if err != nil {
-		fmt.Printf("Error in reading files. Error %+v", err)
+		return nil, err
 	}
-	pactFileToSend, err := ioutil.ReadFile(pactDir + "/" + file[0])
+	pactFileToSend, err := ioutil.ReadFile(conf.PactPath + "/" + file[0])
 	if err != nil {
 		return nil, err
 	}
 	resp := fmt.Sprintf("%s", pactFileToSend)
-	json.Unmarshal([]byte(resp), &result)
+	err = json.Unmarshal([]byte(resp), &result)
+	if err != nil {
+		return nil, err
+	}
 	pactResponse := result.Interactions[1].(map[string]interface{})
 	return pactResponse, err
 }
