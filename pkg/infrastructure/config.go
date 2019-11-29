@@ -28,7 +28,7 @@ type LoggerConf struct {
 	SyslogIdentity string `env:"SYSLOG_IDENTITY"`
 	SyslogEnabled  bool   `env:"SYSLOG_ENABLED" envDefault:"false"`
 	StdlogEnabled  bool   `env:"STDLOG_ENABLED" envDefault:"true"`
-	LogLevel       int    `env:"LOG_LEVEL" envDefault:"0"`
+	LogLevel       int    `env:"LOG_LEVEL" envDefault:"2"`
 }
 
 // PrometheusConf holds configuration to report to Prometheus

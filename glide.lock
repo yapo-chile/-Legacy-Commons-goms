@@ -20,7 +20,7 @@ imports:
   subpackages:
   - pbutil
 - name: github.com/pact-foundation/pact-go
-  version: 5a1cefb77149fae263f80cb9c84a781a319e9b92
+  version: 3ce08c8af46b7bc33a06efc9b8807c08806c8af2
   subpackages:
   - dsl
   - types
