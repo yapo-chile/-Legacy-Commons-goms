@@ -42,10 +42,36 @@ type JSONTemp struct {
 	Interactions []interface{}   `json:"interactions"`
 }
 
+// A temporary logger is created to be used by the HTTPhandler
+type loggerMock struct {
+	t *testing.T
+}
+
+// It has all the logger functions that a normal logger has
+func (m *loggerMock) Debug(format string, params ...interface{}) {
+	fmt.Sprintf(format, params...) // nolint: vet,megacheck
+}
+func (m *loggerMock) Info(format string, params ...interface{}) {
+	fmt.Sprintf(format, params...) // nolint: vet,megacheck
+}
+func (m *loggerMock) Warn(format string, params ...interface{}) {
+	fmt.Sprintf(format, params...) // nolint: vet,megacheck
+}
+func (m *loggerMock) Error(format string, params ...interface{}) {
+	fmt.Sprintf(format, params...) // nolint: vet,megacheck
+}
+func (m *loggerMock) Crit(format string, params ...interface{}) {
+	fmt.Sprintf(format, params...) // nolint: vet,megacheck
+}
+func (m *loggerMock) Success(format string, params ...interface{}) {
+	fmt.Sprintf(format, params...) // nolint: vet,megacheck
+}
+
 // Example Provider Pact: How to run me!
 // 1. Start the daemon with `./pact-go daemon`
 // 2. cd <pact-go>/examples
 // 3. go test -v -run TestProvider
+
 func TestProvider(t *testing.T) {
 	var conf PactConf
 	fmt.Printf("Pact directory: %+v", conf.PactPath)
@@ -73,6 +99,7 @@ func TestProvider(t *testing.T) {
 		}
 	}
 }
+
 func TestSendBroker(t *testing.T) {
 	pactPublisher := &dsl.Publisher{}
 	var conf PactConf
@@ -133,30 +160,20 @@ func IOReadDir(root string) ([]string, error) {
 
 func getContractInfo(url string) (interface{}, float64, error) {
 	var confContracts infrastructure.Config
-
+	var result JSONTemp
 	infrastructure.LoadFromEnv(&confContracts)
-	prometheus := infrastructure.MakePrometheusExporter(
-		confContracts.PrometheusConf.Port,
-		confContracts.PrometheusConf.Enabled,
-	)
-	logger, _ := infrastructure.MakeYapoLogger(&confContracts.LoggerConf,
-		prometheus.NewEventsCollector(
-			"goms_service_events_total",
-			"events tracker counter for goms service",
-		),
-	)
+	logger := &loggerMock{}
+
 	HTTPHandler := infrastructure.NewHTTPHandler(logger)
 	httprequest := HTTPHandler.NewRequest().
 		SetMethod("GET").
 		SetPath(url)
 	publishedContract, err := HTTPHandler.Send(httprequest)
 	if err != nil {
-
 		return nil, -1, err
 	}
 	resp := fmt.Sprintf("%s", publishedContract)
 
-	var result JSONTemp
 	err = json.Unmarshal([]byte(resp), &result)
 
 	if (err != nil) || (len(result.Interactions) < 1) {
