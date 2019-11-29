@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"reflect"
 	"strconv"
 	"testing"
@@ -83,7 +82,6 @@ func TestProvider(t *testing.T) {
 	files, err := IOReadDir(conf.PactPath)
 	if err != nil {
 		fmt.Printf("Error in reading files. Error %+v", err)
-
 	}
 	for _, file := range files {
 		// Verify the Provider with local Pact Files
@@ -139,19 +137,17 @@ func TestSendBroker(t *testing.T) {
 		})
 		if err != nil {
 			fmt.Printf("Error with the Pact Broker server. Error %+v\n", err)
-			log.Fatalln(err)
 			return
 		}
 	}
 }
 
 func IOReadDir(root string) ([]string, error) {
-	var files []string
+	files := make([]string, 0)
 	fileInfo, err := ioutil.ReadDir(root)
 	if err != nil {
 		return files, err
 	}
-
 	for _, file := range fileInfo {
 		files = append(files, file.Name())
 	}
