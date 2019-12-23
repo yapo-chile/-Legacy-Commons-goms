@@ -53,6 +53,9 @@ clone:
 deploy-rancher:
 	@scripts/commands/deploy-rancher.sh
 
+deploy-k8s:
+	@scripts/commands/deploy-k8s.sh
+
 ## Run gofmt to reindent source
 fix-format:
 	@scripts/commands/fix-format.sh

@@ -9,6 +9,10 @@ go:
 # This build should not be triggered by tags
 if: tags IS blank
 
+before_install:
+  - configure_jfrog_client
+  - helm init --client-only
+
 # Anything in install that returns a nonzero exit code will
 # flunk the build and immediately stop. It's sorta like having
 # set -e enabled in bash.
@@ -35,6 +39,7 @@ after_failure:
 
 after_success:
   - reports-publisher
+  - make deploy-k8s
 
 deploy:
   - provider: script

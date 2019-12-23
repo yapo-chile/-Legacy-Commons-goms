@@ -21,4 +21,8 @@ goms-pact.err
 goms-pact.out
 log/pact.log
 /goms*
+pact/*
 app.docker
+daemon.*
+log/*
+nohup.*
