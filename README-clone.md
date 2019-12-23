@@ -45,6 +45,13 @@ __SERVICE__ needs a description here.
   - Have your service created and deployed on a stack on Rancher
   - Modify `rancher/deploy/*.json` files to reflect new names
   - Follow the instructions on https://github.mpi-internal.com/Yapo/rancher-deploy
+* [ ] Create Helm Charts for Kubernetes deploy
+  - Create a new Chart with `helm create k8s/__SERVICE__` cmd
+  - Copy configmap.yaml from k8s/goms/templates/ and change goms to your __SERVICE__ name.
+  - In the k8s/__SERVICE__/deployment.yaml file:
+      + Add `/api/v1/healthcheck` value to livenessProbe and readinessProbe section
+      + Copy imagePullSecrets, annotations and envFrom section from goms example deploment.yaml and change the names to your service name
+  - Delete goms chart
 * [ ] Delete this section
   - It's time for me to leave, I've done my part
   - It's time for you to start coding your new service and documenting your endpoints below
@@ -133,3 +140,18 @@ No request parameters
 
 ## Contact
 dev@schibsted.cl
+
+## Kubernetes
+
+Kubernetes and Helm have to be installed in your machine.
+If you haven't done it yet, you need to create a secret to reach Artifactory.
+`kubectl create secret docker-registry containers-mpi-internal-com -n <namespace> --docker-server=containers.mpi-internal.com --docker-username=<okta_username> --docker-password=<artifactory_api_key> --docker-email=<your_email>`
+
+### Helm Charts
+
+1. You need to fill out the ENV variables in the k8s/goms/templates/configmap.yaml file.
+2. You should fill out the *tag*, and *host* under hosts to your namespace.
+3. Add this host name to your /etc/hosts file with the correct IP address (127.21.5.11)
+4. You run `helm install -n <name_of_your_release> k8s/goms`
+5. Check your pod is running with `kubectl get pods`
+6. If you want to check your request log `kubectl logs <name_of_your_pod>`
