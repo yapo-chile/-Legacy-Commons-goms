@@ -23,8 +23,9 @@ func (m *MockFibonacciInteractor) GetNth(n int) (domain.Fibonacci, error) {
 func TestFibonacciHandlerInput(t *testing.T) {
 	m := MockFibonacciInteractor{}
 	mMockInputRequest := MockInputRequest{}
-	mMockInputRequest.On("Set", mock.AnythingOfType("*handlers.fibonacciRequestInput")).Return(&mMockInputRequest)
-	mMockInputRequest.On("FromJSONBody").Return(&mMockInputRequest)
+	mMockOutputRequest := MockOutputRequest{}
+	mMockInputRequest.On("Set", mock.AnythingOfType("*handlers.fibonacciRequestInput")).Return(&mMockOutputRequest)
+	mMockOutputRequest.On("FromJSONBody").Return()
 
 	h := FibonacciHandler{Interactor: &m}
 	input := h.Input(&mMockInputRequest)

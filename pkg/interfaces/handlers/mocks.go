@@ -10,49 +10,54 @@ type MockInputRequest struct {
 }
 
 // Set is a mocked method
-func (m *MockInputRequest) Set(input interface{}) InputRequest {
+func (m *MockInputRequest) Set(input interface{}) OutputRequest {
 	args := m.Called(input)
-	return args.Get(0).(InputRequest)
+	return args.Get(0).(OutputRequest)
+}
+
+// MockOutputRequest is a mock class
+type MockOutputRequest struct {
+	mock.Mock
 }
 
 // FromJSONBody is a mocked method
-func (m *MockInputRequest) FromJSONBody() InputRequest {
-	args := m.Called()
-	return args.Get(0).(InputRequest)
+func (m *MockOutputRequest) FromJSONBody() OutputRequest {
+	m.Called()
+	return m
 }
 
 // FromRawBody is a mocked method
-func (m *MockInputRequest) FromRawBody() InputRequest {
-	args := m.Called()
-	return args.Get(0).(InputRequest)
+func (m *MockOutputRequest) FromRawBody() OutputRequest {
+	m.Called()
+	return m
 }
 
 // FromPath is a mocked method
-func (m *MockInputRequest) FromPath() InputRequest {
-	args := m.Called()
-	return args.Get(0).(InputRequest)
+func (m *MockOutputRequest) FromPath() OutputRequest {
+	m.Called()
+	return m
 }
 
 // FromQuery is a mocked method
-func (m *MockInputRequest) FromQuery() InputRequest {
-	args := m.Called()
-	return args.Get(0).(InputRequest)
+func (m *MockOutputRequest) FromQuery() OutputRequest {
+	m.Called()
+	return m
 }
 
 // FromHeaders is a mocked method
-func (m *MockInputRequest) FromHeaders() InputRequest {
-	args := m.Called()
-	return args.Get(0).(InputRequest)
+func (m *MockOutputRequest) FromHeaders() OutputRequest {
+	m.Called()
+	return m
 }
 
 // FromCookies is a mocked method
-func (m *MockInputRequest) FromCookies() InputRequest {
-	args := m.Called()
-	return args.Get(0).(InputRequest)
+func (m *MockOutputRequest) FromCookies() OutputRequest {
+	m.Called()
+	return m
 }
 
 // FromForm is a mocked method
-func (m *MockInputRequest) FromForm() InputRequest {
-	args := m.Called()
-	return args.Get(0).(InputRequest)
+func (m *MockOutputRequest) FromForm() OutputRequest {
+	m.Called()
+	return m
 }
