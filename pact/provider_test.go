@@ -43,7 +43,7 @@ type JSONTemp struct {
 
 // A temporary logger is created to be used by the HTTPhandler
 type loggerMock struct {
-	t *testing.T
+	*testing.T
 }
 
 // It has all the logger functions that a normal logger has
@@ -98,7 +98,7 @@ func TestProvider(t *testing.T) {
 	}
 }
 
-func TestSendBroker(t *testing.T) {
+func TestSendBroker(*testing.T) {
 	pactPublisher := &dsl.Publisher{}
 	var conf PactConf
 	newVer := 1.0

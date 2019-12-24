@@ -13,7 +13,7 @@
                "Content-Type": "application/json"
             },
             "method": "GET",
-            "path": "/api/v1/healthcheck"
+            "path": "/healthcheck"
          },
          "response": {
             "status": 200,
@@ -30,7 +30,7 @@
          "providerState": "Return poyainmo basic data",
          "request": {
             "method": "GET",
-            "path": "/api/v1/user/basic-data",
+            "path": "/user/basic-data",
             "headers": {
                "Content-Type": "application/json"
             },

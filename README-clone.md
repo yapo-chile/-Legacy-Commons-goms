@@ -49,7 +49,7 @@ __SERVICE__ needs a description here.
   - Create a new Chart with `helm create k8s/__SERVICE__` cmd
   - Copy configmap.yaml from k8s/goms/templates/ and change goms to your __SERVICE__ name.
   - In the k8s/__SERVICE__/deployment.yaml file:
-      + Add `/api/v1/healthcheck` value to livenessProbe and readinessProbe section
+      + Add `/healthcheck` value to livenessProbe and readinessProbe section
       + Copy imagePullSecrets, annotations and envFrom section from goms example deploment.yaml and change the names to your service name
   - Delete goms chart
 * [ ] Delete this section
@@ -119,7 +119,7 @@ __SERVICE__ needs a description here.
   ```
 
 ## Endpoints
-### GET  /api/v1/healthcheck
+### GET  /healthcheck
 Reports whether the service is up and ready to respond.
 
 > When implementing a new service, you MUST keep this endpoint

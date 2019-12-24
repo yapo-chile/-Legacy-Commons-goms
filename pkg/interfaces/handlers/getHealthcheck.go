@@ -34,7 +34,6 @@ type getHealthcheckRequestError goutils.GenericError
 
 // Execute queries itself to get the service health status.
 func (h *GetHealthcheckHandler) Execute(ig InputGetter) *goutils.Response {
-
 	resp, err := h.GetHealthcheckInteractor.GetHealthcheck()
 	if err != nil {
 		return &goutils.Response{
@@ -44,6 +43,7 @@ func (h *GetHealthcheckHandler) Execute(ig InputGetter) *goutils.Response {
 			},
 		}
 	}
+
 	return &goutils.Response{
 		Code: http.StatusOK,
 		Body: getHealthcheckRequestOutput{

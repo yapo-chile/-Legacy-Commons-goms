@@ -27,5 +27,6 @@ func (i *GetHealthcheckInteractor) GetHealthcheck() (string, error) {
 	}
 
 	i.Logger.LogHealthcheckOK("Goms healthcheck answered successfully")
+
 	return resp, nil
 }

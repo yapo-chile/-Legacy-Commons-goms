@@ -30,6 +30,7 @@ func (h *FibonacciHandler) Input(ir InputRequest) HandlerInput {
 	input := fibonacciRequestInput{}
 	ir.Set(&input).
 		FromJSONBody()
+
 	return &input
 }
 
@@ -50,6 +51,7 @@ func (h *FibonacciHandler) Execute(ig InputGetter) *goutils.Response {
 
 	in := input.(*fibonacciRequestInput)
 	f, err := h.Interactor.GetNth(in.N)
+
 	if err != nil {
 		return &goutils.Response{
 			Code: http.StatusBadRequest,
@@ -58,6 +60,7 @@ func (h *FibonacciHandler) Execute(ig InputGetter) *goutils.Response {
 			},
 		}
 	}
+
 	return &goutils.Response{
 		Code: http.StatusOK,
 		Body: fibonacciRequestOutput{

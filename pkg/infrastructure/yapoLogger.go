@@ -16,6 +16,7 @@ func MakeYapoLogger(config *LoggerConf, metrics EventCollector) (loggers.Logger,
 		metrics: metrics,
 	}
 	err := log.init(config)
+
 	return log, err
 }
 
@@ -33,7 +34,9 @@ func (y *yapoLogger) init(config *LoggerConf) error {
 	if err := logger.Init(loggerConf); err != nil {
 		return err
 	}
+
 	logger.SetLogLevel(config.LogLevel)
+
 	return nil
 }
 

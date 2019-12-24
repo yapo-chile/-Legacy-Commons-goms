@@ -54,7 +54,7 @@ export PROMETHEUS_PORT=8877
 export PROMETHEUS_ENABLED=true
 
 # Goms Client variables
-export GOMS_HEALTH_PATH=http://localhost:${SERVICE_PORT}/api/v1/healthcheck
+export GOMS_HEALTH_PATH=http://localhost:${SERVICE_PORT}/healthcheck
 
 # Circuit breaker variables
 export CIRCUIT_BREAKER_FAILURE_RATIO=0.5

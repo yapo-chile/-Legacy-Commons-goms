@@ -43,6 +43,7 @@ func (interactor *FibonacciInteractor) GetNth(n int) (domain.Fibonacci, error) {
 	// Retrieve the latest pair
 	latest := interactor.Repository.LatestPair()
 	i, x := latest.Next()
+
 	err = interactor.Repository.Save(i, x)
 	if err != nil {
 		// Report the error

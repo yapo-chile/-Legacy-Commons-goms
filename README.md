@@ -127,7 +127,7 @@ Goms is the official golang microservice template for Yapo.
   - Enjoy! This should automatically enable quality-gate reports and a few other goodies
 
 ## Endpoints
-### GET  /api/v1/healthcheck
+### GET  /healthcheck
 Reports whether the service is up and ready to respond.
 
 > When implementing a new service, you MUST keep this endpoint
@@ -146,7 +146,7 @@ No request parameters
 }
 ```
 
-### GET  /api/v1/fibonacci
+### GET  /fibonacci
 Implements the Fibonacci Numbers with Clean Architecture
 
 #### Request
@@ -171,7 +171,7 @@ Implements the Fibonacci Numbers with Clean Architecture
 }
 ```
 
-### GET  /api/v1/user/basic-data?mail=[user_mail]
+### GET  /user/basic-data?mail=[user_mail]
 Returns the essential user data. It is in communication with the Profile Microservice. The main goal of this endpoint is to be used for a basic Pact Test.
 
 #### Request

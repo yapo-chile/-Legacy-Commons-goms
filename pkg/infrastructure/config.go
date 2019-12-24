@@ -79,6 +79,7 @@ func (cc CorsConf) GetHeaders() map[string]string {
 	if !cc.Enabled {
 		return map[string]string{}
 	}
+
 	return map[string]string{
 		"Origin":  cc.Origin,
 		"Methods": cc.Methods,
@@ -140,6 +141,7 @@ func valueFromEnv(envTag, envDefault string) string {
 		if err == nil {
 			return string(b)
 		}
+
 		fmt.Print(err)
 	}
 	// The value might be set directly on the environment
@@ -151,7 +153,7 @@ func valueFromEnv(envTag, envDefault string) string {
 }
 
 // load the variable defined in the envTag into Value
-func load(conf reflect.Value, envTag, envDefault string) {
+func load(conf reflect.Value, envTag, envDefault string) { //nolint: gocyclo, gocognit
 	if conf.Kind() == reflect.Ptr {
 		reflectedConf := reflect.Indirect(conf)
 		// Only attempt to set writeable variables
@@ -161,6 +163,7 @@ func load(conf reflect.Value, envTag, envDefault string) {
 			if envTag != "" && value == "" && !strings.HasSuffix(envTag, "_") {
 				fmt.Printf("Config for %s missing\n", envTag)
 			}
+
 			switch reflectedConf.Interface().(type) {
 			case int:
 				if value, err := strconv.ParseInt(value, 10, 32); err == nil {
@@ -193,6 +196,7 @@ func load(conf reflect.Value, envTag, envDefault string) {
 					reflectedConf.Set(reflect.ValueOf(t))
 				}
 			}
+
 			if reflectedConf.Kind() == reflect.Struct {
 				// Recursively load inner struct fields
 				for i := 0; i < reflectedConf.NumField(); i++ {

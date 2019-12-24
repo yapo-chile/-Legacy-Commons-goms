@@ -15,5 +15,6 @@ func (interactor *GetUserDataInteractor) GetUser(mail string) (UserBasicData, er
 	if err != nil {
 		return userProfile, fmt.Errorf("cannot retrieve the user's profile")
 	}
+
 	return userProfile, nil
 }

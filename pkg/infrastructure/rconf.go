@@ -51,6 +51,7 @@ func readAll(resp *http.Response, log RconfLogger) ([]byte, error) {
 				log.Error("Response: %s", string(body))
 			}
 		}
+
 		return nil, fmt.Errorf("response code invalid: %s", resp.Status)
 	}
 
@@ -60,8 +61,8 @@ func readAll(resp *http.Response, log RconfLogger) ([]byte, error) {
 		log.Error("Error on read body: %s", readErr.Error())
 		return nil, readErr
 	}
-	return body, nil
 
+	return body, nil
 }
 
 // NewRconf remote configuration loader
@@ -73,11 +74,12 @@ func NewRconf(host, path, prefix string, log RconfLogger) (*Rconf, error) {
 	rconf := &Rconf{Log: log, Content: &EtcdContent{}}
 
 	var netClient = &http.Client{
-		Timeout: time.Second * 100,
+		Timeout: time.Second * 100, //nolint: gomnd
 	}
 	// Build URL
 	url := fmt.Sprintf("%s%s%s", host, prefix, path)
 	resp, err := netClient.Get(url)
+
 	if err != nil {
 		log.Error("Error to get url %s", url)
 		return rconf, err
@@ -96,6 +98,7 @@ func NewRconf(host, path, prefix string, log RconfLogger) (*Rconf, error) {
 	}
 
 	log.Info("Conf %s loaded", url)
+
 	return rconf, nil
 }
 
@@ -118,5 +121,6 @@ func (v Rconf) Get(key string) string {
 func (v Rconf) Translate(key string) string {
 	msg := v.Get(key)
 	v.Log.Debug("Translate: %s, %s", key, msg)
+
 	return msg
 }
