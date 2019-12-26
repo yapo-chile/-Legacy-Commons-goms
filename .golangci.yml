@@ -27,5 +27,68 @@ linters-settings:
   gocyclo:
     # minimal code complexity to report, 30 by default (but we recommend 10-20)
     min-complexity: 20
+
+  funlen:
+    lines: 60
+    statements: 40
+
+  wsl:
+    # If true append is only allowed to be cuddled if appending value is
+    # matching variables, fields or types on line above. Default is true.
+    strict-append: false
+    # Allow declarations (var) to be cuddled.
+    allow-cuddle-declarations: true
+    # Allow trailing comments in ending of blocks
+    allow-trailing-comment: true
+
 linters:
-    enable-all: true
+    # please, do not use `enable-all`: it's deprecated and will be removed soon.
+    # inverted configuration with `enable-all` and `disable` is not scalable during updates of golangci-lint
+    disable-all: true
+    enable:
+      - bodyclose
+      - deadcode
+      - depguard
+      - dogsled
+      - dupl
+      - errcheck
+      - funlen
+      - gochecknoinits
+      - goconst
+      - gocritic
+      - gocyclo
+      - gofmt
+      - goimports
+      - golint
+      - gosec
+      - gosimple
+      - govet
+      - ineffassign
+      - interfacer
+      - lll
+      - misspell
+      - nakedret
+      - scopelint
+      - staticcheck
+      - structcheck
+      - stylecheck
+      - typecheck
+      - unconvert
+      - unparam
+      - unused
+      - varcheck
+      - whitespace
+    
+issues:
+  # Excluding configuration per-path, per-linter, per-text and per-source
+  exclude-rules:
+    # Exclude some linters from running on tests files.
+    - path: _test\.go
+      linters:
+        - gocyclo
+        - dupl
+        - gosec
+        - gomnd
+        - errcheck
+        - wsl
+        - golint

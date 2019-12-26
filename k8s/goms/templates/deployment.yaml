@@ -38,13 +38,13 @@ spec:
               protocol: TCP
           livenessProbe:
             httpGet:
-              path: /api/v1/healthcheck
+              path: "{{ .Values.healthcheck.path }}"
               port: http
             initialDelaySeconds: {{ .Values.healthcheck.liveness.initialDelaySeconds }}
             periodSeconds: {{ .Values.healthcheck.liveness.periodSeconds }}
           readinessProbe:
             httpGet:
-              path: /api/v1/healthcheck
+              path: "{{ .Values.healthcheck.path }}"
               port: http
             initialDelaySeconds: {{ .Values.healthcheck.readiness.initialDelaySeconds }}
             periodSeconds: {{ .Values.healthcheck.readiness.periodSeconds }}

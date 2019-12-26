@@ -50,6 +50,7 @@ func (h *HTTPCircuitBreakerHandler) Send(req repository.HTTPRequest) (interface{
 			return h.httpHandler.Send(req)
 		})
 	}
+
 	return response, err
 }
 
@@ -90,6 +91,7 @@ func NewCircuitBreaker(
 			}
 		},
 	}
+
 	return gobreaker.NewCircuitBreaker(settings)
 }
 

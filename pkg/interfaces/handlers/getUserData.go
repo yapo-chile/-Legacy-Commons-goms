@@ -45,8 +45,8 @@ type GetUserDataInteractor interface {
 // Input returns a fresh, empty instance of getUserDataRequestInput
 func (h *GetUserDataHandler) Input(ir InputRequest) HandlerInput {
 	input := getUserDataRequestInput{}
-	ir.Set(&input).
-		FromQuery()
+	ir.Set(&input).FromQuery()
+
 	return &input
 }
 
@@ -55,19 +55,25 @@ func (h *GetUserDataHandler) Execute(ig InputGetter) *goutils.Response {
 	input, response := ig()
 	if response != nil {
 		h.Logger.LogBadRequest(response)
+
 		return response
 	}
+
 	in := input.(*getUserDataRequestInput)
 	err := h.validateMail(in.Mail)
+
 	if err != nil {
 		h.Logger.LogBadRequest(err)
+
 		return &goutils.Response{
 			Code: http.StatusBadRequest,
 		}
 	}
+
 	userBasicData, err := h.Interactor.GetUser(in.Mail)
 	if err != nil {
 		h.Logger.LogErrorGettingInternalData(err)
+
 		return &goutils.Response{
 			Code: http.StatusNoContent,
 		}
@@ -94,10 +100,11 @@ func (h *GetUserDataHandler) fillInternalOutput(userBasicData usecases.UserBasic
 // validateMail validates if the mail is valid or invalid
 func (h *GetUserDataHandler) validateMail(mail string) error {
 	if len(strings.TrimSpace(mail)) == 0 {
-		return fmt.Errorf("Email is empty\n")
+		return fmt.Errorf("Email is empty\n") //nolint: stylecheck, golint
 	}
-	if h.EmailValidate.MatchString(mail) == false {
-		return fmt.Errorf("Email is invalid\n")
+
+	if !h.EmailValidate.MatchString(mail) {
+		return fmt.Errorf("Email is invalid\n") //nolint: stylecheck, golint
 	}
 
 	return nil

@@ -330,12 +330,12 @@ func TestJsonHandlerFuncHeaders(t *testing.T) {
 	fn := MakeJSONHandlerFunc(&h, &l, &ih, &mC, cache)
 	fn(w, r)
 
-	expectedHeaders := http.Header(http.Header{
+	expectedHeaders := http.Header{
 		"Access-Control-Allow-Methods": []string{"mistherious"},
 		"Access-Control-Allow-Origin":  []string{"myorigin"},
-		"Content-Type":                 []string{"application/json"}})
+		"Content-Type":                 []string{"application/json"}}
 
-	assert.Equal(t, expectedHeaders, w.HeaderMap)
+	assert.Equal(t, expectedHeaders, w.HeaderMap) //nolint: staticcheck
 	assert.Equal(t, 42, w.Code)
 	h.AssertExpectations(t)
 	ih.AssertExpectations(t)
@@ -377,12 +377,12 @@ func TestJsonHandlerFuncCache(t *testing.T) {
 	r.Header.Add("If-None-Match", "\"123\"")
 	fn(w, r)
 
-	expectedHeaders := http.Header(http.Header{
+	expectedHeaders := http.Header{
 		"Cache-Control": []string{"max-age=123"},
 		"Etag":          []string{"\"123\""},
-		"Content-Type":  []string{"application/json"}})
+		"Content-Type":  []string{"application/json"}}
 
-	assert.Equal(t, expectedHeaders, w.HeaderMap)
+	assert.Equal(t, expectedHeaders, w.HeaderMap) //nolint: staticcheck
 	assert.Equal(t, 304, w.Code)
 	h.AssertExpectations(t)
 	ih.AssertExpectations(t)

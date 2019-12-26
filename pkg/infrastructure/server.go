@@ -35,6 +35,7 @@ func (s *Server) ListenAndServe() {
 	if err := s.server.ListenAndServe(); err != http.ErrServerClosed {
 		s.logger.Crit("Error on server: %+v", err)
 	}
+
 	s.logger.Info("Closing server...")
 }
 

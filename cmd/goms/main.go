@@ -17,12 +17,14 @@ import (
 	// CLONE REMOVE END
 )
 
-func main() {
+func main() { //nolint: funlen
 	var shutdownSequence = infrastructure.NewShutdownSequence()
 	var conf infrastructure.Config
+
 	fmt.Printf("Etag:%d\n", conf.CacheConf.InitEtag())
 	shutdownSequence.Listen()
 	infrastructure.LoadFromEnv(&conf)
+
 	if jconf, err := json.MarshalIndent(conf, "", "    "); err == nil {
 		fmt.Printf("Config: \n%s\n", jconf)
 	} else {
@@ -30,25 +32,27 @@ func main() {
 	}
 
 	fmt.Printf("Setting up Prometheus\n")
+
 	prometheus := infrastructure.MakePrometheusExporter(
 		conf.PrometheusConf.Port,
 		conf.PrometheusConf.Enabled,
 	)
 
 	fmt.Printf("Setting up logger\n")
+
 	logger, err := infrastructure.MakeYapoLogger(&conf.LoggerConf,
 		prometheus.NewEventsCollector(
 			"goms_service_events_total",
 			"events tracker counter for goms service",
 		),
 	)
+
 	if err != nil {
 		fmt.Println(err)
-		os.Exit(2)
+		os.Exit(2) //nolint: gomnd
 	}
 
 	shutdownSequence.Push(prometheus)
-
 	logger.Info("Initializing resources")
 
 	// HealthHandler
@@ -66,10 +70,11 @@ func main() {
 	fibonacciHandler := handlers.FibonacciHandler{
 		Interactor: &fibonacciInteractor,
 	}
-	//
+
 	getUserDataHandlerLogger := loggers.MakeGetUserDataHandlerLogger(logger)
 
-	emailValidate := regexp.MustCompile("^[\\w_+-]+(\\.[\\w_+-]+)*\\.?@([\\w_+-]+\\.)+[\\w]{2,4}$")
+	emailFormat := "^[\\w_+-]+(\\.[\\w_+-]+)*\\.?@([\\w_+-]+\\.)+[\\w]{2,4}$"
+	emailValidate := regexp.MustCompile(emailFormat)
 	userProfileRepo := repository.NewUserProfileRepository(
 		HTTPHandler,
 		conf.ProfileConf.Host+conf.ProfileConf.UserDataPath+conf.ProfileConf.UserDataTokens,
@@ -153,7 +158,7 @@ func main() {
 		Routes: infrastructure.Routes{
 			{
 				// This is the base path, all routes will start with this prefix
-				Prefix: "/api/v{version:[1-9][0-9]*}",
+				Prefix: "",
 				Groups: []infrastructure.Route{
 					{
 						Name:    "Check service health",
@@ -168,7 +173,7 @@ func main() {
 						Pattern:   "/fibonacci",
 						Handler:   &fibonacciHandler,
 						UseCache:  true,
-						TimeCache: 60 * time.Minute,
+						TimeCache: 60 * time.Minute, //nolint: gomnd
 					},
 					{
 						Name:    "Retrieve healthcheck by doing a client request to itself",
@@ -203,8 +208,8 @@ func main() {
 	)
 	shutdownSequence.Push(server)
 	logger.Info("Starting request serving")
+
 	go server.ListenAndServe()
 	shutdownSequence.Wait()
 	logger.Info("Server exited normally")
-
 }

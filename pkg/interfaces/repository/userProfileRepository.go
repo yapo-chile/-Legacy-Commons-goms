@@ -32,23 +32,27 @@ func NewUserProfileRepository(handler HTTPHandler, path string) usecases.UserPro
 // it sends the sha1 representation of the provided email
 func (repo *UserProfileRepository) GetUserProfileData(email string) (usecases.UserBasicData, error) {
 	h := sha1.New()        // nolint: gosec
-	h.Write([]byte(email)) // nolint: gosec
+	h.Write([]byte(email)) // nolint: gosec, errcheck
 	sha1Email := fmt.Sprintf("%x", h.Sum(nil))
-
 	request := repo.Handler.NewRequest().SetMethod("GET").SetPath(fmt.Sprintf(repo.Path, sha1Email))
+
 	JSONResp, err := repo.Handler.Send(request)
 	if err == nil && JSONResp != "" {
 		resp := fmt.Sprintf("%s", JSONResp)
 		var userData map[string]usecases.UserBasicData
+
 		err := json.Unmarshal([]byte(resp), &userData)
 		if err != nil {
 			return usecases.UserBasicData{}, fmt.Errorf(errorUnmarshal, email)
 		}
+
 		val, ok := userData[sha1Email]
 		if !ok {
 			return usecases.UserBasicData{}, fmt.Errorf(errorNoUserDataFound, email)
 		}
+
 		return val, err
 	}
+
 	return usecases.UserBasicData{}, fmt.Errorf(errorNoUserDataFound, email)
 }

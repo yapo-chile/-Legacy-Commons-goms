@@ -30,7 +30,6 @@ func TestGetUserOk(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, expected, output)
 	m.AssertExpectations(t)
-
 }
 func TestGetUserError(t *testing.T) {
 	m := MockUserProfileRepository{}

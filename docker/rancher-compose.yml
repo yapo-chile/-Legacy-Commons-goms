@@ -5,7 +5,7 @@ services:
     start_on_create: true
     health_check:
       port: 8080
-      request_line: GET /api/v1/healthcheck HTTP/1.0
+      request_line: GET /healthcheck HTTP/1.0
       # Measured in milliseconds, sets how often the healthcheck is executed
       interval: 6000
       # Measured in milliseconds, sets time to wait before executing healthchecks

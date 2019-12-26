@@ -123,7 +123,7 @@ func (ih *inputHandler) SetInputRequest(ri handlers.InputRequest, hi handlers.Ha
 }
 
 // Input does the actual process of getting the input
-func (ih *inputHandler) Input() (handlers.HandlerInput, *goutils.Response) {
+func (ih *inputHandler) Input() (handlers.HandlerInput, *goutils.Response) { //nolint: funlen
 	if ih.inputRequest.output == nil {
 		return ih.output, &goutils.Response{
 			Code: http.StatusInternalServerError,

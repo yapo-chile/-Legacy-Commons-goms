@@ -65,7 +65,7 @@ info:
 	@echo "YO           : ${YO}"
 	@echo "ServerRoot   : ${SERVER_ROOT}"
 	@echo "API Base URL : ${BASE_URL}"
-	@echo "Healthcheck  : curl ${BASE_URL}/api/v1/healthcheck"
+	@echo "Healthcheck  : curl ${BASE_URL}/healthcheck"
 
 include docs.mk
 include docker.mk
