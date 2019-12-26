@@ -27,6 +27,7 @@ prometheus:
   port: "8877"
 
 healthcheck:
+  path: /healthcheck
   readiness:
     initialDelaySeconds: 5
     periodSeconds: 60
