@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	// CLONE REMOVE START
 	"regexp"
 	"time"
+	// CLONE REMOVE END
 
 	"github.mpi-internal.com/Yapo/goms/pkg/infrastructure"
 	"github.mpi-internal.com/Yapo/goms/pkg/interfaces/handlers"
@@ -57,9 +59,11 @@ func main() { //nolint: funlen
 
 	// HealthHandler
 	var healthHandler handlers.HealthHandler
+
+	// CLONE REMOVE START
 	// To handle http connections you can use an httpHandler
 	HTTPHandler := infrastructure.NewHTTPHandler(logger)
-	// CLONE REMOVE START
+
 	// FibonacciHandler
 	fibonacciLogger := loggers.MakeFibonacciLogger(logger)
 	fibonacciRepository := repository.NewMapFibonacciRepository()
