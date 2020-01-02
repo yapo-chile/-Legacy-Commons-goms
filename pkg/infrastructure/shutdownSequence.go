@@ -38,9 +38,9 @@ func (s *ShutdownSequence) Wait() {
 
 // close does the actual closing of things
 func (s *ShutdownSequence) close() {
-	for _, task := range s.sequence {
-		if err := task.Close(); err != nil {
-			fmt.Printf("Error closing the task of type %T: %+v\n", task, err)
+	for i := range s.sequence {
+		if err := s.sequence[i].Close(); err != nil {
+			fmt.Printf("Error closing the task of type %T: %+v\n", s.sequence[i].Close(), err)
 		}
 		s.waitGroup.Done()
 	}
