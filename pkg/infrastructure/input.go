@@ -53,55 +53,55 @@ var ErrNotPointer = errors.New(NotPointer)
 // ErrNotStruct describes an error that occurs when the var is not a struct
 var ErrNotStruct = errors.New(NotStruct)
 
-type outputRequest struct {
+type targetRequest struct {
 	out     interface{}
 	sources []InputSource
 }
 
 type inputRequest struct {
 	httpRequest *http.Request
-	outputs     []outputRequest
+	outputs     []targetRequest
 }
 
-func (ri *inputRequest) Set(output interface{}) handlers.OutputRequest {
-	out := outputRequest{out: output}
+func (ri *inputRequest) Set(output interface{}) handlers.TargetRequest {
+	out := targetRequest{out: output}
 	ri.outputs = append(ri.outputs, out)
 	return &ri.outputs[len(ri.outputs)-1]
 }
 
-func (out *outputRequest) FromJSONBody() handlers.OutputRequest {
+func (out *targetRequest) FromJSONBody() handlers.TargetRequest {
 	out.sources = append(out.sources, BODY)
 	return out
 }
 
-func (out *outputRequest) FromRawBody() handlers.OutputRequest {
+func (out *targetRequest) FromRawBody() handlers.TargetRequest {
 	out.sources = append(out.sources, RAWBODY)
 	return out
 }
 
-func (out *outputRequest) FromPath() handlers.OutputRequest {
+func (out *targetRequest) FromPath() handlers.TargetRequest {
 	out.sources = append(out.sources, PATH)
 	return out
 }
 
-func (out *outputRequest) FromQuery() handlers.OutputRequest {
+func (out *targetRequest) FromQuery() handlers.TargetRequest {
 	out.sources = append(out.sources, QUERY)
 	return out
 }
 
-func (out *outputRequest) FromHeaders() handlers.OutputRequest {
+func (out *targetRequest) FromHeaders() handlers.TargetRequest {
 	out.sources = append(out.sources, HEADERS)
 	return out
 }
 
 // FromCookies sets request cookies as handler input
-func (out *outputRequest) FromCookies() handlers.OutputRequest {
+func (out *targetRequest) FromCookies() handlers.TargetRequest {
 	out.sources = append(out.sources, COOKIES)
 	return out
 }
 
 // FromForm sets request form as handler input
-func (out *outputRequest) FromForm() handlers.OutputRequest {
+func (out *targetRequest) FromForm() handlers.TargetRequest {
 	out.sources = append(out.sources, FORM)
 	return out
 }
@@ -128,7 +128,7 @@ func (ih *inputHandler) SetInputRequest(ri handlers.InputRequest, hi handlers.Ha
 }
 
 // Input does the actual process of getting the input
-func (ih *inputHandler) Input() (handlers.HandlerInput, *goutils.Response) { //nolint: funlen
+func (ih *inputHandler) Input() (handlers.HandlerInput, *goutils.Response) { //nolint: funlen, gocyclo
 	if ih.inputRequest.outputs == nil || len(ih.inputRequest.outputs) == 0 {
 		return ih.output, &goutils.Response{
 			Code: http.StatusInternalServerError,

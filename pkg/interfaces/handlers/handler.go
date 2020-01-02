@@ -39,18 +39,18 @@ type InputHandler interface {
 
 // InputRequest defines what methods an input handler should have
 type InputRequest interface {
-	Set(interface{}) OutputRequest
+	Set(interface{}) TargetRequest
 }
 
-// OutputRequest defines what methods an output request should have
-type OutputRequest interface {
-	FromJSONBody() OutputRequest
-	FromRawBody() OutputRequest
-	FromPath() OutputRequest
-	FromQuery() OutputRequest
-	FromHeaders() OutputRequest
-	FromCookies() OutputRequest
-	FromForm() OutputRequest
+// TargetRequest defines what methods an output request should have
+type TargetRequest interface {
+	FromJSONBody() TargetRequest
+	FromRawBody() TargetRequest
+	FromPath() TargetRequest
+	FromQuery() TargetRequest
+	FromHeaders() TargetRequest
+	FromCookies() TargetRequest
+	FromForm() TargetRequest
 }
 
 // Cors methods to configure cache and cors
