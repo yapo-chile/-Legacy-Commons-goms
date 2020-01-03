@@ -4,11 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+
 	// CLONE REMOVE START
 	"regexp"
 	"time"
-	// CLONE REMOVE END
 
+	// CLONE REMOVE END
 	"github.mpi-internal.com/Yapo/goms/pkg/infrastructure"
 	"github.mpi-internal.com/Yapo/goms/pkg/interfaces/handlers"
 

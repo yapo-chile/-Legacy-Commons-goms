@@ -37,8 +37,9 @@ func (m *mockUserProfileInteractor) GetUser(mail string) (usecases.UserBasicData
 func TestGetUserDataHandlerInput(t *testing.T) {
 	m := mockUserProfileInteractor{}
 	mMockInputRequest := MockInputRequest{}
-	mMockInputRequest.On("Set", mock.AnythingOfType("*handlers.getUserDataRequestInput")).Return(&mMockInputRequest)
-	mMockInputRequest.On("FromQuery").Return(&mMockInputRequest)
+	mMockTargetRequest := MockTargetRequest{}
+	mMockInputRequest.On("Set", mock.AnythingOfType("*handlers.getUserDataRequestInput")).Return(&mMockTargetRequest)
+	mMockTargetRequest.On("FromQuery").Return()
 
 	h := GetUserDataHandler{
 		Interactor: &m,

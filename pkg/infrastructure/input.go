@@ -53,52 +53,57 @@ var ErrNotPointer = errors.New(NotPointer)
 // ErrNotStruct describes an error that occurs when the var is not a struct
 var ErrNotStruct = errors.New(NotStruct)
 
+type targetRequest struct {
+	out     interface{}
+	sources []InputSource
+}
+
 type inputRequest struct {
-	output      interface{}
 	httpRequest *http.Request
-	sources     []InputSource
+	outputs     []targetRequest
 }
 
-func (ri *inputRequest) Set(output interface{}) handlers.InputRequest {
-	ri.output = output
-	return ri
+func (ri *inputRequest) Set(output interface{}) handlers.TargetRequest {
+	out := targetRequest{out: output}
+	ri.outputs = append(ri.outputs, out)
+	return &ri.outputs[len(ri.outputs)-1]
 }
 
-func (ri *inputRequest) FromJSONBody() handlers.InputRequest {
-	ri.sources = append(ri.sources, BODY)
-	return ri
+func (out *targetRequest) FromJSONBody() handlers.TargetRequest {
+	out.sources = append(out.sources, BODY)
+	return out
 }
 
-func (ri *inputRequest) FromRawBody() handlers.InputRequest {
-	ri.sources = append(ri.sources, RAWBODY)
-	return ri
+func (out *targetRequest) FromRawBody() handlers.TargetRequest {
+	out.sources = append(out.sources, RAWBODY)
+	return out
 }
 
-func (ri *inputRequest) FromPath() handlers.InputRequest {
-	ri.sources = append(ri.sources, PATH)
-	return ri
+func (out *targetRequest) FromPath() handlers.TargetRequest {
+	out.sources = append(out.sources, PATH)
+	return out
 }
 
-func (ri *inputRequest) FromQuery() handlers.InputRequest {
-	ri.sources = append(ri.sources, QUERY)
-	return ri
+func (out *targetRequest) FromQuery() handlers.TargetRequest {
+	out.sources = append(out.sources, QUERY)
+	return out
 }
 
-func (ri *inputRequest) FromHeaders() handlers.InputRequest {
-	ri.sources = append(ri.sources, HEADERS)
-	return ri
+func (out *targetRequest) FromHeaders() handlers.TargetRequest {
+	out.sources = append(out.sources, HEADERS)
+	return out
 }
 
 // FromCookies sets request cookies as handler input
-func (ri *inputRequest) FromCookies() handlers.InputRequest {
-	ri.sources = append(ri.sources, COOKIES)
-	return ri
+func (out *targetRequest) FromCookies() handlers.TargetRequest {
+	out.sources = append(out.sources, COOKIES)
+	return out
 }
 
 // FromForm sets request form as handler input
-func (ri *inputRequest) FromForm() handlers.InputRequest {
-	ri.sources = append(ri.sources, FORM)
-	return ri
+func (out *targetRequest) FromForm() handlers.TargetRequest {
+	out.sources = append(out.sources, FORM)
+	return out
 }
 
 type inputHandler struct {
@@ -123,8 +128,8 @@ func (ih *inputHandler) SetInputRequest(ri handlers.InputRequest, hi handlers.Ha
 }
 
 // Input does the actual process of getting the input
-func (ih *inputHandler) Input() (handlers.HandlerInput, *goutils.Response) { //nolint: funlen
-	if ih.inputRequest.output == nil {
+func (ih *inputHandler) Input() (handlers.HandlerInput, *goutils.Response) { //nolint: funlen, gocyclo
+	if ih.inputRequest.outputs == nil || len(ih.inputRequest.outputs) == 0 {
 		return ih.output, &goutils.Response{
 			Code: http.StatusInternalServerError,
 			Body: goutils.GenericError{
@@ -134,59 +139,61 @@ func (ih *inputHandler) Input() (handlers.HandlerInput, *goutils.Response) { //n
 	}
 
 	hasError := false
-	reflectedOutput := reflect.ValueOf(ih.inputRequest.output)
-	for _, source := range ih.inputRequest.sources {
-		switch source {
-		case BODY:
-			hasError = hasError ||
-				goutils.ParseJSONBody(
-					ih.inputRequest.httpRequest,
-					ih.inputRequest.output,
-				) != nil
-		case RAWBODY:
-			rawBody, err := ioutil.ReadAll(ih.inputRequest.httpRequest.Body)
-			ih.inputRequest.httpRequest.Body = ioutil.NopCloser(bytes.NewBuffer(rawBody))
-			hasError = hasError || err != nil ||
-				ih.parseInput(
-					map[string]string{"body": string(rawBody)},
-					source,
-					reflectedOutput,
-				) != nil
-		case QUERY:
-			hasError = hasError ||
-				ih.parseInput(
-					ih.httpValuesToMap(ih.inputRequest.httpRequest.URL.Query()),
-					source,
-					reflectedOutput,
-				) != nil
-		case PATH:
-			hasError = hasError ||
-				ih.parseInput(
-					mux.Vars(ih.inputRequest.httpRequest),
-					source,
-					reflectedOutput,
-				) != nil
-		case HEADERS:
-			hasError = hasError ||
-				ih.parseInput(
-					ih.httpValuesToMap(ih.inputRequest.httpRequest.Header),
-					source,
-					reflectedOutput,
-				) != nil
-		case COOKIES:
-			hasError = hasError ||
-				ih.parseInput(
-					ih.httpCookiesToMap(ih.inputRequest.httpRequest.Cookies()),
-					source,
-					reflectedOutput,
-				) != nil
-		case FORM:
-			hasError = hasError ||
-				ih.parseInput(
-					ih.formToMap(ih.inputRequest.httpRequest.Body),
-					source,
-					reflectedOutput,
-				) != nil
+	for _, output := range ih.inputRequest.outputs {
+		reflectedOutput := reflect.ValueOf(output.out)
+		for _, source := range output.sources {
+			switch source {
+			case BODY:
+				hasError = hasError ||
+					goutils.ParseJSONBody(
+						ih.inputRequest.httpRequest,
+						output.out,
+					) != nil
+			case RAWBODY:
+				rawBody, err := ioutil.ReadAll(ih.inputRequest.httpRequest.Body)
+				ih.inputRequest.httpRequest.Body = ioutil.NopCloser(bytes.NewBuffer(rawBody))
+				hasError = hasError || err != nil ||
+					ih.parseInput(
+						map[string]string{"body": string(rawBody)},
+						source,
+						reflectedOutput,
+					) != nil
+			case QUERY:
+				hasError = hasError ||
+					ih.parseInput(
+						ih.httpValuesToMap(ih.inputRequest.httpRequest.URL.Query()),
+						source,
+						reflectedOutput,
+					) != nil
+			case PATH:
+				hasError = hasError ||
+					ih.parseInput(
+						mux.Vars(ih.inputRequest.httpRequest),
+						source,
+						reflectedOutput,
+					) != nil
+			case HEADERS:
+				hasError = hasError ||
+					ih.parseInput(
+						ih.httpValuesToMap(ih.inputRequest.httpRequest.Header),
+						source,
+						reflectedOutput,
+					) != nil
+			case COOKIES:
+				hasError = hasError ||
+					ih.parseInput(
+						ih.httpCookiesToMap(ih.inputRequest.httpRequest.Cookies()),
+						source,
+						reflectedOutput,
+					) != nil
+			case FORM:
+				hasError = hasError ||
+					ih.parseInput(
+						ih.formToMap(ih.inputRequest.httpRequest.Body),
+						source,
+						reflectedOutput,
+					) != nil
+			}
 		}
 	}
 
