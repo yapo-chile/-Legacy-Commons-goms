@@ -22,6 +22,7 @@ export REPORT_ARTIFACTS=reports
 # This variables are for the use of your microservice. This variables must be updated each time you are creating a new microservice
 export APPNAME=goms
 export APPFOLDER=goms
+export APPMODULE=github.mpi-internal.com/Yapo/${APPNAME}
 export YO=`whoami`
 export SERVICE_PORT=8080
 export SERVICE_HOST=:localhost
