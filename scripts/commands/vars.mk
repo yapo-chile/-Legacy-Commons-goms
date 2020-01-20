@@ -4,30 +4,18 @@ export GO_FILES = $(shell find . -iname '*.go' -type f | grep -v vendor | grep -
 GENPORTOFF?=0
 genport = $(shell expr ${GENPORTOFF} + \( $(shell id -u) - \( $(shell id -u) / 100 \) \* 100 \) \* 200 + 30100 + $(1))
 
-# BRANCH info from travis
-export BUILD_BRANCH=$(shell if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then echo "${TRAVIS_BRANCH}" | sed 's/@.*//'; else echo "${TRAVIS_PULL_REQUEST_BRANCH}"; fi)
-
-# GIT variables
-export BRANCH=$(shell git branch | sed -n 's/^\* //p')
-export GIT_BRANCH=$(shell if [ -n "${BUILD_BRANCH}" ]; then echo "${BUILD_BRANCH}"; else echo "${BRANCH}"; fi;)
-export GIT_COMMIT=$(shell git rev-parse HEAD)
-export GIT_COMMIT_DATE=$(shell TZ="America/Santiago" git show --quiet --date='format-local:%d-%m-%Y_%H:%M:%S' --format="%cd")
-export BUILD_CREATOR=$(shell git log --format=format:%ae | head -n 1)
-
 # REPORT_ARTIFACTS should be in sync with `RegexpFilePathMatcher` in
 # `reports-publisher/config.json`
 export REPORT_ARTIFACTS=reports
 
 # APP variables
 # This variables are for the use of your microservice. This variables must be updated each time you are creating a new microservice
-export APPNAME=goms
-export APPFOLDER=goms
 export APPMODULE=github.mpi-internal.com/Yapo/${APPNAME}
 export YO=`whoami`
 export SERVICE_PORT=8080
 export SERVICE_HOST=:localhost
 export SERVER_ROOT=${PWD}
-export BASE_URL="http://"${SERVICE_HOST}":"${SERVICE_PORT}"
+export BASE_URL="http://${SERVICE_HOST}:${SERVICE_PORT}"
 export MAIN_FILE=cmd/${APPNAME}/main.go
 export LOGGER_SYSLOG_ENABLED=false
 export LOGGER_STDLOG_ENABLED=true
@@ -40,8 +28,6 @@ export PACT_DIRECTORY=pact
 export PACT_TEST_ENABLED=false
 
 # DOCKER variables
-export DOCKER_REGISTRY=containers.mpi-internal.com
-export DOCKER_IMAGE=${DOCKER_REGISTRY}/yapo/${APPNAME}
 export DOCKER_PORT=$(call genport,1)
 
 # Documentation variables
