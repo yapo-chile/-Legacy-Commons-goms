@@ -23,8 +23,6 @@ install:
   - tar xzf pact-1.70.2-linux-x86_64.tar.gz -C $HOME --strip-components 1
   - export PATH=$PATH:$HOME/pact/bin
   - make setup    
-  # Export the current branch according to travis (including pr builds) 
-  - export BUILD_BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
 
 # script always run to completion (set +e). All of these code checks are must haves
 # in a modern Go project.
