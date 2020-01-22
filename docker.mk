@@ -11,7 +11,7 @@ docker-attach:
 	@scripts/commands/docker-attach.sh
 
 ## Start all required docker containers for this service
-docker-compose-up:
+docker-compose-up: docker-boot
 	@scripts/commands/docker-compose-up.sh
 
 ## Stop all running docker containers for this service
