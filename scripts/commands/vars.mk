@@ -10,10 +10,9 @@ export REPORT_ARTIFACTS=reports
 
 # APP variables
 # This variables are for the use of your microservice. This variables must be updated each time you are creating a new microservice
-export APPMODULE=github.mpi-internal.com/Yapo/${APPNAME}
 export YO=`whoami`
 export SERVICE_PORT=8080
-export SERVICE_HOST=:localhost
+export SERVICE_HOST=localhost
 export SERVER_ROOT=${PWD}
 export BASE_URL="http://${SERVICE_HOST}:${SERVICE_PORT}"
 export MAIN_FILE=cmd/${APPNAME}/main.go
@@ -41,7 +40,7 @@ export PROMETHEUS_PORT=8877
 export PROMETHEUS_ENABLED=true
 
 # Goms Client variables
-export GOMS_HEALTH_PATH=http://localhost:${SERVICE_PORT}/healthcheck
+export GOMS_HEALTH_PATH=${BASE_URL}/healthcheck
 
 # Circuit breaker variables
 export CIRCUIT_BREAKER_FAILURE_RATIO=0.5
