@@ -19,7 +19,7 @@ echoHeader "Running Unit Tests"
 
 function run_tests {
     # Get packages list except vendor and pact directories
-    packages=$(go list ./... | join -v 2 cover.exclude.directory.txt - | grep -v vendor | grep -v pact )
+	packages=$(go list ./... 2>/dev/null | join -v 2 cover.exclude.directory.txt - | egrep -v '/(mod|pact)/')
     # Create cover output file
     echo "mode: count" > ${COVER_FILE}
     # Test all packages from the list

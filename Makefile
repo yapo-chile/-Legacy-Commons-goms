@@ -14,6 +14,8 @@ export DOCKER_IMAGE ?= ${DOCKER_REGISTRY}/yapo/${APPNAME}
 export DOCKER_TAG ?= $(shell echo ${BRANCH} | tr '[:upper:]' '[:lower:]' | sed 's,/,_,g')
 export DOCKER ?= docker
 
+# Golang environment
+export GO111MODULE ?= on
 
 ## Run tests and generate quality reports
 test:
@@ -55,13 +57,28 @@ run:
 start: build run
 
 ## New development workflow
-run-dev: build-dev
+run-test: mod build-dev
 	${DOCKER} run -ti \
-		-v $$(pwd):/go/src/github.mpi-internal.com/Yapo/${APPNAME} \
-		-p ${SERVICE_PORT}:${SERVICE_PORT} ${DOCKER_IMAGE}:${DOCKER_TAG} \
+		-v $$(pwd):/app \
+		-v /var/empty:/app/mod \
+		-v $$(pwd)/mod:/go/pkg/mod \
+		-p ${SERVICE_PORT}:${SERVICE_PORT} \
 		--env APPNAME \
-		--env MAIN_FILE
+		--env MAIN_FILE \
+		--entrypoint "make" \
+		${DOCKER_IMAGE}:${DOCKER_TAG} \
+		test
 
+
+run-dev: mod build-dev
+	${DOCKER} run -ti \
+		-v $$(pwd):/app \
+		-v /var/empty:/app/mod \
+		-v $$(pwd)/mod:/go/pkg/mod \
+		-p ${SERVICE_PORT}:${SERVICE_PORT} \
+		--env APPNAME \
+		--env MAIN_FILE \
+		${DOCKER_IMAGE}:${DOCKER_TAG}
 
 build-dev:
 	${DOCKER} build \
@@ -70,6 +87,9 @@ build-dev:
 		--build-arg APPNAME \
 		--build-arg MAIN_FILE \
 		.
+
+mod:
+	mkdir -p mod
 
 ## Compile and start the service using docker
 docker-start: build docker-build docker-compose-up info
