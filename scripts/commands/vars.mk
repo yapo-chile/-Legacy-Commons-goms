@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 export UNAMESTR = $(uname)
-export GO_FILES = $(shell find . -iname '*.go' -type f | grep -v vendor | grep -v pact) # All the .go files, excluding vendor/ and pact/
+export GO_FILES = $(shell find . -iname '*.go' -type f | egrep -v '/(mod|pact)/') # All the .go files, excluding mod/ and pact/
 GENPORTOFF?=0
 genport = $(shell expr ${GENPORTOFF} + \( $(shell id -u) - \( $(shell id -u) / 100 \) \* 100 \) \* 200 + 30100 + $(1))
 
