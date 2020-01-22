@@ -1,4 +1,5 @@
 include scripts/commands/vars.mk
+include scripts/commands/colors.mk
 
 # Image information
 export APPNAME ?= $(shell basename `git rev-parse --show-toplevel`)
@@ -34,9 +35,6 @@ checkstyle:
 	@scripts/commands/test_style.sh display
 
 ## Install golang system level dependencies
-setup:
-	@scripts/commands/setup.sh
-	
 ## Compile and build the executable file for pact tests
 pact-build:
 	scripts/commands/pact-build.sh
@@ -88,6 +86,7 @@ build-dev:
 		--build-arg MAIN_FILE \
 		.
 
+## Setup directory for module cache
 mod:
 	mkdir -p mod
 
