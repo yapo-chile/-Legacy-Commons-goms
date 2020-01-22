@@ -6,11 +6,6 @@ export PROFILE_HOST=http://localhost:${PROFILE_MS_PORT}
 
 file=pact-go_$(uname -s)_amd64.tar.gz
 
-# Include colors.sh
-DIR="${BASH_SOURCE%/*}"
-if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
-. "$DIR/colors.sh"
-
 # Validate pact-go binaries
 if [ ! -f "$PACT_DIRECTORY/bin/pact-go" ]; then
   echoTitle "Downloading binaries..."

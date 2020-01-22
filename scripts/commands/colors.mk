@@ -3,13 +3,13 @@ export ENABLE_COLORS=true
 
 # Echo color variables
 ## Header Color
-export HC='\033[1;33m'
+export HC=\033[1;33m
 ## Title Color
-export TC='\033[0;33m'
+export TC=\033[0;33m
 ## Error Color
-export EC='\033[0;31m'
+export EC=\033[0;31m
 ## No Color
-export NC='\033[0m'
+export NC=\033[0m
 
 define BASH_FUNC_echoColor%%
 () {
