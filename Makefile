@@ -1,5 +1,6 @@
 include scripts/commands/vars.mk
 include scripts/commands/colors.mk
+SHELL=bash
 
 # Image information
 export APPNAME ?= $(shell basename `git rev-parse --show-toplevel`)
@@ -23,15 +24,21 @@ test:
 	@scripts/commands/test.sh
 
 ## Run tests and output coverage reports
-cover:
-	@scripts/commands/test_cover.sh cli
+cover: run-test-cover-int
 
 ## Run tests and open report on default web browser
-coverhtml:
-	@scripts/commands/test_cover.sh html
+coverhtml: run-test-coverhtml-int
 
 ## Run gometalinter and output report as text
-checkstyle:
+checkstyle: run-test-checkstyle-int
+
+cover-int:
+	@scripts/commands/test_cover.sh cli
+
+coverhtml-int:
+	@scripts/commands/test_cover.sh html
+
+checkstyle-int:
 	@scripts/commands/test_style.sh display
 
 ## Install golang system level dependencies
@@ -44,15 +51,13 @@ pact-test: pact-build
 	scripts/commands/pact-test.sh
 	
 ## Compile the code
-build:
-	@scripts/commands/build.sh
+build: build-dev
 
 ## Execute the service
-run:
-	@env APP_PORT=${SERVICE_PORT} ./${APPNAME}
+run: run-dev
 
 ## Compile and start the service
-start: build run
+start: run-dev
 
 ## New development workflow
 
@@ -64,6 +69,7 @@ run-dev: mod build-dev
 		-p ${SERVICE_PORT}:${SERVICE_PORT} \
 		--env APPNAME \
 		--env MAIN_FILE \
+		--name ${APPNAME}
 		${DOCKER_IMAGE}:${DOCKER_TAG}
 
 build-dev:
@@ -73,13 +79,21 @@ build-dev:
 		--build-arg APPNAME \
 		--build-arg MAIN_FILE \
 		.
+clean-dev:
+	${DOCKER} rm ${APPNAME} || true
 
-run-test: mod build-test
+run-test-%:
+	make TEST_CMD="make $*" run-test
+
+run-test: mod build-test clean-test
 	${DOCKER} run -ti \
 		-p ${SERVICE_PORT}:${SERVICE_PORT} \
 		--env APPNAME \
 		--env MAIN_FILE \
-		${DOCKER_IMAGE}:test
+		--env BRANCH \
+		--name ${APPNAME}-test \
+		${DOCKER_IMAGE}:test ${TEST_CMD}
+	[[ "${TEST_CMD}" =~ coverhtml ]] && ${DOCKER} cp ${APPNAME}-test:/app/cover.html ./cover.html && open ./cover.html || true
 
 build-test:
 	${DOCKER} build \
@@ -88,6 +102,9 @@ build-test:
 		--build-arg APPNAME \
 		--build-arg MAIN_FILE \
 		.
+
+clean-test:
+	${DOCKER} rm ${APPNAME}-test || true
 
 ## Setup directory for module cache
 mod:

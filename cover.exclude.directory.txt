@@ -1,1 +1,2 @@
+github.mpi-internal.com/Yapo/goms/pact
 github.mpi-internal.com/Yapo/goms/pkg/infrastructure

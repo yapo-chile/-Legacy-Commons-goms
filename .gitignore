@@ -27,3 +27,4 @@ daemon.*
 log/*
 nohup.*
 mod/
+cover.html
