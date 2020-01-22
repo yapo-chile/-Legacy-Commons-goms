@@ -55,18 +55,6 @@ run:
 start: build run
 
 ## New development workflow
-run-test: mod build-dev
-	${DOCKER} run -ti \
-		-v $$(pwd):/app \
-		-v /var/empty:/app/mod \
-		-v $$(pwd)/mod:/go/pkg/mod \
-		-p ${SERVICE_PORT}:${SERVICE_PORT} \
-		--env APPNAME \
-		--env MAIN_FILE \
-		--entrypoint "make" \
-		${DOCKER_IMAGE}:${DOCKER_TAG} \
-		test
-
 
 run-dev: mod build-dev
 	${DOCKER} run -ti \
@@ -82,6 +70,21 @@ build-dev:
 	${DOCKER} build \
 		-t ${DOCKER_IMAGE}:${DOCKER_TAG} \
 		-f docker/dockerfile.dev \
+		--build-arg APPNAME \
+		--build-arg MAIN_FILE \
+		.
+
+run-test: mod build-test
+	${DOCKER} run -ti \
+		-p ${SERVICE_PORT}:${SERVICE_PORT} \
+		--env APPNAME \
+		--env MAIN_FILE \
+		${DOCKER_IMAGE}:test
+
+build-test:
+	${DOCKER} build \
+		-t ${DOCKER_IMAGE}:test \
+		-f docker/dockerfile.test \
 		--build-arg APPNAME \
 		--build-arg MAIN_FILE \
 		.
