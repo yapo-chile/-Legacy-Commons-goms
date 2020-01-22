@@ -1,10 +1,5 @@
 #!/usr/bin/env bash
 
-# Include colors.sh
-DIR="${BASH_SOURCE%/*}"
-if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
-. "$DIR/colors.sh"
-
 echoHeader "Scraping documentation from godoc webserver"
 wget -r -nv -np -N -E -p -k -e robots=off --include-directories="/pkg,/lib" --exclude-directories="*" http://${DOCS_HOST}/pkg/${DOCS_PATH}/
 
