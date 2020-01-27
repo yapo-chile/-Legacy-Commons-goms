@@ -1,0 +1,18 @@
+version: '3'
+services:
+  goms:
+    build:
+      context: .
+      dockerfile: docker/dockerfile.dev
+    container_name: ${APPNAME}
+    image: ${DOCKER_IMAGE}:${DOCKER_TAG}
+    ports:
+     - "${SERVICE_PORT}:${SERVICE_PORT}"
+     - "${PROMETHEUS_PORT}:${PROMETHEUS_PORT}"
+    volumes:
+      - ./:/app
+      - /var/empty:/app/mod
+      - ./mod:/go/pkg/mod
+    environment:
+      - APPNAME
+      - MAIN_FILE

@@ -9,7 +9,7 @@ CHECKSTYLE_FILE=${REPORT_ARTIFACTS}/checkstyle-report.xml
 echoHeader "Running Checkstyle Tests"
 
 if [[ -n "$TRAVIS" ]]; then
-    golangci-lint -c .golangci.yml run ./... | tee /dev/tty > ${CHECKSTYLE_FILE} && echo
+	golangci-lint -c .golangci.yml run ./... | tee /dev/tty > ${CHECKSTYLE_FILE} && echo
 else
     golangci-lint -c .golangci.yml --out-format "colored-line-number" run ./...
 fi

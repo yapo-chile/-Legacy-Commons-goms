@@ -5,9 +5,9 @@ volumes:
 # CLONE-RCONF REMOVE END
 services:
   goms:
-    image: ${DOCKER_IMAGE}:local
+    image: ${DOCKER_IMAGE}:${DOCKER_TAG}
     ports:
-     - "${DOCKER_PORT}:8080"
+     - "${SERVICE_PORT}:8080"
     labels:
       prometheus.port: ${PROMETHEUS_PORT}
     # CLONE-RCONF REMOVE START

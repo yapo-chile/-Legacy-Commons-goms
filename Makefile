@@ -20,8 +20,7 @@ export DOCKER ?= docker
 export GO111MODULE ?= on
 
 ## Run tests and generate quality reports
-test:
-	@scripts/commands/test.sh
+test: run-test-test-int
 
 ## Run tests and output coverage reports
 cover: run-test-cover-int
@@ -31,6 +30,9 @@ coverhtml: run-test-coverhtml-int
 
 ## Run gometalinter and output report as text
 checkstyle: run-test-checkstyle-int
+
+test-int:
+	@scripts/commands/test.sh
 
 cover-int:
 	@scripts/commands/test_cover.sh cli
@@ -61,50 +63,31 @@ start: run-dev
 
 ## New development workflow
 
-run-dev: mod build-dev
-	${DOCKER} run -ti \
-		-v $$(pwd):/app \
-		-v /var/empty:/app/mod \
-		-v $$(pwd)/mod:/go/pkg/mod \
-		-p ${SERVICE_PORT}:${SERVICE_PORT} \
-		--env APPNAME \
-		--env MAIN_FILE \
-		--name ${APPNAME}
-		${DOCKER_IMAGE}:${DOCKER_TAG}
-
-build-dev:
-	${DOCKER} build \
-		-t ${DOCKER_IMAGE}:${DOCKER_TAG} \
-		-f docker/dockerfile.dev \
-		--build-arg APPNAME \
-		--build-arg MAIN_FILE \
-		.
-clean-dev:
-	${DOCKER} rm ${APPNAME} || true
+run-dev: mod
+	docker-compose \
+		--project-directory . \
+		-f docker/docker-compose.dev.yml \
+		up \
+		--build
 
 run-test-%:
 	make TEST_CMD="make $*" run-test
 
-run-test: mod build-test clean-test
-	${DOCKER} run -ti \
-		-p ${SERVICE_PORT}:${SERVICE_PORT} \
-		--env APPNAME \
-		--env MAIN_FILE \
-		--env BRANCH \
-		--name ${APPNAME}-test \
-		${DOCKER_IMAGE}:test ${TEST_CMD}
-	[[ "${TEST_CMD}" =~ coverhtml ]] && ${DOCKER} cp ${APPNAME}-test:/app/cover.html ./cover.html && open ./cover.html || true
+run-test: mod build-test
+	docker-compose \
+		--project-directory . \
+		-f docker/docker-compose.test.yml \
+		run goms
+	@[[ "${TEST_CMD}" =~ coverhtml ]] && ${DOCKER} cp ${APPNAME}-test:/app/cover.html ./cover.html && open ./cover.html || true
 
 build-test:
-	${DOCKER} build \
-		-t ${DOCKER_IMAGE}:test \
-		-f docker/dockerfile.test \
+	docker-compose \
+		--project-directory . \
+		-f docker/docker-compose.test.yml \
+		build \
 		--build-arg APPNAME \
 		--build-arg MAIN_FILE \
-		.
-
-clean-test:
-	${DOCKER} rm ${APPNAME}-test || true
+		goms
 
 ## Setup directory for module cache
 mod:

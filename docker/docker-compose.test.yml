@@ -1,0 +1,13 @@
+version: '3'
+services:
+  goms:
+    build:
+      context: .
+      dockerfile: docker/dockerfile.test
+    command: ${TEST_CMD}
+    container_name: ${APPNAME}-test
+    image: ${DOCKER_IMAGE}:test
+    environment:
+      - APPNAME
+      - MAIN_FILE
+      - BRANCH

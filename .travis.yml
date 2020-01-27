@@ -23,13 +23,13 @@ before_install:
 # set -e enabled in bash.
 install:
   # run the initial setup
-  - make build-dev
+  #- make build-dev
 
 # script always run to completion (set +e). All of these code checks are must haves
 # in a modern Go project.
 script:
   # Generate coverage and checkstyle report
-  - make run-test
+  - make test
     #- make pact-test
     #- make docker-build
 

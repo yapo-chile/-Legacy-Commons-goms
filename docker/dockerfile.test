@@ -26,4 +26,4 @@ ENV MAIN_FILE ${MAIN_FILE:-main.go}
 WORKDIR /app
 COPY ./ .
 
-CMD make test
+CMD make run-test
