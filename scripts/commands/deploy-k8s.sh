@@ -1,8 +1,7 @@
 echo "Publishing helm package to Artifactory"
 
 export CHART_DIR=k8s/goms
-export CHART_VERSION=$(grep version $CHART_DIR/Chart.yaml | awk '{print $2}')
 
 helm lint ${CHART_DIR}
-helm package ${CHART_DIR} --version ${CHART_VERSION}
+helm package ${CHART_DIR}
 jfrog rt u "*.tgz" "helm-local/yapo/" || true
