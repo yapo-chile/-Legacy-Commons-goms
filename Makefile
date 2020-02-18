@@ -43,13 +43,6 @@ pact-test: pact-build
 clone:
 	@scripts/commands/clone.sh
 
-## Upload helm charts for deploying on k8s
-helm-publish:
-	@echoHeader "Publishing helm package to Artifactory"
-	helm lint ${CHART_DIR}
-	helm package ${CHART_DIR}
-	jfrog rt u "*.tgz" "helm-local/yapo/" || true
-
 ## Display basic service info
 info:
 	@echo "YO           : ${YO}"
@@ -57,6 +50,7 @@ info:
 	@echo "API Base URL : ${BASE_URL}"
 	@echo "Healthcheck  : curl ${BASE_URL}/healthcheck"
 
+include mk/deploy.mk
 include mk/dev.mk
 include mk/test.mk
 include mk/docs.mk
