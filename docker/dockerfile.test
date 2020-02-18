@@ -18,12 +18,7 @@ ENV PATH="/pact/bin:${PATH}"
 
 EXPOSE 8080
 
-ARG APPNAME
-ARG MAIN_FILE
-ENV APPNAME ${APPNAME:-goms}
-ENV MAIN_FILE ${MAIN_FILE:-main.go}
-
 WORKDIR /app
 COPY ./ .
 
-CMD make test
+CMD make test-int

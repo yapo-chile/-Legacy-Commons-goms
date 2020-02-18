@@ -20,7 +20,7 @@ before_install:
 install: skip
 
 script:
-  - make run-test
+  - make test
     #- make pact-test
 
 after_failure:
@@ -35,6 +35,6 @@ deploy:
     on:
       all_branches: true
   - provider: script
-    script: make deploy-k8s
+    script: make helm-publish
     on:
       tags: true

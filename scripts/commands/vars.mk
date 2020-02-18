@@ -1,24 +1,10 @@
 #!/usr/bin/env bash
-export UNAMESTR = $(uname)
-export GO_FILES = $(shell find . -iname '*.go' -type f | egrep -v '/(mod|pact)/') # All the .go files, excluding mod/ and pact/
 GENPORTOFF?=0
 genport = $(shell expr ${GENPORTOFF} + \( $(shell id -u) - \( $(shell id -u) / 100 \) \* 100 \) \* 200 + 30100 + $(1))
 
 # REPORT_ARTIFACTS should be in sync with `RegexpFilePathMatcher` in
 # `reports-publisher/config.json`
 export REPORT_ARTIFACTS=reports
-
-# APP variables
-# This variables are for the use of your microservice. This variables must be updated each time you are creating a new microservice
-export YO=`whoami`
-export SERVICE_PORT=8080
-export SERVICE_HOST=localhost
-export SERVER_ROOT=${PWD}
-export BASE_URL="http://${SERVICE_HOST}:${SERVICE_PORT}"
-export MAIN_FILE=cmd/${APPNAME}/main.go
-export LOGGER_SYSLOG_ENABLED=false
-export LOGGER_STDLOG_ENABLED=true
-export LOGGER_LOG_LEVEL=0
 
 # Pact test variables
 export PACT_MAIN_FILE=cmd/${APPNAME}/main.go
@@ -35,23 +21,11 @@ export DOCS_HOST=localhost:$(call genport,3)
 export DOCS_PATH=github.mpi-internal.com/Yapo/${APPNAME}
 export DOCS_COMMIT_MESSAGE=Generate updated documentation
 
-# Prometheus variables
-export PROMETHEUS_PORT=8877
-export PROMETHEUS_ENABLED=true
-
 # Goms Client variables
 export GOMS_HEALTH_PATH=${BASE_URL}/healthcheck
 
-# Circuit breaker variables
-export CIRCUIT_BREAKER_FAILURE_RATIO=0.5
-export CIRCUIT_BREAKER_CONSECUTIVE_FAILURE=2
-
 # User config
 export PROFILE_HOST=http://10.15.1.78:7987
-
-# Rancher Deploy
-export RANCHER_DEPLOY_IMAGE=containers.mpi-internal.com/yapo/rancher-deploy:0.0.40
-export RANCHER_ENV_REPO=Yapo/rancher-deploy-envs
 
 #Pact broker
 export PACT_BROKER_HOST=http://3.229.36.112
