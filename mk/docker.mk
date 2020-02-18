@@ -1,15 +1,6 @@
-## Compile and start the service using docker
-docker-start: build docker-build docker-compose-up info
-
-## Stop docker containers
-docker-stop: docker-compose-down
-
 ## Create production build
-build: docker-build
-
-## Create docker image based on docker/dockerfile
-docker-build: docker-boot
-	echoHeader "Building production docker image"
+build: docker-boot
+	@echoHeader "Building production docker image"
 	set -x
 	${DOCKER} build \
 		-t ${DOCKER_IMAGE}:${DOCKER_TAG} \
@@ -26,10 +17,19 @@ docker-build: docker-boot
 	${DOCKER} tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:${COMMIT_DATE_UTC}
 	set +x
 
+.PHONY: build
+
+## Compile and start the service using docker
+docker-start: build docker-build docker-compose-up info
+
+## Stop docker containers
+docker-stop: docker-compose-down
 
 ## Push docker image to containers.mpi-internal.com
-docker-publish: docker-build
-	@scripts/commands/docker-publish.sh
+docker-publish: build
+	@echoTitle "Publishing docker image to Artifactory"
+	${DOCKER} login --username "${ARTIFACTORY_USER}" --password "${ARTIFACTORY_PWD}" "${DOCKER_REGISTRY}"
+	${DOCKER} push "${DOCKER_IMAGE}"
 
 
 ## Attach to this service's currently running docker container output stream

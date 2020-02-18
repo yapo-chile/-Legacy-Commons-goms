@@ -2,6 +2,7 @@
 test: build-test
 	${DOCKER} run -ti --rm \
 		-p ${SERVICE_PORT}:${SERVICE_PORT} \
+		-v $$(pwd)/${REPORT_ARTIFACTS}:/app/${REPORT_ARTIFACTS} \
 		--name ${APPNAME}-test \
 		${DOCKER_IMAGE}:test ${TEST_CMD:-test}
 	[[ "${TEST_CMD}" =~ coverhtml ]] && ${DOCKER} cp ${APPNAME}-test:/app/cover.html ./cover.html && open ./cover.html || true
@@ -34,7 +35,9 @@ checkstyle-int:
 	@scripts/commands/test_style.sh display
 
 test-int:
-	@scripts/commands/test.sh
+	@echoHeader "Running Tests"
+	@scripts/commands/test_style.sh
+	@scripts/commands/test_cover.sh
 
 test-%:
 	make TEST_CMD="make $*" test
