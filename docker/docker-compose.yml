@@ -9,7 +9,7 @@ services:
       args:
         - APPNAME
         - MAIN_FILE=cmd/${APPNAME}/main.go
-      context: ..
+      context: .
       dockerfile: docker/dockerfile.dev
     image: ${DOCKER_IMAGE}:${DOCKER_TAG}
     ports:

@@ -12,7 +12,7 @@ helm-publish:
 	jfrog rt u "*.tgz" "helm-local/yapo/" || true
 
 ## Create production build
-build: docker-boot
+build:
 	@echoHeader "Building production docker image"
 	set -x
 	${DOCKER} build \

@@ -1,3 +1,4 @@
+include mk/help.mk
 include scripts/commands/vars.mk
 include scripts/commands/colors.mk
 SHELL=bash
@@ -50,9 +51,7 @@ info:
 	@echo "API Base URL : ${BASE_URL}"
 	@echo "Healthcheck  : curl ${BASE_URL}/healthcheck"
 
-include mk/deploy.mk
 include mk/dev.mk
 include mk/test.mk
+include mk/deploy.mk
 include mk/docs.mk
-include mk/docker.mk
-include mk/help.mk

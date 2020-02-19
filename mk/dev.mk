@@ -1,27 +1,18 @@
-## Compile and start the service
-run start: run-dev
+## Build and start the service in development mode (detached)
+run: mod build-dev "docker-compose-up -d"
+
+## Build and start the service in development mode (attached)
+start: mod build-dev docker-compose-up
 
 .PHONY: run start
 
-## Run the service in development mode
-run-dev: mod build-dev
-	${DOCKER} run -ti --rm \
-		-v $$(pwd):/app \
-		-v /var/empty:/app/mod \
-		-v $$(pwd)/mod:/go/pkg/mod \
-		-p ${SERVICE_PORT}:${SERVICE_PORT} \
-		--env APPNAME \
-		--name ${APPNAME} \
-		${DOCKER_IMAGE}:${DOCKER_TAG}
-
 ## Build develoment docker image
-build-dev:
-	${DOCKER} build \
-		-t ${DOCKER_IMAGE}:${DOCKER_TAG} \
-		-f docker/dockerfile.dev \
-		--build-arg APPNAME \
-		.
+build-dev: docker-compose-build
 
 ## Setup directory for go module cache
 mod:
 	mkdir -p mod
+
+## Run docker compose commands with the project configuration
+docker-compose-%:
+	docker-compose -f docker/docker-compose.yml -p ${APPNAME} --project-directory . $*
