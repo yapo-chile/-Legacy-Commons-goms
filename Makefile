@@ -54,4 +54,3 @@ info:
 include mk/dev.mk
 include mk/test.mk
 include mk/deploy.mk
-include mk/docs.mk

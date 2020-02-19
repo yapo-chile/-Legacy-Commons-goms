@@ -11,10 +11,10 @@ helm-publish:
 	helm package ${CHART_DIR}
 	jfrog rt u "*.tgz" "helm-local/yapo/" || true
 
-## Create production build
+## Create production docker image
 build:
 	@echoHeader "Building production docker image"
-	set -x
+	@set -x
 	${DOCKER} build \
 		-t ${DOCKER_IMAGE}:${DOCKER_TAG} \
 		-f docker/dockerfile \
@@ -28,6 +28,6 @@ build:
 		--label commit-date=${COMMIT_DATE} \
 		.
 	${DOCKER} tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:${COMMIT_DATE_UTC}
-	set +x
+	@set +x
 
 .PHONY: build
