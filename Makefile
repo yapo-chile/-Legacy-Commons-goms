@@ -31,15 +31,7 @@ export SERVICE_HOST=localhost
 export SERVER_ROOT=${PWD}
 export BASE_URL="http://${SERVICE_HOST}:${SERVICE_PORT}"
 
-## Install golang system level dependencies
-## Compile and build the executable file for pact tests
-pact-build:
-	scripts/commands/pact-build.sh
 
-## Execute pact tests
-pact-test: pact-build
-	scripts/commands/pact-test.sh
-	
 ## Setup a new service repository based on goms
 clone:
 	@scripts/commands/clone.sh

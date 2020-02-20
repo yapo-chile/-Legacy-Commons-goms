@@ -21,7 +21,7 @@ install: skip
 
 script:
   - make test
-    #- make pact-test
+  - make pact
 
 after_failure:
   - reports-publisher

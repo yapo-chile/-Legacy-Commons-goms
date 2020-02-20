@@ -3,9 +3,10 @@ test: build-test
 	${DOCKER} run -ti --rm \
 		-p ${SERVICE_PORT}:${SERVICE_PORT} \
 		-v $$(pwd)/${REPORT_ARTIFACTS}:/app/${REPORT_ARTIFACTS} \
+		--env APPNAME \
 		--env BRANCH \
 		--name ${APPNAME}-test \
-		${DOCKER_IMAGE}:test ${TEST_CMD:-make test-int}
+		${DOCKER_IMAGE}:test ${TEST_CMD}
 	[[ "${TEST_CMD}" =~ coverhtml ]] && ${DOCKER} cp ${APPNAME}-test:/app/cover.html ./cover.html && open ./cover.html || true
 
 ## Build test docker image
@@ -26,6 +27,9 @@ coverhtml: test-coverhtml-int
 ## Run code linter and output report as text
 checkstyle: test-checkstyle-int
 
+## Run pact tests
+pact: test-pact-int
+
 # Internal targets are run on the test docker container,
 # they are not intended to be run directly
 
@@ -37,6 +41,9 @@ coverhtml-int:
 
 checkstyle-int:
 	@scripts/commands/test_style.sh display
+
+pact-int:
+	@scripts/commands/pact-test.sh
 
 test-int:
 	@echoHeader "Running Tests"

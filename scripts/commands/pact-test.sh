@@ -3,6 +3,8 @@ export PACT_TEST_ENABLED=true
 export PROFILE_MS_PORT=5555
 export PROFILE_HOST=http://localhost:${PROFILE_MS_PORT}
 
+echoTitle "Building pact test binary"
+go build -v -o ${PACT_BINARY} ./${PACT_MAIN_FILE}
 
 file=pact-go_$(uname -s)_amd64.tar.gz
 
@@ -35,6 +37,8 @@ echo ${MS_PID}
 sleep 10
 cd pact
 go test -v -run TestProvider
+EXIT_CODE=$?
+
 if [[ -n "$TRAVIS" ]]; then
   go test -v -run TestSendBroker
 fi
@@ -44,3 +48,4 @@ kill -9 ${PROFILE_PID}
 kill -9 ${MS_PID}
 
 echoTitle "Done"
+exit ${EXIT_CODE}
