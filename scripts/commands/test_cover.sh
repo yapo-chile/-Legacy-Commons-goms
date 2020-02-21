@@ -9,7 +9,7 @@ TMP_COVER_FILE=${REPORT_ARTIFACTS}/cover.out.tmp
 COVERAGE_REPORT=${REPORT_ARTIFACTS}/coverage.xml
 JUNIT_REPORT=${REPORT_ARTIFACTS}/junit-report.xml
 EXCLUDE_FILE=./cover.exclude.directory.txt
-COVER_HTML_FILE=./cover.html
+COVER_HTML_FILE=${REPORT_ARTIFACTS}/cover.html
 
 echoHeader "Running Unit Tests"
 

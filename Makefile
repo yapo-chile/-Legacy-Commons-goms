@@ -25,10 +25,8 @@ export GO111MODULE ?= on
 export CHART_DIR ?= k8s/${APPNAME}
 
 # Service variables
-export YO=`whoami`
 export SERVICE_PORT=8080
 export SERVICE_HOST=localhost
-export SERVER_ROOT=${PWD}
 export BASE_URL="http://${SERVICE_HOST}:${SERVICE_PORT}"
 
 
@@ -38,8 +36,6 @@ clone:
 
 ## Display basic service info
 info:
-	@echo "YO           : ${YO}"
-	@echo "ServerRoot   : ${SERVER_ROOT}"
 	@echo "API Base URL : ${BASE_URL}"
 	@echo "Healthcheck  : curl ${BASE_URL}/healthcheck"
 
