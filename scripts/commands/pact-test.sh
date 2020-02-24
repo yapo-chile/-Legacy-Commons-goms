@@ -1,10 +1,19 @@
 #!/usr/bin/env bash
 
+# Pact tests
 export PACT_TEST_ENABLED=true
 export PACT_MAIN_FILE=cmd/${APPNAME}/main.go
 export PACT_BINARY=${APPNAME}-pact
 export PACT_DIRECTORY=pact
 
+# Pact broker
+export PACT_BROKER_HOST=http://3.229.36.112
+export PACT_BROKER_PORT=80
+export PACT_PROVIDER_HOST=http://localhost
+export PACT_PROVIDER_PORT=8080
+export PACTS_PATH=./pacts
+
+# Profile service
 export PROFILE_MS_PORT=5555
 export PROFILE_HOST=http://localhost:${PROFILE_MS_PORT}
 

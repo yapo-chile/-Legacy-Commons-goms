@@ -8,7 +8,6 @@ env:
   global:
     - BRANCH=$([ ${TRAVIS_BRANCH} == master ] && echo latest || echo ${TRAVIS_BRANCH})
     - DOCKER_REGISTRY="${ARTIFACTORY_DOCKER_REGISTRY}"
-    - DOCKER_TAG="${TRAVIS_BRANCH}"
 
 # This build should not be triggered by tags
 if: tags IS blank

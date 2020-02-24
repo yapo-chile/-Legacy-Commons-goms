@@ -15,4 +15,7 @@ mod:
 
 ## Run docker compose commands with the project configuration
 docker-compose-%:
-	docker-compose -f docker/docker-compose.yml -p ${APPNAME} --project-directory . $*
+	docker-compose -f docker/docker-compose.yml \
+		--project-name ${APPNAME} \
+		--project-directory . \
+		$*

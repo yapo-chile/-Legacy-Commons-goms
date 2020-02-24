@@ -1,5 +1,4 @@
 include mk/help.mk
-include scripts/commands/vars.mk
 include scripts/commands/colors.mk
 SHELL=bash
 
@@ -36,8 +35,12 @@ clone:
 
 ## Display basic service info
 info:
-	@echo "API Base URL : ${BASE_URL}"
-	@echo "Healthcheck  : curl ${BASE_URL}/healthcheck"
+	@echo "Service: ${APPNAME}"
+	@echo "Images from latest commit:"
+	@echo -e "- ${DOCKER_IMAGE}:${DOCKER_TAG}"
+	@echo -e "- ${DOCKER_IMAGE}:${COMMIT_DATE_UTC}"
+	@echo "API Base URL: ${BASE_URL}"
+	@echo "Healthcheck: curl ${BASE_URL}/healthcheck"
 
 include mk/dev.mk
 include mk/test.mk
