@@ -54,6 +54,7 @@ else
     find cmd -name main.go | xargs sed -i.bak '/CLONE-RCONF REMOVE START/,/CLONE-RCONF REMOVE END/d'
     find docker -name docker-compose.yml | xargs sed -i.bak '/CLONE-RCONF REMOVE START/,/CLONE-RCONF REMOVE END/d'
     find . -iname "*rconf*" | xargs rm
+    find . -iname "*mockLoggerInfra_test*" | xargs rm
 fi
 
 for dir in $(find . -name "${TEMPLATE}" -type d); do

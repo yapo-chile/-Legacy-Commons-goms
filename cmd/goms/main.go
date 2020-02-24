@@ -9,15 +9,13 @@ import (
 	"regexp"
 	"time"
 
-	// CLONE REMOVE END
-	"github.mpi-internal.com/Yapo/goms/pkg/infrastructure"
-	"github.mpi-internal.com/Yapo/goms/pkg/interfaces/handlers"
-
-	// CLONE REMOVE START
 	"github.mpi-internal.com/Yapo/goms/pkg/interfaces/loggers"
 	"github.mpi-internal.com/Yapo/goms/pkg/interfaces/repository"
 	"github.mpi-internal.com/Yapo/goms/pkg/usecases"
+
 	// CLONE REMOVE END
+	"github.mpi-internal.com/Yapo/goms/pkg/infrastructure"
+	"github.mpi-internal.com/Yapo/goms/pkg/interfaces/handlers"
 )
 
 func main() { //nolint: funlen
@@ -131,7 +129,6 @@ func main() { //nolint: funlen
 	}
 
 	// CLONE REMOVE END
-
 	// CLONE-RCONF REMOVE START
 	// Initialize remote conf example
 	lastUpdate, errRconf := infrastructure.NewRconf(
@@ -146,8 +143,8 @@ func main() { //nolint: funlen
 	} else {
 		logger.Info("Remote Conf Updated at %s", lastUpdate.Content.Node.Value)
 	}
-	// CLONE-RCONF REMOVE END
 
+	// CLONE-RCONF REMOVE END
 	useBrowserCache := handlers.Cache{
 		MaxAge:  conf.CacheConf.MaxAge,
 		Etag:    conf.CacheConf.Etag,
