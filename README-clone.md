@@ -17,7 +17,6 @@ __SERVICE__ needs a description here.
   - Open https://github.mpi-internal.com/Yapo/__SERVICE__/settings
   - Features: Wikis, Restrict editing, Issues, Projects
   - Merge button: Only allow merge commits
-  - GitHub Pages: master branch / docs folder
   - Open https://github.mpi-internal.com/Yapo/goms/settings/branches
   - Default branch: master
   - Protected branches: choose master
@@ -81,23 +80,23 @@ __SERVICE__ needs a description here.
 
   ```
   $ make help
-  Targets:
-    test                 Run tests and generate quality reports
-    cover                Run tests and output coverage reports
-    coverhtml            Run tests and open report on default web browser
-    checkstyle           Run gometalinter and output report as text
-    setup                Install golang system level dependencies
-    build                Compile the code
-    run                  Execute the service
-    start                Compile and start the service
-    fix-format           Run gofmt to reindent source
-    info                 Display basic service info
-    docker-build         Create docker image based on docker/dockerfile
-    docker-publish       Push docker image to containers.mpi-internal.com
-    docker-attach        Attach to this service's currently running docker container output stream
-    docker-compose-up    Start all required docker containers for this service
-    docker-compose-down  Stop all running docker containers for this service
-    help                 This help message
+	Targets:
+	  clone                Setup a new service repository based on goms
+	  info                 Display basic service info
+	  help                 This help message
+	  run                  Build and start the service in development mode (detached)
+	  start                Build and start the service in development mode (attached)
+	  build-dev            Build develoment docker image
+	  mod                  Setup directory for go module cache
+	  docker-compose-%     Run docker compose commands with the project configuration
+	  test                 Run tests and generate quality reports
+	  build-test           Build test docker image
+	  cover                Run tests and output coverage reports
+	  coverhtml            Run tests and open report on default web browser
+	  checkstyle           Run code linter and output report as text
+	  docker-publish       Push docker image to containers.mpi-internal.com
+	  helm-publish         Upload helm charts for deploying on k8s
+	  build                Create production docker image
   ```
 
 * If you change the code:
