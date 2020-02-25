@@ -1,5 +1,5 @@
 include mk/help.mk
-include scripts/commands/colors.mk
+include mk/colors.mk
 SHELL=bash
 
 # Image information
@@ -25,8 +25,7 @@ export CHART_DIR ?= k8s/${APPNAME}
 
 # Service variables
 export SERVICE_PORT=8080
-export SERVICE_HOST=localhost
-export BASE_URL="http://${SERVICE_HOST}:${SERVICE_PORT}"
+export BASE_URL="http://localhost:${SERVICE_PORT}"
 
 
 ## Setup a new service repository based on goms

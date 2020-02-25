@@ -156,7 +156,7 @@ func main() { //nolint: funlen
 		Cors:          conf.CorsConf,
 		Cache:         useBrowserCache,
 		WrapperFuncs:  []infrastructure.WrapperFunc{prometheus.TrackHandlerFunc},
-		WithProfiling: conf.ServiceConf.Profiling,
+		WithProfiling: conf.Runtime.Profiling,
 		Routes: infrastructure.Routes{
 			{
 				// This is the base path, all routes will start with this prefix

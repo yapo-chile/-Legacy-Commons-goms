@@ -11,12 +11,6 @@ import (
 	"time"
 )
 
-// ServiceConf holds configuration for this Service
-type ServiceConf struct {
-	Host      string `env:"HOST" envDefault:":8080"`
-	Profiling bool   `env:"PROFILING" envDefault:"true"`
-}
-
 // LoggerConf holds configuration for logging
 // LogLevel definition:
 //   0 - Debug
@@ -39,8 +33,9 @@ type PrometheusConf struct {
 
 // RuntimeConfig config to start the app
 type RuntimeConfig struct {
-	Host string `env:"HOST" envDefault:"0.0.0.0"`
-	Port int    `env:"PORT" envDefault:"8080"`
+	Host      string `env:"HOST" envDefault:"0.0.0.0"`
+	Port      int    `env:"PORT" envDefault:"8080"`
+	Profiling bool   `env:"PROFILING" envDefault:"true"`
 }
 
 // CircuitBreakerConf holds all configurations for circuit breaker
@@ -110,7 +105,6 @@ type ProfileConf struct {
 
 // Config holds all configuration for the service
 type Config struct {
-	ServiceConf        ServiceConf        `env:"SERVICE_"`
 	PrometheusConf     PrometheusConf     `env:"PROMETHEUS_"`
 	LoggerConf         LoggerConf         `env:"LOGGER_"`
 	Runtime            RuntimeConfig      `env:"APP_"`
