@@ -4,7 +4,10 @@ run: mod build-dev "docker-compose-up -d"
 ## Build and start the service in development mode (attached)
 start: mod build-dev docker-compose-up
 
-.PHONY: run start
+## Stop running services
+stop: docker-compose-down
+
+.PHONY: run start stop
 
 ## Build develoment docker image
 build-dev: docker-compose-build

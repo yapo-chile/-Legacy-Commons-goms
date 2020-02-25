@@ -17,8 +17,6 @@ build-test:
 		-f docker/dockerfile.test \
 		.
 
-.PHONY: test
-
 ## Run tests and output coverage reports
 cover: test-cover-int
 
@@ -28,8 +26,10 @@ coverhtml: test-coverhtml-int
 ## Run code linter and output report as text
 checkstyle: test-checkstyle-int
 
-## Run pact tests
+## Run pact tests
 pact: test-pact-int
+
+.PHONY: test pact
 
 # Internal targets are run on the test docker container,
 # they are not intended to be run directly
