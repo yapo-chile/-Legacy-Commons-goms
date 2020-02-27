@@ -2,6 +2,7 @@
 *.swo
 *.rpm
 *.pid
+*.ses
 .DS_Store
 conf/conf.json
 logs/*
@@ -26,3 +27,5 @@ app.docker
 daemon.*
 log/*
 nohup.*
+mod/
+cover.html

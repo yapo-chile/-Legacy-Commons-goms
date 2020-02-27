@@ -1,22 +1,33 @@
 #!/usr/bin/env bash
+
+# Pact tests
 export PACT_TEST_ENABLED=true
+export PACT_MAIN_FILE=cmd/${APPNAME}/main.go
+export PACT_BINARY=${APPNAME}-pact
+export PACT_DIRECTORY=pact
+
+# Pact broker
+export PACT_BROKER_HOST=http://3.229.36.112
+export PACT_BROKER_PORT=80
+export PACT_PROVIDER_HOST=http://localhost
+export PACT_PROVIDER_PORT=8080
+export PACTS_PATH=./pacts
+
+# Profile service
 export PROFILE_MS_PORT=5555
 export PROFILE_HOST=http://localhost:${PROFILE_MS_PORT}
 
+echoTitle "Building pact test binary"
+go build -v -o ${PACT_BINARY} ./${PACT_MAIN_FILE}
 
-file=pact-go_$(uname -s)_amd64.tar.gz
-
-# Include colors.sh
-DIR="${BASH_SOURCE%/*}"
-if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
-. "$DIR/colors.sh"
+tar_file=pact-go_$(uname -s)_amd64.tar.gz
 
 # Validate pact-go binaries
-if [ ! -f "$PACT_DIRECTORY/bin/pact-go" ]; then
+if [ ! -f "${PACT_DIRECTORY}/bin/pact-go" ]; then
   echoTitle "Downloading binaries..."
   mkdir -p ${PACT_DIRECTORY}/bin
-  wget --quiet -P ${PACT_DIRECTORY}/bin https://github.com/pact-foundation/pact-go/releases/download/v0.0.13/${file}
-  tar zxf ${PACT_DIRECTORY}/bin/${file} -C ${PACT_DIRECTORY}/bin/
+  wget --quiet -P ${PACT_DIRECTORY}/bin https://github.com/pact-foundation/pact-go/releases/download/v0.0.13/${tar_file}
+  tar zxf ${PACT_DIRECTORY}/bin/${tar_file} -C ${PACT_DIRECTORY}/bin/
 fi
 
 echoTitle "Starting pact-go daemon in background"
@@ -40,6 +51,8 @@ echo ${MS_PID}
 sleep 10
 cd pact
 go test -v -run TestProvider
+EXIT_CODE=$?
+
 if [[ -n "$TRAVIS" ]]; then
   go test -v -run TestSendBroker
 fi
@@ -49,3 +62,4 @@ kill -9 ${PROFILE_PID}
 kill -9 ${MS_PID}
 
 echoTitle "Done"
+exit ${EXIT_CODE}

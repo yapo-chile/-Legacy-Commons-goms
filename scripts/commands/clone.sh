@@ -1,10 +1,5 @@
 #!/usr/bin/env bash
 
-# Include colors.sh
-DIR="${BASH_SOURCE%/*}"
-if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
-. "$DIR/colors.sh"
-
 TEMPLATE=goms
 BRANCH=master
 GITHUB_ORG=github.mpi-internal.com/Yapo
@@ -59,6 +54,7 @@ else
     find cmd -name main.go | xargs sed -i.bak '/CLONE-RCONF REMOVE START/,/CLONE-RCONF REMOVE END/d'
     find docker -name docker-compose.yml | xargs sed -i.bak '/CLONE-RCONF REMOVE START/,/CLONE-RCONF REMOVE END/d'
     find . -iname "*rconf*" | xargs rm
+    find . -iname "*mockLoggerInfra_test*" | xargs rm
 fi
 
 for dir in $(find . -name "${TEMPLATE}" -type d); do
