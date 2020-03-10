@@ -52,7 +52,6 @@ Goms is the official golang microservice template for Yapo.
 	  run                  Build and start the service in development mode (detached)
 	  start                Build and start the service in development mode (attached)
 	  build-dev            Build develoment docker image
-	  mod                  Setup directory for go module cache
 	  docker-compose-%     Run docker compose commands with the project configuration
 	  test                 Run tests and generate quality reports
 	  build-test           Build test docker image
