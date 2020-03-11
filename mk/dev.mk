@@ -1,8 +1,8 @@
 ## Build and start the service in development mode (detached)
-run: mod build-dev "docker-compose-up -d"
+run: build-dev "docker-compose-up -d"
 
 ## Build and start the service in development mode (attached)
-start: mod build-dev docker-compose-up
+start: build-dev docker-compose-up
 
 ## Stop running services
 stop: docker-compose-down
@@ -11,10 +11,6 @@ stop: docker-compose-down
 
 ## Build develoment docker image
 build-dev: docker-compose-build
-
-## Setup directory for go module cache
-mod:
-	mkdir -p mod
 
 ## Run docker compose commands with the project configuration
 docker-compose-%:

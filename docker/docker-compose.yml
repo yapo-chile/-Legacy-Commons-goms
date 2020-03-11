@@ -16,8 +16,6 @@ services:
      - "${SERVICE_PORT}:8080"
     volumes:
       - ./:/app
-      - /var/empty:/app/mod
-      - ./mod:/go/pkg/mod
     environment:
       CIRCUIT_BREAKER_FAILURE_RATIO: "0.5"
       CIRCUIT_BREAKER_CONSECUTIVE_FAILURE: "2"
