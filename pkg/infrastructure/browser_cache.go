@@ -37,14 +37,14 @@ func (ibc *InBrowserCache) Validate(w http.ResponseWriter, r *http.Request) bool
 }
 
 // NewBrowserCache setup the vars of BrowserCache and return the pointer
-func NewBrowserCache(Enabled bool, Etag int64, DefaultAge time.Duration, MaxAge time.Duration) *InBrowserCache {
+func NewBrowserCache(enabled bool, etag int64, defaultAge time.Duration, maxAge time.Duration) *InBrowserCache {
 	bCache := &InBrowserCache{
-		Enabled: Enabled,
-		Etag:    Etag,
-		MaxAge:  DefaultAge,
+		Enabled: enabled,
+		Etag:    etag,
+		MaxAge:  defaultAge,
 	}
-	if MaxAge > 0 {
-		bCache.MaxAge = MaxAge
+	if maxAge > 0 {
+		bCache.MaxAge = maxAge
 	}
 	return bCache
 }

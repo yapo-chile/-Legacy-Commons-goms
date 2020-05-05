@@ -104,7 +104,7 @@ func NewRconf(host, path, prefix string, log RconfLogger) (*Rconf, error) {
 
 // Get gets the result of a GET method with the given key
 func (v Rconf) Get(key string) string {
-	if v.Content == nil || &v.Content.Node == nil {
+	if v.Content == nil {
 		v.Log.Error("Empty conf")
 		return ""
 	}

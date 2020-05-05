@@ -396,8 +396,7 @@ func TestJsonHandlerFuncCache(t *testing.T) {
 	r.Header.Add("If-None-Match", "\"123\"")
 	fn(w, r)
 
-	expectedHeaders := http.Header(http.Header{
-		"Content-Type": []string{"application/json"}})
+	expectedHeaders := http.Header{"Content-Type": []string{"application/json"}}
 
 	assert.Equal(t, expectedHeaders, w.HeaderMap) //nolint: staticcheck
 	assert.Equal(t, 304, w.Code)
