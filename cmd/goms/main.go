@@ -21,12 +21,7 @@ import (
 func main() { //nolint: funlen
 	var shutdownSequence = infrastructure.NewShutdownSequence()
 	var conf infrastructure.Config
-<<<<<<< HEAD
-
-	fmt.Printf("Etag:%d\n", conf.CacheConf.InitEtag())
-=======
 	fmt.Printf("Etag:%d\n", conf.InBrowserCacheConf.InitEtag())
->>>>>>> Rename: Cache to InBrowserCache
 	shutdownSequence.Listen()
 	infrastructure.LoadFromEnv(&conf)
 
@@ -160,7 +155,7 @@ func main() { //nolint: funlen
 		Cors:           conf.CorsConf,
 		InBrowserCache: useBrowserCache,
 		WrapperFuncs:   []infrastructure.WrapperFunc{prometheus.TrackHandlerFunc},
-		WithProfiling:  conf.ServiceConf.Profiling,
+		WithProfiling:  conf.Runtime.Profiling,
 		Routes: infrastructure.Routes{
 			{
 				// This is the base path, all routes will start with this prefix
