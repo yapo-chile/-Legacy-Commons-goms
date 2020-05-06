@@ -5,7 +5,6 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -115,6 +114,15 @@ func (mc *MockCors) GetHeaders() map[string]string {
 	return args.Get(0).(map[string]string)
 }
 
+type MockCache struct {
+	mock.Mock
+}
+
+func (cache *MockCache) Validate(w http.ResponseWriter, r *http.Request) bool {
+	args := cache.Called()
+	return args.Get(0).(bool)
+}
+
 func TestJsonHandlerFuncOK(t *testing.T) {
 	h := MockHandler{}
 	ih := MockInputHandler{}
@@ -144,10 +152,11 @@ func TestJsonHandlerFuncOK(t *testing.T) {
 	l.On("LogRequestStart", r)
 	l.On("LogRequestEnd", r, response)
 
-	cache := Cache{}
+	mCache := MockCache{}
+	mCache.On("Validate").Return(false)
 	mC := MockCors{}
 	mC.On("GetHeaders").Return(map[string]string{})
-	fn := MakeJSONHandlerFunc(&h, &l, &ih, &mC, &cache)
+	fn := MakeJSONHandlerFunc(&h, &l, &ih, &mC, &mCache)
 	fn(w, r)
 
 	assert.Equal(t, 42, w.Code)
@@ -157,6 +166,7 @@ func TestJsonHandlerFuncOK(t *testing.T) {
 	mMockInputRequest.AssertExpectations(t)
 	l.AssertExpectations(t)
 	mC.AssertExpectations(t)
+	mCache.AssertExpectations(t)
 }
 
 func TestJsonHandlerFuncOK2(t *testing.T) {
@@ -193,8 +203,9 @@ func TestJsonHandlerFuncOK2(t *testing.T) {
 	mC := MockCors{}
 	mC.On("GetHeaders").Return(map[string]string{})
 
-	cache := &Cache{}
-	fn := MakeJSONHandlerFunc(&h, &l, &ih, &mC, cache)
+	mCache := MockCache{}
+	mCache.On("Validate").Return(false)
+	fn := MakeJSONHandlerFunc(&h, &l, &ih, &mC, &mCache)
 	fn(w, r)
 
 	assert.Equal(t, 42, w.Code)
@@ -204,6 +215,7 @@ func TestJsonHandlerFuncOK2(t *testing.T) {
 	mMockInputRequest.AssertExpectations(t)
 	l.AssertExpectations(t)
 	mC.AssertExpectations(t)
+	mCache.AssertExpectations(t)
 }
 
 func TestJsonHandlerFuncParseError(t *testing.T) {
@@ -237,8 +249,9 @@ func TestJsonHandlerFuncParseError(t *testing.T) {
 	mC := MockCors{}
 	mC.On("GetHeaders").Return(map[string]string{})
 
-	cache := &Cache{}
-	fn := MakeJSONHandlerFunc(&h, &l, &ih, &mC, cache)
+	mCache := MockCache{}
+	mCache.On("Validate").Return(false)
+	fn := MakeJSONHandlerFunc(&h, &l, &ih, &mC, &mCache)
 	fn(w, r)
 
 	assert.Equal(t, http.StatusBadRequest, w.Code)
@@ -248,6 +261,7 @@ func TestJsonHandlerFuncParseError(t *testing.T) {
 	mMockInputRequest.AssertExpectations(t)
 	l.AssertExpectations(t)
 	mC.AssertExpectations(t)
+	mCache.AssertExpectations(t)
 }
 
 func TestJsonHandlerFuncPanic(t *testing.T) {
@@ -276,8 +290,9 @@ func TestJsonHandlerFuncPanic(t *testing.T) {
 	mC := MockCors{}
 	mC.On("GetHeaders").Return(map[string]string{})
 
-	cache := &Cache{}
-	fn := MakeJSONHandlerFunc(&h, &l, &ih, &mC, cache)
+	mCache := MockCache{}
+	mCache.On("Validate").Return(false)
+	fn := MakeJSONHandlerFunc(&h, &l, &ih, &mC, &mCache)
 	fn(w, r)
 
 	assert.Equal(t, http.StatusInternalServerError, w.Code)
@@ -287,6 +302,7 @@ func TestJsonHandlerFuncPanic(t *testing.T) {
 	mMockInputRequest.AssertExpectations(t)
 	l.AssertExpectations(t)
 	mC.AssertExpectations(t)
+	mCache.AssertExpectations(t)
 }
 func TestJsonHandlerFuncHeaders(t *testing.T) {
 	h := MockHandler{}
@@ -326,8 +342,9 @@ func TestJsonHandlerFuncHeaders(t *testing.T) {
 	}
 	mC.On("GetHeaders").Return(headers)
 
-	cache := &Cache{}
-	fn := MakeJSONHandlerFunc(&h, &l, &ih, &mC, cache)
+	mCache := MockCache{}
+	mCache.On("Validate").Return(false)
+	fn := MakeJSONHandlerFunc(&h, &l, &ih, &mC, &mCache)
 	fn(w, r)
 
 	expectedHeaders := http.Header{
@@ -342,6 +359,7 @@ func TestJsonHandlerFuncHeaders(t *testing.T) {
 	mMockInputRequest.AssertExpectations(t)
 	l.AssertExpectations(t)
 	mC.AssertExpectations(t)
+	mCache.AssertExpectations(t)
 }
 func TestJsonHandlerFuncCache(t *testing.T) {
 	h := MockHandler{}
@@ -372,15 +390,13 @@ func TestJsonHandlerFuncCache(t *testing.T) {
 
 	mC := MockCors{}
 	mC.On("GetHeaders").Return(map[string]string{})
-	cache := &Cache{Enabled: true, MaxAge: 123 * time.Microsecond * 1000000, Etag: int64(123)}
-	fn := MakeJSONHandlerFunc(&h, &l, &ih, &mC, cache)
+	mCache := MockCache{}
+	mCache.On("Validate").Return(true)
+	fn := MakeJSONHandlerFunc(&h, &l, &ih, &mC, &mCache)
 	r.Header.Add("If-None-Match", "\"123\"")
 	fn(w, r)
 
-	expectedHeaders := http.Header{
-		"Cache-Control": []string{"max-age=123"},
-		"Etag":          []string{"\"123\""},
-		"Content-Type":  []string{"application/json"}}
+	expectedHeaders := http.Header{"Content-Type": []string{"application/json"}}
 
 	assert.Equal(t, expectedHeaders, w.HeaderMap) //nolint: staticcheck
 	assert.Equal(t, 304, w.Code)
@@ -389,4 +405,5 @@ func TestJsonHandlerFuncCache(t *testing.T) {
 	mMockInputRequest.AssertExpectations(t)
 	l.AssertExpectations(t)
 	mC.AssertExpectations(t)
+	mCache.AssertExpectations(t)
 }

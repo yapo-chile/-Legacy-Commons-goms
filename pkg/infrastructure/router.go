@@ -35,12 +35,12 @@ type Routes []routeGroups
 
 // RouterMaker gathers route and wrapper information to build a router
 type RouterMaker struct {
-	Logger        loggers.Logger
-	WrapperFuncs  []WrapperFunc
-	WithProfiling bool
-	Routes        Routes
-	Cors          handlers.Cors
-	Cache         handlers.Cache
+	Logger         loggers.Logger
+	WrapperFuncs   []WrapperFunc
+	WithProfiling  bool
+	Routes         Routes
+	Cors           handlers.Cors
+	InBrowserCache InBrowserCache
 }
 
 // NewRouter setups a Router based on the provided routes
@@ -51,15 +51,14 @@ func (maker *RouterMaker) NewRouter() http.Handler {
 		for _, route := range routeGroup.Groups {
 			hLogger := loggers.MakeJSONHandlerLogger(maker.Logger)
 			hInputHandler := NewInputHandler()
-			cache := &handlers.Cache{}
+			cache := &InBrowserCache{}
 			if route.UseCache {
-				cache.Enabled = maker.Cache.Enabled
-				cache.Etag = maker.Cache.Etag
-				cache.MaxAge = maker.Cache.MaxAge
-				if route.TimeCache > 0 {
-					// Replace default max age
-					cache.MaxAge = route.TimeCache
-				}
+				cache = NewBrowserCache(
+					maker.InBrowserCache.Enabled,
+					maker.InBrowserCache.Etag,
+					maker.InBrowserCache.MaxAge,
+					route.TimeCache,
+				)
 			}
 			handler := handlers.MakeJSONHandlerFunc(route.Handler, hLogger, hInputHandler, maker.Cors, cache)
 			for _, wrapFunc := range maker.WrapperFuncs {

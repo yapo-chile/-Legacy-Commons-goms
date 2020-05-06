@@ -21,8 +21,7 @@ import (
 func main() { //nolint: funlen
 	var shutdownSequence = infrastructure.NewShutdownSequence()
 	var conf infrastructure.Config
-
-	fmt.Printf("Etag:%d\n", conf.CacheConf.InitEtag())
+	fmt.Printf("Etag:%d\n", conf.InBrowserCacheConf.InitEtag())
 	shutdownSequence.Listen()
 	infrastructure.LoadFromEnv(&conf)
 
@@ -143,20 +142,20 @@ func main() { //nolint: funlen
 	} else {
 		logger.Info("Remote Conf Updated at %s", lastUpdate.Content.Node.Value)
 	}
-
 	// CLONE-RCONF REMOVE END
-	useBrowserCache := handlers.Cache{
-		MaxAge:  conf.CacheConf.MaxAge,
-		Etag:    conf.CacheConf.Etag,
-		Enabled: conf.CacheConf.Enabled,
+
+	useBrowserCache := infrastructure.InBrowserCache{
+		MaxAge:  conf.InBrowserCacheConf.MaxAge,
+		Etag:    conf.InBrowserCacheConf.Etag,
+		Enabled: conf.InBrowserCacheConf.Enabled,
 	}
 	// Setting up router
 	maker := infrastructure.RouterMaker{
-		Logger:        logger,
-		Cors:          conf.CorsConf,
-		Cache:         useBrowserCache,
-		WrapperFuncs:  []infrastructure.WrapperFunc{prometheus.TrackHandlerFunc},
-		WithProfiling: conf.Runtime.Profiling,
+		Logger:         logger,
+		Cors:           conf.CorsConf,
+		InBrowserCache: useBrowserCache,
+		WrapperFuncs:   []infrastructure.WrapperFunc{prometheus.TrackHandlerFunc},
+		WithProfiling:  conf.Runtime.Profiling,
 		Routes: infrastructure.Routes{
 			{
 				// This is the base path, all routes will start with this prefix
