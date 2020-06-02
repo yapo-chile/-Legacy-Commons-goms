@@ -262,7 +262,10 @@ func (ih *inputHandler) parseInput(vars map[string]string, inputTag InputSource,
 					reflectedInput.Field(i).Set(reflect.ValueOf(value))
 				}
 			case reflect.Slice:
-				values := strings.Split(vars[tag], ",")
+				values := []string{}
+				if vars[tag] != "" {
+					values = strings.Split(vars[tag], ",")
+				}
 				switch reflectedInput.Field(i).Interface().(type) {
 				case []string:
 					trimValues := []string{}
