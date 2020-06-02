@@ -8,23 +8,32 @@ globals:
 
 image:
   repository: containers.mpi-internal.com/yapo/goms
-  tag: "" # Should it pass from the command line
+  tag: "latest"
   pullPolicy: IfNotPresent
   pullSecret: containers-mpi-internal-com
 
-imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 dontUseReleaseName: true
 
+# secrets:
+#   secret_name:
+#     env_var: secret_key
+secrets: {}
+
+# env:
+#     env_var: value
+env:
+  ETCD_HOST: http://config-etcd:2397
+  GOMS_HEALTH_PATH: "/healthcheck"
+
 service:
   type: ClusterIP
   port: 80
-  prometheus_port: 8877
 
 prometheus:
-  enabled: "true"
-  port: "8877"
+  enabled: true
+  port: 8877
 
 healthcheck:
   path: /healthcheck

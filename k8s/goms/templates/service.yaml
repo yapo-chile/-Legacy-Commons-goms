@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   annotations:
-    prometheus.io/port: "{{ .Values.service.prometheus_port }}"
+    prometheus.io/port: "{{ .Values.prometheus.port }}"
     prometheus.io/scrape: "{{ .Values.prometheus.enabled }}"
   name: {{ include "goms.fullname" . }}
   namespace: {{ .Release.Namespace }}
@@ -15,7 +15,7 @@ spec:
       targetPort: http
       protocol: TCP
       name: http
-    - port: {{ .Values.service.prometheus_port }}
+    - port: {{ .Values.prometheus.port }}
       targetPort: prom
       protocol: TCP
       name: prom
