@@ -31,18 +31,20 @@ spec:
             - name: http
               containerPort: 8080
               protocol: TCP
+            {{- if .Values.prometheus.enabled }}
             - name: prom
               containerPort: 8877
               protocol: TCP
+            {{- end }}
           livenessProbe:
             httpGet:
-              path: {{ quote .Values.healthcheck.path }}
+              path: {{ .Values.healthcheck.path | quote }}
               port: http
             initialDelaySeconds: {{ .Values.healthcheck.liveness.initialDelaySeconds }}
             periodSeconds: {{ .Values.healthcheck.liveness.periodSeconds }}
           readinessProbe:
             httpGet:
-              path: {{ quote .Values.healthcheck.path }}
+              path: {{ .Values.healthcheck.path | quote }}
               port: http
             initialDelaySeconds: {{ .Values.healthcheck.readiness.initialDelaySeconds }}
             periodSeconds: {{ .Values.healthcheck.readiness.periodSeconds }}
@@ -61,11 +63,11 @@ spec:
           {{- end }}
           # env
           {{- range $key, $value := .Values.env }}
-            - name: {{ quote $key }}
-              value: {{ quote $value }}
+            - name: {{ $key | quote }}
+              value: {{ $value | quote }}
           {{- end }}
             - name: "PROMETHEUS_ENABLED"
-              value: "true"
+              value: {{ .Values.prometheus.enabled | quote }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
