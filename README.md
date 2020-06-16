@@ -189,6 +189,8 @@ No additional parameters
     "region": The region where the user lives,
     "commune": The commune where the user lives,
 }
+```
+
 ### Contact
 dev@schibsted.cl
 
