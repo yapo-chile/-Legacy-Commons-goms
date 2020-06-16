@@ -51,9 +51,10 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 Generate the host prefix using the env global var
 */}}
 {{- define "goms.hostPrefix" -}}
+{{- $name := include "goms.name" . -}}
 {{- if eq "reg" .Values.globals.env -}}
-{{- printf "%s.%s.%s" .Chart.Name .Release.Namespace .Values.globals.env -}}
+{{- printf "%s.%s.%s" $name .Release.Namespace .Values.globals.env -}}
 {{- else -}}
-{{- printf "%s.%s" .Chart.Name .Values.globals.env -}}
+{{- printf "%s.%s" $name .Values.globals.env -}}
 {{- end -}}
 {{- end -}}
