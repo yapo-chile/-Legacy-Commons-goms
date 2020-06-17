@@ -60,17 +60,32 @@ type Cache interface {
 	Validate(w http.ResponseWriter, r *http.Request) bool
 }
 
+type RequestCacheHandler interface {
+	GetCache(input interface{}) (*goutils.Response, error)
+	SetCache(input interface{}, response *goutils.Response) error
+}
+
+const CACHESET string = " (cache set)"
+const FROMCACHE string = " (from cache)"
+
 // MakeJSONHandlerFunc wraps a Handler on a json-over-http context, returning
 // a standard http.HandlerFunc
-func MakeJSONHandlerFunc(h Handler, l JSONHandlerLogger, ih InputHandler, crs Cors, cache Cache) http.HandlerFunc {
-	jh := jsonHandler{handler: h, logger: l, inputHandler: ih, cors: crs, cache: cache}
+func MakeJSONHandlerFunc(
+	h Handler,
+	l JSONHandlerLogger,
+	ih InputHandler,
+	crs Cors,
+	cache Cache,
+	cacheHandler RequestCacheHandler,
+) http.HandlerFunc {
+	jh := jsonHandler{handler: h, logger: l, inputHandler: ih, cors: crs, cache: cache, requestCache: cacheHandler}
 	return jh.run
 }
 
 // JSONHandlerLogger defines all the events a jsonHandler can report
 type JSONHandlerLogger interface {
 	LogRequestStart(r *http.Request)
-	LogRequestEnd(*http.Request, *goutils.Response)
+	LogRequestEnd(*http.Request, *goutils.Response, string)
 	LogRequestPanic(*http.Request, *goutils.Response, interface{})
 }
 
@@ -82,6 +97,7 @@ type jsonHandler struct {
 	inputHandler InputHandler
 	cors         Cors
 	cache        Cache
+	requestCache RequestCacheHandler
 }
 
 func (jh *jsonHandler) setupCors(w *http.ResponseWriter) {
@@ -119,13 +135,21 @@ func (jh *jsonHandler) run(w http.ResponseWriter, r *http.Request) {
 	defer outputWriter()
 	defer errorHandler()
 
+	requestCacheStatus := ""
+
 	if jh.cache.Validate(w, r) {
 		response = &goutils.Response{
 			Code: http.StatusNotModified,
 		}
+	} else if r, err := jh.requestCache.GetCache(input); err == nil {
+		response = r
+		requestCacheStatus = FROMCACHE
 	} else {
 		// Do the Harlem Shake
 		response = jh.handler.Execute(jh.inputHandler.Input)
+		if err := jh.requestCache.SetCache(input, response); err == nil {
+			requestCacheStatus = CACHESET
+		}
 	}
-	jh.logger.LogRequestEnd(r, response)
+	jh.logger.LogRequestEnd(r, response, requestCacheStatus)
 }

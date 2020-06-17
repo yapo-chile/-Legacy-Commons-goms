@@ -13,12 +13,13 @@ import (
 
 // Route stands for an http endpoint description
 type Route struct {
-	Name      string
-	Method    string
-	Pattern   string
-	Handler   handlers.Handler
-	UseCache  bool
-	TimeCache time.Duration
+	Name         string
+	Method       string
+	Pattern      string
+	Handler      handlers.Handler
+	UseCache     bool
+	RequestCache string
+	TimeCache    time.Duration
 }
 
 type routeGroups struct {
@@ -60,7 +61,15 @@ func (maker *RouterMaker) NewRouter() http.Handler {
 					route.TimeCache,
 				)
 			}
-			handler := handlers.MakeJSONHandlerFunc(route.Handler, hLogger, hInputHandler, maker.Cors, cache)
+
+			requestCache := &RequestCache{}
+			if ttl, err := time.ParseDuration(route.RequestCache); err == nil {
+				requestCache = NewRequestCacheHandler(int(ttl.Milliseconds()))
+			} else if route.RequestCache != "" {
+				maker.Logger.Error("provided cache time is invalid, endpoint: '%s', ttl: '%s'", route.Pattern, route.RequestCache)
+			}
+
+			handler := handlers.MakeJSONHandlerFunc(route.Handler, hLogger, hInputHandler, maker.Cors, cache, requestCache)
 			for _, wrapFunc := range maker.WrapperFuncs {
 				handler = wrapFunc(route.Pattern, handler)
 			}
