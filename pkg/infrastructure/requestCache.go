@@ -32,10 +32,11 @@ func (rc *RequestCache) GetCache(input interface{}) (*goutils.Response, error) {
 	var response goutils.Response
 	if rc.enabled {
 		hash := rc.getHash(input)
-		if stringResponse, err := rc.cache.Get(hash); err == nil {
+		stringResponse, err := rc.cache.Get(hash)
+		if err == nil {
 			err = json.Unmarshal([]byte(stringResponse.(string)), &response)
-			return &response, err
 		}
+		return &response, err
 	}
 	return &response, fmt.Errorf("cache disabled")
 }
