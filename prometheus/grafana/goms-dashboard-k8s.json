@@ -2097,7 +2097,7 @@
     "style": "dark",
     "tags": [
       "golang",
-      "rancher",
+      "k8s",
       "docker",
       "service"
     ],
