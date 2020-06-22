@@ -46,8 +46,10 @@ func (rc *RequestCache) GetCache(input interface{}) (*goutils.Response, error) {
 func (rc *RequestCache) SetCache(input interface{}, response *goutils.Response) error {
 	if rc.enabled {
 		hash := rc.getHash(input)
-		if ok, _ := rc.cache.HasKey(hash); ok {
+		if ok, err := rc.cache.HasKey(hash); ok {
 			return fmt.Errorf("cache already set and still valid")
+		} else if err != nil {
+			return fmt.Errorf("cache error, the cache will not be set, error: %+v", err)
 		}
 		stringResponse, err := json.Marshal(response)
 		if err != nil {
