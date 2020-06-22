@@ -106,6 +106,20 @@ func (jh *jsonHandler) setupCors(w *http.ResponseWriter) {
 	}
 }
 
+// inputGetterCacheDecorator will decorate the input getter and will validate if a cache is
+// already set then returning it
+func (jh *jsonHandler) inputGetterCacheDecorator(input InputGetter, status *string) InputGetter {
+	decorator := func() (HandlerInput, *goutils.Response) {
+		requestInput, requestResponse := input()
+		if cachedResponse, err := jh.requestCache.GetCache(requestInput); err == nil {
+			*status = FROMCACHE
+			return requestInput, cachedResponse
+		}
+		return requestInput, requestResponse
+	}
+	return decorator
+}
+
 // run will prepare the input for the actual handler and format the response
 // as json. Also, request information will be logged. It's an instance of
 // http.HandlerFunc
@@ -141,12 +155,11 @@ func (jh *jsonHandler) run(w http.ResponseWriter, r *http.Request) {
 		response = &goutils.Response{
 			Code: http.StatusNotModified,
 		}
-	} else if r, err := jh.requestCache.GetCache(input); err == nil {
-		response = r
-		requestCacheStatus = FROMCACHE
 	} else {
 		// Do the Harlem Shake
-		response = jh.handler.Execute(jh.inputHandler.Input)
+		response = jh.handler.Execute(
+			jh.inputGetterCacheDecorator(jh.inputHandler.Input, &requestCacheStatus),
+		)
 		if err := jh.requestCache.SetCache(input, response); err == nil {
 			requestCacheStatus = CACHESET
 		}
