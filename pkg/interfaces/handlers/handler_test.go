@@ -320,7 +320,6 @@ func TestJsonHandlerFuncPanic(t *testing.T) {
 	mCache := MockCache{}
 	mCache.On("Validate").Return(false)
 	mRequestCache := MockRequestCache{}
-	mRequestCache.On("GetCache", mock.AnythingOfType("*handlers.DummyInput")).Return(&goutils.Response{}, fmt.Errorf(""))
 	fn := MakeJSONHandlerFunc(&h, &l, &ih, &mC, &mCache, &mRequestCache)
 	fn(w, r)
 

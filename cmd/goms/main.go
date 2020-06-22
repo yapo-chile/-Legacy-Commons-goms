@@ -170,12 +170,13 @@ func main() { //nolint: funlen
 					},
 					// CLONE REMOVE START
 					{
-						Name:      "Retrieve the Nth Fibonacci with Clean Architecture",
-						Method:    "GET",
-						Pattern:   "/fibonacci",
-						Handler:   &fibonacciHandler,
-						UseCache:  true,
-						TimeCache: 60 * time.Minute, //nolint: gomnd
+						Name:         "Retrieve the Nth Fibonacci with Clean Architecture",
+						Method:       "GET",
+						Pattern:      "/fibonacci",
+						Handler:      &fibonacciHandler,
+						UseCache:     true,
+						TimeCache:    60 * time.Minute, //nolint: gomnd
+						RequestCache: "10s",
 					},
 					{
 						Name:    "Retrieve healthcheck by doing a client request to itself",
