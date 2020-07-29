@@ -6,8 +6,9 @@ export MS_MAIN_FILE=cmd/${APPNAME}/main.go
 export MS_BINARY=${APPNAME}-pact
 export PACT_DIRECTORY=pact
 
-# /pact directory in container
+# Pact binaries and logs directories in container
 export PACT_BINARY=../pact/bin
+export PACT_LOGS=./reports
 
 # Pact broker
 export PACT_BROKER_HOST=http://3.229.36.112
@@ -25,13 +26,13 @@ go build -v -o ${MS_BINARY} ./${MS_MAIN_FILE}
 
 
 echoTitle "Starting profile-ms mock in background"
-nohup ${PACT_BINARY}/pact-stub-service pact/mocks/profile-ms.json --port=${PROFILE_MS_PORT} &
+nohup ${PACT_BINARY}/pact-stub-service pact/mocks/profile-ms.json --port=${PROFILE_MS_PORT} > ${PACT_LOGS}/profile.out 2>&1  &
 PROFILE_PID=$!
 
 echo ${PROFILE_PID}
 
 echoTitle "Starting ${MS_BINARY} in background"
-nohup  ./${MS_BINARY} > ${MS_BINARY}.out 2> ${MS_BINARY}.err &
+nohup  ./${MS_BINARY} > ${PACT_LOGS}/${MS_BINARY}.out 2> ${PACT_LOGS}/${MS_BINARY}.err &
 MS_PID=$!
 
 echo ${MS_PID}
