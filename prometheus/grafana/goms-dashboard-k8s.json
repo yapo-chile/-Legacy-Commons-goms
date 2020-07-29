@@ -326,32 +326,25 @@
         "steppedLine": false,
         "targets": [
           {
-            "expr": "process_resident_memory_bytes{instance=\"$INSTANCE\"}+process_virtual_memory_bytes{instance=\"$INSTANCE\"}",
-            "format": "time_series",
-            "intervalFactor": 1,
-            "legendFormat": "Memory used",
-            "refId": "A"
-          },
-          {
             "expr": "process_virtual_memory_bytes{instance=\"$INSTANCE\"}",
             "format": "time_series",
             "intervalFactor": 1,
             "legendFormat": "Virtual",
-            "refId": "B"
+            "refId": "A"
           },
           {
             "expr": "process_resident_memory_bytes{instance=\"$INSTANCE\"}",
             "format": "time_series",
             "intervalFactor": 1,
             "legendFormat": "Resident",
-            "refId": "C"
+            "refId": "B"
           },
           {
             "expr": "go_memstats_alloc_bytes{instance=\"$INSTANCE\"}",
             "format": "time_series",
             "intervalFactor": 1,
             "legendFormat": "Allocated",
-            "refId": "D"
+            "refId": "C"
           }
         ],
         "thresholds": [],
@@ -538,7 +531,7 @@
         "tableColumn": "",
         "targets": [
           {
-            "expr": "sum(process_resident_memory_bytes{instance=\"$INSTANCE\"}+\nprocess_virtual_memory_bytes{instance=\"$INSTANCE\"})",
+            "expr": "sum(process_virtual_memory_bytes{instance=\"$INSTANCE\"})",
             "format": "time_series",
             "intervalFactor": 1,
             "refId": "A"
@@ -560,8 +553,7 @@
       {
         "aliasColors": {
           "Routines": "#c15c17",
-          "Routines ": "#1f78c1",
-          "Routines - yams-proxy-poya1": "#3f2b5b"
+          "Routines ": "#1f78c1"
         },
         "bars": false,
         "dashLength": 10,
@@ -987,7 +979,7 @@
             "format": "time_series",
             "instant": false,
             "intervalFactor": 1,
-            "legendFormat": "[{{method}}] {{handler}}",
+            "legendFormat": "[{{method}}] {{handler}} {{code}}",
             "refId": "A"
           }
         ],
