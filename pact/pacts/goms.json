@@ -3,7 +3,7 @@
       "name": "goms"
    },
    "provider": {
-      "name": "profile-ms"
+      "name": "profile"
    },
    "interactions": [{
          "description": "Check MS health",

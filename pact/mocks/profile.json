@@ -3,11 +3,11 @@
 		"name": "goms"
 	},
 	"provider": {
-		"name": "profile-ms"
+		"name": "profile"
 	},
 	"interactions": [{
-		"description": "Retrieve the user basic data",
-		"providerState": "Return poyainmo data",
+		"description": "A request to retrieve the user basic data",
+		"providerState": "there is a user with a valid token",
 		"request": {
 			"method": "GET",
 			"path": "/api/v1/internal/user",
