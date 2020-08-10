@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"path"
 	"reflect"
 	"strconv"
 	"strings"
-	"path"
 	"testing"
 
 	"github.com/pact-foundation/pact-go/dsl"
@@ -17,7 +17,7 @@ import (
 )
 
 const (
-	errorNotFound string= "404"
+	errorNotFound string = "404"
 )
 
 type PactConf struct {
@@ -88,7 +88,7 @@ func TestProvider(t *testing.T) {
 	}
 	files, err := ioutil.ReadDir(conf.PactPath)
 	if err != nil {
-		fmt.Printf("Error in reading files. Error %+v", err)
+		fmt.Printf("Error while reading microservice contract. Error %+v", err)
 	}
 	for _, file := range files {
 		// Verify the Provider with local Pact Files
@@ -115,7 +115,7 @@ func TestSendBroker(*testing.T) {
 
 	files, err := ioutil.ReadDir(conf.PactProvidersPath)
 	if err != nil {
-		fmt.Printf("Error in reading mock files. Error %+v", err)
+		fmt.Printf("Error while reading mock files. Error %+v", err)
 	}
 
 	// Publishing providers pacts
