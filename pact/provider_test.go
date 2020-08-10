@@ -116,6 +116,7 @@ func TestSendBroker(*testing.T) {
 	files, err := ioutil.ReadDir(conf.PactProvidersPath)
 	if err != nil {
 		fmt.Printf("Error while reading mock files. Error %+v", err)
+		return
 	}
 
 	// Publishing providers pacts
