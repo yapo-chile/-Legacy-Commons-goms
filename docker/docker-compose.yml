@@ -26,6 +26,11 @@ services:
       PROFILE_HOST: "http://10.15.1.78:7987"
       PROMETHEUS_PORT: "8877"
       PROMETHEUS_ENABLED: "true"
+      JAEGER_SERVICE_NAME: "goms"
+      JAEGER_REPORTER_LOG_SPANS: "true"
+      JAEGER_SAMPLER_TYPE: "const"
+      JAEGER_SAMPLER_PARAM: "1"
+      JAEGER_TAGS: "test=1"
     # CLONE-RCONF REMOVE START
       ETCD_HOST: http://etcd:2379
     depends_on:

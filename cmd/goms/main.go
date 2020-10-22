@@ -14,6 +14,13 @@ import (
 	"github.mpi-internal.com/Yapo/goms/pkg/usecases"
 
 	// CLONE REMOVE END
+	opentracing "github.com/opentracing/opentracing-go"
+	jaegercfg "github.com/uber/jaeger-client-go/config"
+	jaegerlog "github.com/uber/jaeger-client-go/log"
+	jaegermetrics "github.com/uber/jaeger-lib/metrics"
+
+	//	"github.com/uber/jaeger-client-go"
+
 	"github.mpi-internal.com/Yapo/goms/pkg/infrastructure"
 	"github.mpi-internal.com/Yapo/goms/pkg/interfaces/handlers"
 )
@@ -30,7 +37,6 @@ func main() { //nolint: funlen
 	} else {
 		fmt.Printf("Config: \n%+v\n", conf)
 	}
-
 	fmt.Printf("Setting up Prometheus\n")
 
 	prometheus := infrastructure.MakePrometheusExporter(
@@ -51,6 +57,35 @@ func main() { //nolint: funlen
 		fmt.Println(err)
 		os.Exit(2) //nolint: gomnd
 	}
+
+	logger.Info("Initializing Jaegertracing")
+
+	jcfg, err := jaegercfg.FromEnv()
+	if err != nil {
+		// parsing errors might happen here, such as when we get a string where we expect a number
+		logger.Error("Could not parse Jaeger env vars: %s", err.Error())
+	}
+
+	if jconf, err := json.MarshalIndent(jcfg, "", "    "); err == nil {
+		fmt.Printf("JaegerConfig: \n%s\n", jconf)
+	}
+
+	jLogger := jaegerlog.StdLogger
+	jMetricsFactory := jaegermetrics.NullFactory
+
+	// Initialize tracer with a logger and a metrics factory
+	tracer, closer, err := jcfg.NewTracer(
+		jaegercfg.Logger(jLogger),
+		jaegercfg.Metrics(jMetricsFactory),
+	)
+
+	if err != nil {
+		logger.Error("Could not initialize jaeger tracer: %s", err.Error())
+	}
+	defer closer.Close()
+	opentracing.SetGlobalTracer(tracer)
+
+	span := tracer.StartSpan("boot")
 
 	shutdownSequence.Push(prometheus)
 	logger.Info("Initializing resources")
@@ -212,6 +247,7 @@ func main() { //nolint: funlen
 	shutdownSequence.Push(server)
 	logger.Info("Starting request serving")
 
+	span.Finish()
 	go server.ListenAndServe()
 	shutdownSequence.Wait()
 	logger.Info("Server exited normally")
