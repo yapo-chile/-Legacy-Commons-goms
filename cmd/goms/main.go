@@ -14,13 +14,6 @@ import (
 	"github.mpi-internal.com/Yapo/goms/pkg/usecases"
 
 	// CLONE REMOVE END
-	opentracing "github.com/opentracing/opentracing-go"
-	jaegercfg "github.com/uber/jaeger-client-go/config"
-	jaegerlog "github.com/uber/jaeger-client-go/log"
-	jaegermetrics "github.com/uber/jaeger-lib/metrics"
-
-	//	"github.com/uber/jaeger-client-go"
-
 	"github.mpi-internal.com/Yapo/goms/pkg/infrastructure"
 	"github.mpi-internal.com/Yapo/goms/pkg/interfaces/handlers"
 )
@@ -43,6 +36,7 @@ func main() { //nolint: funlen
 		conf.PrometheusConf.Port,
 		conf.PrometheusConf.Enabled,
 	)
+	shutdownSequence.Push(prometheus)
 
 	fmt.Printf("Setting up logger\n")
 
@@ -59,35 +53,16 @@ func main() { //nolint: funlen
 	}
 
 	logger.Info("Initializing Jaegertracing")
-
-	jcfg, err := jaegercfg.FromEnv()
+	tracer, tracerCloser, err := infrastructure.InitJaegerTracing()
 	if err != nil {
-		// parsing errors might happen here, such as when we get a string where we expect a number
-		logger.Error("Could not parse Jaeger env vars: %s", err.Error())
+		logger.Error("Jaegertracing: %s", err)
+		os.Exit(2) //nolint: gomnd
 	}
-
-	if jconf, err := json.MarshalIndent(jcfg, "", "    "); err == nil {
-		fmt.Printf("JaegerConfig: \n%s\n", jconf)
-	}
-
-	jLogger := jaegerlog.StdLogger
-	jMetricsFactory := jaegermetrics.NullFactory
-
-	// Initialize tracer with a logger and a metrics factory
-	tracer, closer, err := jcfg.NewTracer(
-		jaegercfg.Logger(jLogger),
-		jaegercfg.Metrics(jMetricsFactory),
-	)
-
-	if err != nil {
-		logger.Error("Could not initialize jaeger tracer: %s", err.Error())
-	}
-	defer closer.Close()
-	opentracing.SetGlobalTracer(tracer)
+	shutdownSequence.Push(tracerCloser)
 
 	span := tracer.StartSpan("boot")
+	span.SetBaggageItem("le_boot", "is here")
 
-	shutdownSequence.Push(prometheus)
 	logger.Info("Initializing resources")
 
 	// HealthHandler
@@ -189,7 +164,7 @@ func main() { //nolint: funlen
 		Logger:         logger,
 		Cors:           conf.CorsConf,
 		InBrowserCache: useBrowserCache,
-		WrapperFuncs:   []infrastructure.WrapperFunc{prometheus.TrackHandlerFunc},
+		WrapperFuncs:   []infrastructure.WrapperFunc{prometheus.TrackHandlerFunc, infrastructure.JaegerWrapperFunc},
 		WithProfiling:  conf.Runtime.Profiling,
 		Routes: infrastructure.Routes{
 			{

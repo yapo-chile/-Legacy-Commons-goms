@@ -27,10 +27,12 @@ services:
       PROMETHEUS_PORT: "8877"
       PROMETHEUS_ENABLED: "true"
       JAEGER_SERVICE_NAME: "goms"
+      JAEGER_AGENT_HOST: "host.docker.internal"
       JAEGER_REPORTER_LOG_SPANS: "true"
       JAEGER_SAMPLER_TYPE: "const"
       JAEGER_SAMPLER_PARAM: "1"
       JAEGER_TAGS: "test=1"
+      JAEGER_RPC_METRICS: "true"
     # CLONE-RCONF REMOVE START
       ETCD_HOST: http://etcd:2379
     depends_on:

@@ -16,14 +16,14 @@ require (
 	github.com/hashicorp/logutils v1.0.0 // indirect
 	github.com/howeyc/fsnotify v0.9.0 // indirect
 	github.com/jstemmer/go-junit-report v0.9.1
-	github.com/opentracing/opentracing-go v1.2.0 // indirect
+	github.com/opentracing/opentracing-go v1.2.0
 	github.com/pact-foundation/pact-go v1.0.4
 	github.com/prometheus/client_golang v1.3.0
 	github.com/sony/gobreaker v0.4.1
 	github.com/stretchr/testify v1.4.0
 	github.com/tidwall/gjson v1.4.0
-	github.com/uber/jaeger-client-go v2.25.0+incompatible // indirect
-	github.com/uber/jaeger-lib v2.4.0+incompatible // indirect
+	github.com/uber/jaeger-client-go v2.25.0+incompatible
+	github.com/uber/jaeger-lib v2.4.0+incompatible
 	golang.org/x/net v0.0.0-20200114155413-6afb5195e5aa // indirect
 	golang.org/x/sys v0.0.0-20200122134326-e047566fdf82 // indirect
 	golang.org/x/tools v0.0.0-20200122042241-dc16b66866f1 // indirect

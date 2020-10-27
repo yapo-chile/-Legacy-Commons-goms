@@ -25,7 +25,7 @@ export CHART_DIR ?= k8s/${APPNAME}
 
 # Service variables
 export SERVICE_PORT=8080
-export BASE_URL="http://localhost:${SERVICE_PORT}"
+export BASE_URL=http://localhost:${SERVICE_PORT}
 
 
 ## Setup a new service repository based on goms
