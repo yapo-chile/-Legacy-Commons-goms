@@ -19,7 +19,7 @@ func InitJaegerTracing() (opentracing.Tracer, io.Closer, error) {
 	cfg, err := jaegercfg.FromEnv()
 	if err != nil {
 		// parsing errors might happen here, such as when we get a string where we expect a number
-		return nil, nil, fmt.Errorf("Could not parse Jaeger env vars: %s", err.Error())
+		return nil, nil, fmt.Errorf("could not parse Jaeger env vars: %s", err.Error())
 	}
 
 	if jconf, err := json.MarshalIndent(cfg, "", "    "); err == nil {
@@ -36,7 +36,7 @@ func InitJaegerTracing() (opentracing.Tracer, io.Closer, error) {
 	)
 
 	if err != nil {
-		return nil, nil, fmt.Errorf("Could not initialize jaeger tracer: %s", err.Error())
+		return nil, nil, fmt.Errorf("could not initialize jaeger tracer: %s", err.Error())
 	}
 	defer closer.Close()
 	opentracing.SetGlobalTracer(tracer)
