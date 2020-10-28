@@ -21,6 +21,10 @@ export PACTS_PATH=./pacts
 export PROFILE_MS_PORT=5555
 export PROFILE_HOST=http://localhost:${PROFILE_MS_PORT}
 
+# Disable Jaeger Tracing
+export JAEGER_SERVICE_NAME=pact
+export JAEGER_DISABLED=true
+
 echoTitle "Building microservice pact test binary"
 go build -v -o ${MS_BINARY} ./${MS_MAIN_FILE}
 
@@ -32,7 +36,6 @@ PROFILE_PID=$!
 echo ${PROFILE_PID}
 
 echoTitle "Starting ${MS_BINARY} in background"
-env
 nohup  ./${MS_BINARY} > ${PACT_LOGS}/${MS_BINARY}.out 2> ${PACT_LOGS}/${MS_BINARY}.err &
 MS_PID=$!
 
