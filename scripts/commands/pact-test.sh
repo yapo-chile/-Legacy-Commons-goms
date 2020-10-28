@@ -32,6 +32,7 @@ PROFILE_PID=$!
 echo ${PROFILE_PID}
 
 echoTitle "Starting ${MS_BINARY} in background"
+env
 nohup  ./${MS_BINARY} > ${PACT_LOGS}/${MS_BINARY}.out 2> ${PACT_LOGS}/${MS_BINARY}.err &
 MS_PID=$!
 
