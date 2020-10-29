@@ -26,6 +26,12 @@ secrets: {}
 env:
   ETCD_HOST: http://config-etcd:2397
   GOMS_HEALTH_PATH: "/healthcheck"
+  JAEGER_SERVICE_NAME: "goms"
+  JAEGER_REPORTER_LOG_SPANS: "true"
+  JAEGER_SAMPLER_TYPE: "const"
+  JAEGER_SAMPLER_PARAM: "1"
+  JAEGER_TAGS: "test=1"
+  JAEGER_RPC_METRICS: "true"
 
 service:
   type: ClusterIP

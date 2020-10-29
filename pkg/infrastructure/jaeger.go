@@ -49,7 +49,7 @@ func JaegerWrapperFunc(pattern string, handler http.HandlerFunc) http.HandlerFun
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Extract the context from the headers
 		spanCtx, _ := tracer.Extract(opentracing.HTTPHeaders, opentracing.HTTPHeadersCarrier(r.Header))
-		serverSpan := tracer.StartSpan("handler", ext.RPCServerOption(spanCtx))
+		serverSpan := tracer.StartSpan(pattern, ext.RPCServerOption(spanCtx))
 		defer serverSpan.Finish()
 		handler(w, r)
 	})
