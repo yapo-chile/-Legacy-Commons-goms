@@ -98,7 +98,7 @@ func (chc *InBrowserCacheConf) InitEtag() int64 {
 
 // ProfileConf holds configuration to send http request to Profile
 type ProfileConf struct {
-	Host           string `env:"HOST" envDefault:"http://profile:8080"`
+	Host           string `env:"HOST" envDefault:"http://profile"`
 	UserDataPath   string `env:"USER_DATA_PATH" envDefault:"/api/v1/internal/user?"`
 	UserDataTokens string `env:"USER_DATA_TOKENS" envDefault:"tokens=%s"`
 }
