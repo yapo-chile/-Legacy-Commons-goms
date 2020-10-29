@@ -25,7 +25,7 @@ secrets: {}
 #     env_var: value
 env:
   ETCD_HOST: http://config-etcd:2397
-  GOMS_HEALTH_PATH: "/healthcheck"
+  GOMS_HEALTH_PATH: "http://localhost:8080/healthcheck"
   JAEGER_SERVICE_NAME: "goms"
   JAEGER_REPORTER_LOG_SPANS: "true"
   JAEGER_SAMPLER_TYPE: "const"
