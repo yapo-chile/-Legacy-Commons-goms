@@ -38,7 +38,6 @@ func InitJaegerTracing() (opentracing.Tracer, io.Closer, error) {
 	if err != nil {
 		return nil, nil, fmt.Errorf("could not initialize jaeger tracer: %s", err.Error())
 	}
-	defer closer.Close()
 	opentracing.SetGlobalTracer(tracer)
 
 	return tracer, closer, nil
