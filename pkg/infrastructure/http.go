@@ -30,6 +30,10 @@ func NewHTTPHandler(logger loggers.Logger) repository.HTTPHandler {
 // a custom http client has been made to add a request timeout of 10 seconds
 func (h *httpHandler) Send(req repository.HTTPRequest) (interface{}, error) {
 	h.logger.Debug("Http - %s - Sending HTTP request to: %+v", req.GetMethod(), req.GetPath())
+	h.logger.Info("Send Request - %+v", req)
+
+	span := TraceRequest(req)
+	defer span.Finish()
 
 	// this makes a custom http client with a timeout in secs for each request
 	var httpClient = &http.Client{
