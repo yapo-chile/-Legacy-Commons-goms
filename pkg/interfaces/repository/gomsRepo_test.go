@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"testing"
@@ -41,10 +42,11 @@ func TestGetOK(t *testing.T) {
 	mRequest.On("SetPath", "").Return(&mRequest).Once()
 	mRequest.On("SetTimeOut", mock.AnythingOfType("int")).Return(&mRequest).Once()
 
-	mHandler.On("NewRequest").Return(&mRequest, nil).Once()
+	ctx := mock.AnythingOfType("*context.emptyCtx")
+	mHandler.On("NewRequest", ctx).Return(&mRequest, nil).Once()
 	mHandler.On("Send", &mRequest).Return(string(jsonResponse), nil).Once()
 
-	result, err := gomsRepo.GetHealthcheck()
+	result, err := gomsRepo.GetHealthcheck(context.Background())
 
 	assert.Equal(t, "OK", result)
 	assert.Nil(t, err)
@@ -64,10 +66,11 @@ func TestGetError(t *testing.T) {
 	mRequest.On("SetPath", "").Return(&mRequest).Once()
 	mRequest.On("SetTimeOut", mock.AnythingOfType("int")).Return(&mRequest).Once()
 
-	mHandler.On("NewRequest").Return(&mRequest, nil).Once()
+	ctx := mock.AnythingOfType("*context.emptyCtx")
+	mHandler.On("NewRequest", ctx).Return(&mRequest, nil).Once()
 	mHandler.On("Send", &mRequest).Return(nil, errors.New("Error")).Once()
 
-	result, err := gomsRepo.GetHealthcheck()
+	result, err := gomsRepo.GetHealthcheck(context.Background())
 
 	assert.Equal(t, "", result)
 	assert.Error(t, err)
@@ -87,10 +90,11 @@ func TestPostParseError(t *testing.T) {
 	mRequest.On("SetPath", "").Return(&mRequest).Once()
 	mRequest.On("SetTimeOut", mock.AnythingOfType("int")).Return(&mRequest).Once()
 
-	mHandler.On("NewRequest").Return(&mRequest, nil).Once()
+	ctx := mock.AnythingOfType("*context.emptyCtx")
+	mHandler.On("NewRequest", ctx).Return(&mRequest, nil).Once()
 	mHandler.On("Send", &mRequest).Return("", nil).Once()
 
-	result, err := gomsRepo.GetHealthcheck()
+	result, err := gomsRepo.GetHealthcheck(context.Background())
 
 	assert.Equal(t, result, "")
 	assert.Error(t, err)
@@ -110,10 +114,11 @@ func TestGetEmptyResponseError(t *testing.T) {
 	mRequest.On("SetPath", "").Return(&mRequest).Once()
 	mRequest.On("SetTimeOut", mock.AnythingOfType("int")).Return(&mRequest).Once()
 
-	mHandler.On("NewRequest").Return(&mRequest, nil).Once()
+	ctx := mock.AnythingOfType("*context.emptyCtx")
+	mHandler.On("NewRequest", ctx).Return(&mRequest, nil).Once()
 	mHandler.On("Send", &mRequest).Return("", nil).Once()
 
-	result, err := gomsRepo.GetHealthcheck()
+	result, err := gomsRepo.GetHealthcheck(context.Background())
 
 	assert.Equal(t, result, "")
 	assert.Error(t, err)

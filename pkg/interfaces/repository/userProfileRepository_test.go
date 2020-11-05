@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"fmt"
 	"testing"
 	"time"
@@ -19,8 +20,8 @@ func (m *MockHTTPHandler) Send(request HTTPRequest) (interface{}, error) {
 	return args.Get(0), args.Error(1)
 }
 
-func (m *MockHTTPHandler) NewRequest() HTTPRequest {
-	args := m.Called()
+func (m *MockHTTPHandler) NewRequest(ctx context.Context) HTTPRequest {
+	args := m.Called(ctx)
 	return args.Get(0).(HTTPRequest)
 }
 
@@ -88,6 +89,11 @@ func (m *MockRequest) SetTimeOut(t int) HTTPRequest {
 	return args.Get(0).(HTTPRequest)
 }
 
+func (m *MockRequest) Context() context.Context {
+	args := m.Called()
+	return args.Get(0).(context.Context)
+}
+
 func TestNewUserDataRepository(t *testing.T) {
 	mHandler := MockHTTPHandler{}
 	expected := &UserProfileRepository{
@@ -105,7 +111,8 @@ func TestUserDataRepositoryGetUserDataOK(t *testing.T) {
 	mRequest.On("SetPath", mock.AnythingOfType("string")).Return(&mRequest)
 	mRequest.On("SetMethod", "GET").Return(&mRequest)
 
-	mHandler.On("NewRequest").Return(&mRequest)
+	ctx := mock.AnythingOfType("*context.emptyCtx")
+	mHandler.On("NewRequest", ctx).Return(&mRequest)
 	mHandler.On("Send", &mRequest).Return(`{"9fbcd51ef0a2d6293730c6a60afee8c807677fb5":{"uuid":"edgar"}}`, nil)
 
 	expected := usecases.UserBasicData{Name: ""}
@@ -113,7 +120,7 @@ func TestUserDataRepositoryGetUserDataOK(t *testing.T) {
 	repo := UserProfileRepository{
 		Handler: &mHandler,
 	}
-	resp, err := repo.GetUserProfileData("edgar@gmail.com")
+	resp, err := repo.GetUserProfileData(context.Background(), "edgar@gmail.com")
 	assert.Equal(t, expected, resp)
 	assert.NoError(t, err)
 	mHandler.AssertExpectations(t)
@@ -127,7 +134,8 @@ func TestUserDataRepositoryGetUserDataError(t *testing.T) {
 	mRequest.On("SetPath", mock.AnythingOfType("string")).Return(&mRequest)
 	mRequest.On("SetMethod", "GET").Return(&mRequest)
 
-	mHandler.On("NewRequest").Return(&mRequest)
+	ctx := mock.AnythingOfType("*context.emptyCtx")
+	mHandler.On("NewRequest", ctx).Return(&mRequest)
 	mHandler.On("Send", &mRequest).Return(`{"notasha1email":{}}`, nil)
 
 	expected := usecases.UserBasicData{}
@@ -135,7 +143,7 @@ func TestUserDataRepositoryGetUserDataError(t *testing.T) {
 	repo := UserProfileRepository{
 		Handler: &mHandler,
 	}
-	resp, err := repo.GetUserProfileData("edgar@gmail.com")
+	resp, err := repo.GetUserProfileData(context.Background(), "edgar@gmail.com")
 	assert.Equal(t, expected, resp)
 	assert.Error(t, err)
 	mHandler.AssertExpectations(t)
@@ -149,7 +157,8 @@ func TestUserDataRepositoryGetUserDataRequestError(t *testing.T) {
 	mRequest.On("SetPath", mock.AnythingOfType("string")).Return(&mRequest)
 	mRequest.On("SetMethod", "GET").Return(&mRequest)
 
-	mHandler.On("NewRequest").Return(&mRequest)
+	ctx := mock.AnythingOfType("*context.emptyCtx")
+	mHandler.On("NewRequest", ctx).Return(&mRequest)
 	mHandler.On("Send", &mRequest).Return("", fmt.Errorf("error"))
 
 	expected := usecases.UserBasicData{}
@@ -157,7 +166,7 @@ func TestUserDataRepositoryGetUserDataRequestError(t *testing.T) {
 	repo := UserProfileRepository{
 		Handler: &mHandler,
 	}
-	resp, err := repo.GetUserProfileData("edgar@gmail.com")
+	resp, err := repo.GetUserProfileData(context.Background(), "edgar@gmail.com")
 	assert.Equal(t, expected, resp)
 	assert.Error(t, err)
 	mHandler.AssertExpectations(t)
@@ -171,7 +180,8 @@ func TestUserDataRepositoryUnmarshalError(t *testing.T) {
 	mRequest.On("SetPath", mock.AnythingOfType("string")).Return(&mRequest)
 	mRequest.On("SetMethod", "GET").Return(&mRequest)
 
-	mHandler.On("NewRequest").Return(&mRequest)
+	ctx := mock.AnythingOfType("*context.emptyCtx")
+	mHandler.On("NewRequest", ctx).Return(&mRequest)
 	mHandler.On("Send", &mRequest).Return(`{"9fbcd51ef0a2d6293730c6a60afee8c807677fb5":"uuid":"edgar"}}`, nil).Once()
 
 	expected := usecases.UserBasicData{}
@@ -179,7 +189,7 @@ func TestUserDataRepositoryUnmarshalError(t *testing.T) {
 	repo := UserProfileRepository{
 		Handler: &mHandler,
 	}
-	resp, err := repo.GetUserProfileData("edgar@gmail.com")
+	resp, err := repo.GetUserProfileData(context.Background(), "edgar@gmail.com")
 	assert.Equal(t, expected, resp)
 	assert.Error(t, err)
 	mHandler.AssertExpectations(t)

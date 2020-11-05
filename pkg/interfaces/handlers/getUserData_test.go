@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"regexp"
@@ -29,8 +30,8 @@ type mockUserProfileInteractor struct {
 	mock.Mock
 }
 
-func (m *mockUserProfileInteractor) GetUser(mail string) (usecases.UserBasicData, error) {
-	args := m.Called(mail)
+func (m *mockUserProfileInteractor) GetUser(ctx context.Context, mail string) (usecases.UserBasicData, error) {
+	args := m.Called(ctx, mail)
 	return args.Get(0).(usecases.UserBasicData), args.Error(1)
 }
 
@@ -55,7 +56,8 @@ func TestGetUserDataHandlerDataRunOK(t *testing.T) {
 	mInteractor := &mockUserProfileInteractor{}
 	var userb usecases.UserBasicData
 	emailV := regexp.MustCompile("@")
-	mInteractor.On("GetUser", "hola@mail.com").Return(userb, nil)
+	ctx := mock.AnythingOfType("*context.emptyCtx")
+	mInteractor.On("GetUser", ctx, "hola@mail.com").Return(userb, nil)
 	h := GetUserDataHandler{
 		Interactor:    mInteractor,
 		EmailValidate: emailV,
@@ -64,7 +66,7 @@ func TestGetUserDataHandlerDataRunOK(t *testing.T) {
 		Mail: "hola@mail.com",
 	}
 	getter := MakeMockInputGetter(input, nil)
-	r := h.Execute(getter)
+	r := h.Execute(context.Background(), getter)
 
 	expected := &goutils.Response{
 		Code: http.StatusOK,
@@ -81,7 +83,8 @@ func TestInternalUserDataHandlerForInternalDataRunError(t *testing.T) {
 	var userb usecases.UserBasicData
 	emailV := regexp.MustCompile("@")
 
-	mInteractor.On("GetUser", "hola@mail.com").Return(userb, err)
+	ctx := mock.AnythingOfType("*context.emptyCtx")
+	mInteractor.On("GetUser", ctx, "hola@mail.com").Return(userb, err)
 	mLogger.On("LogErrorGettingInternalData", err).Once()
 
 	h := GetUserDataHandler{
@@ -93,7 +96,7 @@ func TestInternalUserDataHandlerForInternalDataRunError(t *testing.T) {
 		Mail: "hola@mail.com",
 	}
 	getter := MakeMockInputGetter(input, nil)
-	r := h.Execute(getter)
+	r := h.Execute(context.Background(), getter)
 
 	expected := &goutils.Response{
 		Code: http.StatusNoContent,
@@ -119,7 +122,7 @@ func TestInternalUserDataHandlerForInternalDataBadRequest(t *testing.T) {
 	getter := MakeMockInputGetter(input, &goutils.Response{
 		Code: http.StatusBadRequest,
 	})
-	r := h.Execute(getter)
+	r := h.Execute(context.Background(), getter)
 
 	expected := &goutils.Response{
 		Code: http.StatusBadRequest,
@@ -145,7 +148,7 @@ func TestGetUserDataHandlerEmptyMail(t *testing.T) {
 		Mail: "",
 	}
 	getter := MakeMockInputGetter(input, nil)
-	r := h.Execute(getter)
+	r := h.Execute(context.Background(), getter)
 
 	expected := &goutils.Response{
 		Code: http.StatusBadRequest,
@@ -171,7 +174,7 @@ func TestGetUserDataHandlerBadMail(t *testing.T) {
 		Mail: "asdfg",
 	}
 	getter := MakeMockInputGetter(input, nil)
-	r := h.Execute(getter)
+	r := h.Execute(context.Background(), getter)
 
 	expected := &goutils.Response{
 		Code: http.StatusBadRequest,

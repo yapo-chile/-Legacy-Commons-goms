@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"errors"
 	"net/http"
 	"testing"
@@ -47,7 +48,7 @@ func TestFibonacciHandlerExecuteOK(t *testing.T) {
 	}
 
 	getter := MakeMockInputGetter(&input, nil)
-	r := h.Execute(getter)
+	r := h.Execute(context.Background(), getter)
 	assert.Equal(t, expectedResponse, r)
 
 	m.AssertExpectations(t)
@@ -65,7 +66,7 @@ func TestFibonacciHandlerExecuteError(t *testing.T) {
 	}
 
 	getter := MakeMockInputGetter(&input, nil)
-	r := h.Execute(getter)
+	r := h.Execute(context.Background(), getter)
 	assert.Equal(t, expectedResponse, r)
 
 	m.AssertExpectations(t)
@@ -81,7 +82,7 @@ func TestFibonacciHandlerInputError(t *testing.T) {
 	}
 
 	getter := MakeMockInputGetter(nil, expectedResponse)
-	r := h.Execute(getter)
+	r := h.Execute(context.Background(), getter)
 	assert.Equal(t, expectedResponse, r)
 
 	m.AssertExpectations(t)

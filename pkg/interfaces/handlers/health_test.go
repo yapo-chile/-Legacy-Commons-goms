@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"net/http"
 	"testing"
 
@@ -21,7 +22,7 @@ func TestHealthHandlerRun(t *testing.T) {
 	var h HealthHandler
 	var input HandlerInput
 	getter := MakeMockInputGetter(&input, nil)
-	r := h.Execute(getter)
+	r := h.Execute(context.Background(), getter)
 
 	expected := &goutils.Response{
 		Code: http.StatusOK,

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -161,7 +162,7 @@ func getContractInfo(url string) (interface{}, float64, error) {
 	logger := &loggerMock{}
 
 	HTTPHandler := infrastructure.NewHTTPHandler(logger)
-	httprequest := HTTPHandler.NewRequest().
+	httprequest := HTTPHandler.NewRequest(context.Background()).
 		SetMethod("GET").
 		SetPath(url)
 	publishedContract, err := HTTPHandler.Send(httprequest)

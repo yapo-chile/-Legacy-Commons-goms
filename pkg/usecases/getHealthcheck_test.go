@@ -1,6 +1,7 @@
 package usecases
 
 import (
+	"context"
 	"errors"
 	"testing"
 
@@ -12,8 +13,8 @@ type MockGomsRepository struct {
 	mock.Mock
 }
 
-func (m *MockGomsRepository) GetHealthcheck() (string, error) {
-	ret := m.Called()
+func (m *MockGomsRepository) GetHealthcheck(ctx context.Context) (string, error) {
+	ret := m.Called(ctx)
 	return ret.String(0), ret.Error(1)
 }
 
@@ -45,9 +46,10 @@ func TestGetHealthcheckOK(t *testing.T) {
 	mLogger.On("LogURI", mock.AnythingOfType("string"))
 	mLogger.On("LogHealthcheckOK", mock.AnythingOfType("string"))
 
-	mRepo.On("GetHealthcheck").Return("OK", nil)
+	ctx := mock.AnythingOfType("*context.emptyCtx")
+	mRepo.On("GetHealthcheck", ctx).Return("OK", nil)
 
-	resp, err := mInteractor.GetHealthcheck()
+	resp, err := mInteractor.GetHealthcheck(context.Background())
 
 	assert.Nil(t, err)
 	assert.Equal(t, "OK", resp)
@@ -68,9 +70,10 @@ func TestGetHealthcheckError(t *testing.T) {
 	mLogger.On("LogURI", mock.AnythingOfType("string"))
 	mLogger.On("LogRequestErr", err)
 
-	mRepo.On("GetHealthcheck").Return("", err)
+	ctx := mock.AnythingOfType("*context.emptyCtx")
+	mRepo.On("GetHealthcheck", ctx).Return("", err)
 
-	resp, err := mInteractor.GetHealthcheck()
+	resp, err := mInteractor.GetHealthcheck(context.Background())
 
 	assert.Error(t, err)
 	assert.Equal(t, "", resp)

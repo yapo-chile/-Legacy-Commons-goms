@@ -31,7 +31,10 @@ func NewUserProfileRepository(handler HTTPHandler, path string) usecases.UserPro
 // GetUserProfileData makes a http request to profile service
 // to get the user profile data
 // it sends the sha1 representation of the provided email
-func (repo *UserProfileRepository) GetUserProfileData(ctx context.Context, email string) (usecases.UserBasicData, error) {
+func (repo *UserProfileRepository) GetUserProfileData(
+	ctx context.Context,
+	email string,
+) (usecases.UserBasicData, error) {
 	h := sha1.New()        // nolint: gosec
 	h.Write([]byte(email)) // nolint: gosec, errcheck
 	sha1Email := fmt.Sprintf("%x", h.Sum(nil))

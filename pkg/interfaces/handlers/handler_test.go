@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -29,8 +30,8 @@ func (m *MockHandler) Input(ir InputRequest) HandlerInput {
 	return args.Get(0).(HandlerInput)
 }
 
-func (m *MockHandler) Execute(getter InputGetter) *goutils.Response {
-	args := m.Called(getter)
+func (m *MockHandler) Execute(ctx context.Context, getter InputGetter) *goutils.Response {
+	args := m.Called(ctx, getter)
 	_, response := getter()
 	if response != nil {
 		return response
@@ -64,8 +65,8 @@ func (m *MockPanicHandler) Input(ir InputRequest) HandlerInput {
 	args := m.Called(ir)
 	return args.Get(0).(HandlerInput)
 }
-func (m *MockPanicHandler) Execute(getter InputGetter) *goutils.Response {
-	m.Called(getter)
+func (m *MockPanicHandler) Execute(ctx context.Context, getter InputGetter) *goutils.Response {
+	m.Called(ctx, getter)
 	panic("dead")
 }
 
@@ -149,8 +150,9 @@ func TestJsonHandlerFuncOK(t *testing.T) {
 		Code: 42,
 		Body: DummyOutput{"That's some bad hat, Harry"},
 	}
+	ctx := mock.AnythingOfType("*context.emptyCtx")
 	getter := mock.AnythingOfType("handlers.InputGetter")
-	h.On("Execute", getter).Return(response).Once()
+	h.On("Execute", ctx, getter).Return(response).Once()
 	h.On("Input", mock.AnythingOfType("*handlers.MockInputRequest")).Return(input).Once()
 
 	ih.On("NewInputRequest", mock.AnythingOfType("*http.Request")).Return(&mMockInputRequest)
@@ -198,8 +200,9 @@ func TestJsonHandlerFuncOK2(t *testing.T) {
 		Code: 42,
 		Body: DummyOutput{"That's some bad hat, Harry"},
 	}
+	ctx := mock.AnythingOfType("*context.valueCtx")
 	getter := mock.AnythingOfType("handlers.InputGetter")
-	h.On("Execute", getter).Return(response).Once()
+	h.On("Execute", ctx, getter).Return(response).Once()
 	h.On("Input", mock.AnythingOfType("*handlers.MockInputRequest")).Return(input).Once()
 
 	ih.On("NewInputRequest", mock.AnythingOfType("*http.Request")).Return(&mMockInputRequest)
@@ -247,12 +250,13 @@ func TestJsonHandlerFuncParseError(t *testing.T) {
 	mMockInputRequest := MockInputRequest{}
 	l := MockLogger{}
 	input := &DummyInput{}
+	ctx := mock.AnythingOfType("*context.emptyCtx")
 	getter := mock.AnythingOfType("handlers.InputGetter")
 	response := &goutils.Response{
 		Code: 400,
 		Body: struct{ ErrorMessage string }{ErrorMessage: "unexpected EOF"},
 	}
-	h.On("Execute", getter)
+	h.On("Execute", ctx, getter)
 	h.On("Input", mock.AnythingOfType("*handlers.MockInputRequest")).Return(input).Once()
 
 	ih.On("NewInputRequest", mock.AnythingOfType("*http.Request")).Return(&mMockInputRequest)
@@ -296,9 +300,10 @@ func TestJsonHandlerFuncPanic(t *testing.T) {
 	ih := MockInputHandler{}
 	mMockInputRequest := MockInputRequest{}
 	l := MockLogger{}
+	ctx := mock.AnythingOfType("*context.emptyCtx")
 	getter := mock.AnythingOfType("handlers.InputGetter")
 	input := &DummyInput{}
-	h.On("Execute", getter)
+	h.On("Execute", ctx, getter)
 	h.On("Input", mock.AnythingOfType("*handlers.MockInputRequest")).Return(input).Once()
 
 	ih.On("NewInputRequest", mock.AnythingOfType("*http.Request")).Return(&mMockInputRequest)
@@ -343,8 +348,9 @@ func TestJsonHandlerFuncHeaders(t *testing.T) {
 		Code: 42,
 		Body: DummyOutput{"That's some bad hat, Harry"},
 	}
+	ctx := mock.AnythingOfType("*context.valueCtx")
 	getter := mock.AnythingOfType("handlers.InputGetter")
-	h.On("Execute", getter).Return(response).Once()
+	h.On("Execute", ctx, getter).Return(response).Once()
 	h.On("Input", mock.AnythingOfType("*handlers.MockInputRequest")).Return(input).Once()
 
 	ih.On("NewInputRequest", mock.AnythingOfType("*http.Request")).Return(&mMockInputRequest)
