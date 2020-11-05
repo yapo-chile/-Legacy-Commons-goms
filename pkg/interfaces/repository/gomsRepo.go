@@ -42,9 +42,10 @@ func (repo *GomsRepository) GetHealthcheck(ctx context.Context) (string, error) 
 	}
 
 	var gomsresp GomsResponse
+	var body = response.GetBodyString()
 
-	if response != "" {
-		if err = json.Unmarshal([]byte(response.(string)), &gomsresp); err != nil {
+	if body != "" {
+		if err = json.Unmarshal([]byte(body), &gomsresp); err != nil {
 			return "", fmt.Errorf("there was an error parsing goms response: %+v", err)
 		}
 

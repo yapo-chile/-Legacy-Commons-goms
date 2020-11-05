@@ -40,7 +40,9 @@ func (repo *UserProfileRepository) GetUserProfileData(
 	sha1Email := fmt.Sprintf("%x", h.Sum(nil))
 	request := repo.Handler.NewRequest(ctx).SetMethod("GET").SetPath(fmt.Sprintf(repo.Path, sha1Email))
 
-	JSONResp, err := repo.Handler.Send(request)
+	response, err := repo.Handler.Send(request)
+	var JSONResp = response.GetBodyString()
+
 	if err == nil && JSONResp != "" {
 		resp := fmt.Sprintf("%s", JSONResp)
 		var userData map[string]usecases.UserBasicData

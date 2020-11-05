@@ -40,7 +40,7 @@ func NewHTTPCircuitBreakerHandler(
 // Send will execute the sending of a http request
 // but in this case it will wait until it obtains a successful response
 // in order to continue it's execution
-func (h *HTTPCircuitBreakerHandler) Send(req repository.HTTPRequest) (interface{}, error) {
+func (h *HTTPCircuitBreakerHandler) Send(req repository.HTTPRequest) (repository.HTTPResponse, error) {
 	h.logger.Debug("HTTP - %s - Sending HTTP with circuit breaker request to: %+v", req.GetMethod(), req.GetPath())
 
 	var response interface{}
@@ -52,7 +52,7 @@ func (h *HTTPCircuitBreakerHandler) Send(req repository.HTTPRequest) (interface{
 		})
 	}
 
-	return response, err
+	return response.(repository.HTTPResponse), err
 }
 
 // NewRequest returns an initialized struct that can be used to make a http request

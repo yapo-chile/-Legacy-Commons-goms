@@ -96,3 +96,41 @@ func TraceRequest(req repository.HTTPRequest) opentracing.Span {
 	)
 	return span
 }
+
+type JaegerTracedHTTPHandler struct {
+	httpHandler repository.HTTPHandler
+}
+
+// NewJaegerTracedHTTPHandler will create a new instance of a custom http request handler
+func NewJaegerTracedHTTPHandler(h repository.HTTPHandler) repository.HTTPHandler {
+	return &JaegerTracedHTTPHandler{
+		httpHandler: h,
+	}
+}
+
+// Send will execute the sending of a http request
+// but in this case it will wait until it obtains a successful response
+// in order to continue it's execution
+func (h *JaegerTracedHTTPHandler) Send(req repository.HTTPRequest) (repository.HTTPResponse, error) {
+	var name = req.GetMethod() + " " + req.GetPath()
+	span, _ := opentracing.StartSpanFromContext(req.Context(), name)
+	defer span.Finish()
+
+	ext.SpanKindRPCClient.Set(span)
+	ext.HTTPUrl.Set(span, req.GetPath())
+	ext.HTTPMethod.Set(span, req.GetMethod())
+	span.Tracer().Inject(span.Context(),
+		opentracing.HTTPHeaders,
+		opentracing.HTTPHeadersCarrier(req.GetHeaders()),
+	)
+
+	response, err := h.httpHandler.Send(req)
+
+	span.SetTag("http.status_code", response.GetStatusCode())
+	return response, err
+}
+
+// NewRequest returns an initialized struct that can be used to make a http request
+func (h *JaegerTracedHTTPHandler) NewRequest(ctx context.Context) repository.HTTPRequest {
+	return h.httpHandler.NewRequest(ctx)
+}

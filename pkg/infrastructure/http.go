@@ -16,6 +16,27 @@ import (
 	"github.mpi-internal.com/Yapo/goms/pkg/interfaces/repository"
 )
 
+// response is a hack to avoid a previous hack
+type response struct {
+	body       string
+	statusCode int
+}
+
+func (r *response) GetBodyString() string {
+	return r.body
+}
+
+func (r *response) GetStatusCode() int {
+	return r.statusCode
+}
+
+func makeResponse(body string, statusCode int) repository.HTTPResponse {
+	return &response{
+		body:       body,
+		statusCode: statusCode,
+	}
+}
+
 type httpHandler struct {
 	logger loggers.Logger
 }
@@ -29,12 +50,9 @@ func NewHTTPHandler(logger loggers.Logger) repository.HTTPHandler {
 
 // Send will execute the sending of a http request
 // a custom http client has been made to add a request timeout of 10 seconds
-func (h *httpHandler) Send(req repository.HTTPRequest) (interface{}, error) {
+func (h *httpHandler) Send(req repository.HTTPRequest) (repository.HTTPResponse, error) {
 	h.logger.Debug("Http - %s - Sending HTTP request to: %+v", req.GetMethod(), req.GetPath())
 	h.logger.Info("Send Request - %+v", req)
-
-	span := TraceRequest(req)
-	defer span.Finish()
 
 	// this makes a custom http client with a timeout in secs for each request
 	var httpClient = &http.Client{
@@ -43,7 +61,7 @@ func (h *httpHandler) Send(req repository.HTTPRequest) (interface{}, error) {
 	resp, err := httpClient.Do(&req.(*request).innerRequest)
 	if err != nil {
 		h.logger.Error("Http - %s - Error sending HTTP request: %+v", req.GetMethod(), err)
-		return "", fmt.Errorf("found error: %+v", err)
+		return makeResponse("", resp.StatusCode), fmt.Errorf("found error: %+v", err)
 	}
 	defer resp.Body.Close()
 
@@ -52,14 +70,14 @@ func (h *httpHandler) Send(req repository.HTTPRequest) (interface{}, error) {
 		h.logger.Error("Http - %s - Received an error response: %+v", req.GetMethod(), err)
 		var msg interface{}
 		if e := json.Unmarshal(response, &msg); e != nil {
-			return "", fmt.Errorf("the error code was %d", resp.StatusCode)
+			return makeResponse("", resp.StatusCode), fmt.Errorf("the error code was %d", resp.StatusCode)
 		}
-		return "", fmt.Errorf("%s", msg)
+		return makeResponse("", resp.StatusCode), fmt.Errorf("%s", msg)
 	}
 	if err != nil {
 		h.logger.Error("Http - %s - Error reading response: %+v", req.GetMethod(), err)
 	}
-	return string(response), nil
+	return makeResponse(string(response), resp.StatusCode), nil
 }
 
 // request is a custom golang http.Request

@@ -88,7 +88,7 @@ func main() { //nolint: funlen
 	emailFormat := "^[\\w_+-]+(\\.[\\w_+-]+)*\\.?@([\\w_+-]+\\.)+[\\w]{2,4}$"
 	emailValidate := regexp.MustCompile(emailFormat)
 	userProfileRepo := repository.NewUserProfileRepository(
-		HTTPHandler,
+		infrastructure.NewJaegerTracedHTTPHandler(HTTPHandler),
 		conf.ProfileConf.Host+conf.ProfileConf.UserDataPath+conf.ProfileConf.UserDataTokens,
 	)
 	getUserDataInteractor := usecases.GetUserDataInteractor{
@@ -108,7 +108,7 @@ func main() { //nolint: funlen
 	getHealthLogger := loggers.MakeGomsRepoLogger(logger)
 	getHealthInteractor := usecases.GetHealthcheckInteractor{
 		GomsRepository: repository.NewGomsRepository(
-			HTTPHandler,
+			infrastructure.NewJaegerTracedHTTPHandler(HTTPHandler),
 			conf.GomsClientConf.TimeOut,
 			conf.GomsClientConf.GetHealthcheckPath),
 		Logger: getHealthLogger,
@@ -130,7 +130,7 @@ func main() { //nolint: funlen
 	getHealthCBHandler := handlers.GetHealthcheckHandler{
 		GetHealthcheckInteractor: &usecases.GetHealthcheckInteractor{
 			GomsRepository: repository.NewGomsRepository(
-				HTTPCBHandler,
+				infrastructure.NewJaegerTracedHTTPHandler(HTTPCBHandler),
 				conf.GomsClientConf.TimeOut,
 				conf.GomsClientConf.GetHealthcheckPath),
 			Logger: getHealthLogger,

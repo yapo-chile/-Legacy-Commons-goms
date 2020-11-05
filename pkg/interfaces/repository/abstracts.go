@@ -22,8 +22,13 @@ type HTTPRequest interface {
 	Context() context.Context
 }
 
+type HTTPResponse interface {
+	GetBodyString() string
+	GetStatusCode() int
+}
+
 // HTTPHandler implements HTTP handler operations
 type HTTPHandler interface {
-	Send(HTTPRequest) (interface{}, error)
+	Send(HTTPRequest) (HTTPResponse, error)
 	NewRequest(context.Context) HTTPRequest
 }
