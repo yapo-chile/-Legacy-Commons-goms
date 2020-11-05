@@ -1,9 +1,13 @@
 package usecases
 
+import (
+	"context"
+)
+
 // GomsRepository interface that represents all the methods available to
 // interact with goms microservice
 type GomsRepository interface {
-	GetHealthcheck() (string, error)
+	GetHealthcheck(context.Context) (string, error)
 }
 
 // UserBasicData is the structure that contains the basic user data
@@ -19,11 +23,11 @@ type UserBasicData struct {
 // UserRepository defines the methods that a User repository should have
 type UserRepository interface {
 	// GetUserData gets the user data based on his email
-	GetUserData(email string) (UserBasicData, error)
+	GetUserData(ctx context.Context, email string) (UserBasicData, error)
 }
 
 // UserProfileRepository defines the methods that a User Profile repository should have
 type UserProfileRepository interface {
 	// GetUserData gets the user data based on his email
-	GetUserProfileData(email string) (UserBasicData, error)
+	GetUserProfileData(ctx context.Context, email string) (UserBasicData, error)
 }

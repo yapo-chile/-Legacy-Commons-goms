@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/Yapo/goutils"
@@ -24,7 +25,7 @@ func (*HealthHandler) Input(ir InputRequest) HandlerInput {
 // Execute returns the service health status.
 // Expected response format:
 //   { Status: string - Always "OK" }
-func (*HealthHandler) Execute(ig InputGetter) *goutils.Response {
+func (*HealthHandler) Execute(_ context.Context, ig InputGetter) *goutils.Response {
 	return &goutils.Response{
 		Code: http.StatusOK,
 		Body: healthRequestOutput{

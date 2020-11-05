@@ -1,6 +1,7 @@
 package infrastructure
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -70,12 +71,13 @@ type request struct {
 }
 
 // NewRequest returns an initialized struct that can be used to make a http request
-func (*httpHandler) NewRequest() repository.HTTPRequest {
+func (*httpHandler) NewRequest(ctx context.Context) repository.HTTPRequest {
+	inner := http.Request{
+		Header: make(http.Header),
+	}
 	return &request{
-		innerRequest: http.Request{
-			Header: make(http.Header),
-		},
-		timeOut: time.Duration(10),
+		innerRequest: *inner.WithContext(ctx),
+		timeOut:      time.Duration(10), // TODO: integrate timeout into context
 	}
 }
 
@@ -178,4 +180,9 @@ func (r *request) SetTimeOut(timeout int) repository.HTTPRequest {
 func isErrorCode(statusCode int) bool {
 	return (statusCode >= http.StatusBadRequest &&
 		statusCode <= http.StatusNetworkAuthenticationRequired)
+}
+
+// Context TODO
+func (r *request) Context() context.Context {
+	return r.innerRequest.Context()
 }

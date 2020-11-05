@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 
@@ -29,8 +30,8 @@ func NewGomsRepository(handler HTTPHandler, timeOut int, path string) usecases.G
 }
 
 // GetHealthcheck obtains the status of the goms application
-func (repo *GomsRepository) GetHealthcheck() (string, error) {
-	request := repo.Handler.NewRequest().
+func (repo *GomsRepository) GetHealthcheck(ctx context.Context) (string, error) {
+	request := repo.Handler.NewRequest(ctx).
 		SetMethod("GET").
 		SetPath(repo.Path).
 		SetTimeOut(repo.TimeOut)

@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/Yapo/goutils"
@@ -10,7 +11,7 @@ import (
 // The method GetHealthcheck is implemented in the use case and allows the MS to query
 // it's own state
 type GetHealthcheckInteractor interface {
-	GetHealthcheck() (string, error)
+	GetHealthcheck(context.Context) (string, error)
 }
 
 // GetHealthcheckHandler implements the handler interface and responds to
@@ -33,8 +34,8 @@ func (h *GetHealthcheckHandler) Input(ir InputRequest) HandlerInput {
 type getHealthcheckRequestError goutils.GenericError
 
 // Execute queries itself to get the service health status.
-func (h *GetHealthcheckHandler) Execute(ig InputGetter) *goutils.Response {
-	resp, err := h.GetHealthcheckInteractor.GetHealthcheck()
+func (h *GetHealthcheckHandler) Execute(ctx context.Context, ig InputGetter) *goutils.Response {
+	resp, err := h.GetHealthcheckInteractor.GetHealthcheck(ctx)
 	if err != nil {
 		return &goutils.Response{
 			Code: http.StatusBadRequest,

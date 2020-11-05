@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/Yapo/goutils"
@@ -43,7 +44,7 @@ func (h *FibonacciHandler) Input(ir InputRequest) HandlerInput {
 //   { Result: int - Operation result }
 // Expected error format:
 //   { ErrorMessage: string - Error detail }
-func (h *FibonacciHandler) Execute(ig InputGetter) *goutils.Response {
+func (h *FibonacciHandler) Execute(_ context.Context, ig InputGetter) *goutils.Response {
 	input, response := ig()
 	if response != nil {
 		return response

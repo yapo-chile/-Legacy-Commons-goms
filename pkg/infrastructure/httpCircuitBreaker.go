@@ -1,6 +1,7 @@
 package infrastructure
 
 import (
+	"context"
 	"time"
 
 	"github.com/sony/gobreaker"
@@ -55,8 +56,8 @@ func (h *HTTPCircuitBreakerHandler) Send(req repository.HTTPRequest) (interface{
 }
 
 // NewRequest returns an initialized struct that can be used to make a http request
-func (h *HTTPCircuitBreakerHandler) NewRequest() repository.HTTPRequest {
-	return h.httpHandler.NewRequest()
+func (h *HTTPCircuitBreakerHandler) NewRequest(ctx context.Context) repository.HTTPRequest {
+	return h.httpHandler.NewRequest(ctx)
 }
 
 // NewCircuitBreaker initializes circuit breaker wrapper

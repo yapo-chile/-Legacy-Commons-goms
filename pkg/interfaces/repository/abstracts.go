@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"time"
 )
 
@@ -18,10 +19,11 @@ type HTTPRequest interface {
 	SetQueryParams(map[string]string) HTTPRequest
 	GetTimeOut() time.Duration
 	SetTimeOut(int) HTTPRequest
+	Context() context.Context
 }
 
 // HTTPHandler implements HTTP handler operations
 type HTTPHandler interface {
 	Send(HTTPRequest) (interface{}, error)
-	NewRequest() HTTPRequest
+	NewRequest(context.Context) HTTPRequest
 }

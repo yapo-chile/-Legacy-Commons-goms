@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"regexp"
@@ -39,7 +40,7 @@ type getUserDataRequestOutput struct {
 
 // GetUserDataInteractor is the interactor used by the handler
 type GetUserDataInteractor interface {
-	GetUser(mail string) (usecases.UserBasicData, error)
+	GetUser(ctx context.Context, mail string) (usecases.UserBasicData, error)
 }
 
 // Input returns a fresh, empty instance of getUserDataRequestInput
@@ -51,7 +52,7 @@ func (h *GetUserDataHandler) Input(ir InputRequest) HandlerInput {
 }
 
 // Execute is the main function of the getUserData handler
-func (h *GetUserDataHandler) Execute(ig InputGetter) *goutils.Response {
+func (h *GetUserDataHandler) Execute(ctx context.Context, ig InputGetter) *goutils.Response {
 	input, response := ig()
 	if response != nil {
 		h.Logger.LogBadRequest(response)
@@ -70,7 +71,7 @@ func (h *GetUserDataHandler) Execute(ig InputGetter) *goutils.Response {
 		}
 	}
 
-	userBasicData, err := h.Interactor.GetUser(in.Mail)
+	userBasicData, err := h.Interactor.GetUser(ctx, in.Mail)
 	if err != nil {
 		h.Logger.LogErrorGettingInternalData(err)
 

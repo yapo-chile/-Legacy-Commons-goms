@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/Yapo/goutils"
@@ -23,7 +24,7 @@ type Handler interface {
 	Input(InputRequest) HandlerInput
 	// Execute is the actual handler code. The InputGetter can be used to retrieve
 	// the request's input at any time (or not at all).
-	Execute(InputGetter) *goutils.Response
+	Execute(context.Context, InputGetter) *goutils.Response
 }
 
 // InputHandler defines what methods an input handler should have
@@ -158,6 +159,7 @@ func (jh *jsonHandler) run(w http.ResponseWriter, r *http.Request) {
 	} else {
 		// Do the Harlem Shake
 		response = jh.handler.Execute(
+			r.Context(),
 			jh.inputGetterCacheDecorator(jh.inputHandler.Input, &requestCacheStatus),
 		)
 		if err := jh.requestCache.SetCache(input, response); err == nil {

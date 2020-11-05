@@ -1,5 +1,9 @@
 package usecases
 
+import (
+	"context"
+)
+
 // GetHealthcheckInteractor contains the interfaces that allows it to interact with:
 // GomsRepository: the service it needs to consume in order to know it's state
 // Logger: to log useful information
@@ -17,9 +21,9 @@ type HealthcheckPrometheusLogger interface {
 }
 
 // GetHealthcheck allows the service to ask for it's own service state via http
-func (i *GetHealthcheckInteractor) GetHealthcheck() (string, error) {
+func (i *GetHealthcheckInteractor) GetHealthcheck(ctx context.Context) (string, error) {
 	i.Logger.LogURI("Getting local healthcheck information")
-	resp, err := i.GomsRepository.GetHealthcheck()
+	resp, err := i.GomsRepository.GetHealthcheck(ctx)
 
 	if err != nil {
 		i.Logger.LogRequestErr(err)
