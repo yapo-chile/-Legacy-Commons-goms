@@ -15,14 +15,28 @@ type MockHTTPHandler struct {
 	mock.Mock
 }
 
-func (m *MockHTTPHandler) Send(request HTTPRequest) (interface{}, error) {
+func (m *MockHTTPHandler) Send(request HTTPRequest) (HTTPResponse, error) {
 	args := m.Called(request)
-	return args.Get(0), args.Error(1)
+	return args.Get(0).(HTTPResponse), args.Error(1)
 }
 
 func (m *MockHTTPHandler) NewRequest(ctx context.Context) HTTPRequest {
 	args := m.Called(ctx)
 	return args.Get(0).(HTTPRequest)
+}
+
+type MockResponse struct {
+	mock.Mock
+}
+
+func (m *MockResponse) GetBodyString() string {
+	args := m.Called()
+	return args.String(0)
+}
+
+func (m *MockResponse) GetStatusCode() int {
+	args := m.Called()
+	return args.Int(0)
 }
 
 type MockRequest struct {
@@ -106,14 +120,17 @@ func TestNewUserDataRepository(t *testing.T) {
 
 func TestUserDataRepositoryGetUserDataOK(t *testing.T) {
 	mHandler := MockHTTPHandler{}
+	mResponse := MockResponse{}
 	mRequest := MockRequest{}
 
 	mRequest.On("SetPath", mock.AnythingOfType("string")).Return(&mRequest)
 	mRequest.On("SetMethod", "GET").Return(&mRequest)
 
+	mResponse.On("GetBodyString").Return(`{"9fbcd51ef0a2d6293730c6a60afee8c807677fb5":{"uuid":"edgar"}}`).Once()
+
 	ctx := mock.AnythingOfType("*context.emptyCtx")
 	mHandler.On("NewRequest", ctx).Return(&mRequest)
-	mHandler.On("Send", &mRequest).Return(`{"9fbcd51ef0a2d6293730c6a60afee8c807677fb5":{"uuid":"edgar"}}`, nil)
+	mHandler.On("Send", &mRequest).Return(&mResponse, nil)
 
 	expected := usecases.UserBasicData{Name: ""}
 
@@ -129,14 +146,17 @@ func TestUserDataRepositoryGetUserDataOK(t *testing.T) {
 
 func TestUserDataRepositoryGetUserDataError(t *testing.T) {
 	mHandler := MockHTTPHandler{}
+	mResponse := MockResponse{}
 	mRequest := MockRequest{}
 
 	mRequest.On("SetPath", mock.AnythingOfType("string")).Return(&mRequest)
 	mRequest.On("SetMethod", "GET").Return(&mRequest)
 
+	mResponse.On("GetBodyString").Return(`{"notasha1email":{}}`).Once()
+
 	ctx := mock.AnythingOfType("*context.emptyCtx")
 	mHandler.On("NewRequest", ctx).Return(&mRequest)
-	mHandler.On("Send", &mRequest).Return(`{"notasha1email":{}}`, nil)
+	mHandler.On("Send", &mRequest).Return(&mResponse, nil)
 
 	expected := usecases.UserBasicData{}
 
@@ -152,14 +172,17 @@ func TestUserDataRepositoryGetUserDataError(t *testing.T) {
 
 func TestUserDataRepositoryGetUserDataRequestError(t *testing.T) {
 	mHandler := MockHTTPHandler{}
+	mResponse := MockResponse{}
 	mRequest := MockRequest{}
 
 	mRequest.On("SetPath", mock.AnythingOfType("string")).Return(&mRequest)
 	mRequest.On("SetMethod", "GET").Return(&mRequest)
 
+	mResponse.On("GetBodyString").Return("").Once()
+
 	ctx := mock.AnythingOfType("*context.emptyCtx")
 	mHandler.On("NewRequest", ctx).Return(&mRequest)
-	mHandler.On("Send", &mRequest).Return("", fmt.Errorf("error"))
+	mHandler.On("Send", &mRequest).Return(&mResponse, fmt.Errorf("error"))
 
 	expected := usecases.UserBasicData{}
 
@@ -175,14 +198,17 @@ func TestUserDataRepositoryGetUserDataRequestError(t *testing.T) {
 
 func TestUserDataRepositoryUnmarshalError(t *testing.T) {
 	mHandler := MockHTTPHandler{}
+	mResponse := MockResponse{}
 	mRequest := MockRequest{}
 
 	mRequest.On("SetPath", mock.AnythingOfType("string")).Return(&mRequest)
 	mRequest.On("SetMethod", "GET").Return(&mRequest)
 
+	mResponse.On("GetBodyString").Return(`{"9fbcd51ef0a2d6293730c6a60afee8c807677fb5":"uuid":"edgar"}}`).Once()
+
 	ctx := mock.AnythingOfType("*context.emptyCtx")
 	mHandler.On("NewRequest", ctx).Return(&mRequest)
-	mHandler.On("Send", &mRequest).Return(`{"9fbcd51ef0a2d6293730c6a60afee8c807677fb5":"uuid":"edgar"}}`, nil).Once()
+	mHandler.On("Send", &mRequest).Return(&mResponse, nil).Once()
 
 	expected := usecases.UserBasicData{}
 

@@ -44,10 +44,9 @@ func (repo *UserProfileRepository) GetUserProfileData(
 	var JSONResp = response.GetBodyString()
 
 	if err == nil && JSONResp != "" {
-		resp := fmt.Sprintf("%s", JSONResp)
 		var userData map[string]usecases.UserBasicData
 
-		err := json.Unmarshal([]byte(resp), &userData)
+		err := json.Unmarshal([]byte(JSONResp), &userData)
 		if err != nil {
 			return usecases.UserBasicData{}, fmt.Errorf(errorUnmarshal, email)
 		}

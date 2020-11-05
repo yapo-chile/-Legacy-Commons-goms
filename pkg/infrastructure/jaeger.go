@@ -8,13 +8,11 @@ import (
 	"net/http"
 
 	"github.com/opentracing/opentracing-go/ext"
-	"github.com/opentracing/opentracing-go/log"
 
 	opentracing "github.com/opentracing/opentracing-go"
 	jaegercfg "github.com/uber/jaeger-client-go/config"
 	jaegerlog "github.com/uber/jaeger-client-go/log"
 	jaegermetrics "github.com/uber/jaeger-lib/metrics"
-	//	"github.com/uber/jaeger-client-go"
 
 	"github.mpi-internal.com/Yapo/goms/pkg/interfaces/repository"
 )
@@ -76,27 +74,6 @@ func JaegerWrapperFunc(pattern string, handler http.HandlerFunc) http.HandlerFun
 	})
 }
 
-// TraceRequest generates a new traced HTTP request with opentracing headers injected into it
-func TraceRequest(req repository.HTTPRequest) opentracing.Span {
-	var name = req.GetMethod() + " " + req.GetPath()
-	span, _ := opentracing.StartSpanFromContext(req.Context(), name)
-	span.SetTag("hello-to", "+Estables")
-	span.SetBaggageItem("le_request", "is also here")
-	span.LogFields(
-		log.String("le log", "string type"),
-		log.Int("another log", 42),
-	)
-
-	ext.SpanKindRPCClient.Set(span)
-	ext.HTTPUrl.Set(span, req.GetPath())
-	ext.HTTPMethod.Set(span, req.GetMethod())
-	span.Tracer().Inject(span.Context(),
-		opentracing.HTTPHeaders,
-		opentracing.HTTPHeadersCarrier(req.GetHeaders()),
-	)
-	return span
-}
-
 type JaegerTracedHTTPHandler struct {
 	httpHandler repository.HTTPHandler
 }
@@ -119,7 +96,7 @@ func (h *JaegerTracedHTTPHandler) Send(req repository.HTTPRequest) (repository.H
 	ext.SpanKindRPCClient.Set(span)
 	ext.HTTPUrl.Set(span, req.GetPath())
 	ext.HTTPMethod.Set(span, req.GetMethod())
-	span.Tracer().Inject(span.Context(),
+	span.Tracer().Inject(span.Context(), // nolint:errcheck
 		opentracing.HTTPHeaders,
 		opentracing.HTTPHeadersCarrier(req.GetHeaders()),
 	)
