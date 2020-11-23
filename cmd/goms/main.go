@@ -60,9 +60,6 @@ func main() { //nolint: funlen
 	}
 	shutdownSequence.Push(tracerCloser)
 
-	span := tracer.StartSpan("boot")
-	span.SetBaggageItem("le_boot", "is here")
-
 	logger.Info("Initializing resources")
 
 	// HealthHandler
@@ -222,7 +219,6 @@ func main() { //nolint: funlen
 	shutdownSequence.Push(server)
 	logger.Info("Starting request serving")
 
-	span.Finish()
 	go server.ListenAndServe()
 	shutdownSequence.Wait()
 	logger.Info("Server exited normally")

@@ -65,10 +65,10 @@ func JaegerWrapperFunc(pattern string, handler http.HandlerFunc) http.HandlerFun
 
 		recorder := &statusRecorder{
 			ResponseWriter: w,
-			Status:         200,
+			Status:         http.StatusOK,
 		}
 
-		ctx := opentracing.ContextWithSpan(context.Background(), serverSpan)
+		ctx := opentracing.ContextWithSpan(r.Context(), serverSpan)
 		handler(recorder, r.WithContext(ctx))
 		serverSpan.SetTag("http.status_code", recorder.Status)
 	})
