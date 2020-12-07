@@ -43,6 +43,7 @@ git tag | xargs git tag -d
 echoTitle "Renaming paths and variables ${TEMPLATE} -> ${SERVICE}"
 git grep -l ${TEMPLATE} | xargs sed -i.bak "s/${TEMPLATE}/${SERVICE}/g"
 find cmd -name main.go | xargs sed -i.bak '/CLONE REMOVE START/,/CLONE REMOVE END/d'
+find scripts -name pact-test.sh | xargs sed -i.bak '/CLONE REMOVE START/,/CLONE REMOVE END/d'
 
 echoTitle "Optionals for ${SERVICE}"
 read -p "Use remote conf with etcd? (yes/no)" ETCD
@@ -64,18 +65,28 @@ done
 sed "s/__SERVICE__/${SERVICE}/g" README-clone.md > README.md
 rm README-clone.md
 
-echoTitle "Removing code examples and leftovers"
-find . -iname "*.bak" | xargs rm
-find . -iname "*fibonacci*" | xargs rm
-find . -iname "*getHealthcheck*" | xargs rm
-find . -iname "*gomsRepo*" | xargs rm
-
 read -p "Would you like to add HTTP connections to your repo by default? [y/N] " RESPONSE
 if [[ "${RESPONSE}" =~ ^([nN][oO]?)?$ ]]
 then
 	find . -iname "*http*" | xargs rm
 	find . -iname "*abstract*" | xargs rm
+	find scripts -name pact-test.sh | xargs sed -i.bak '/CLONE-HTTP REMOVE START/,/CLONE-HTTP REMOVE END/d'
+	find pact -name provider_test.go | xargs sed -i.bak '/CLONE-HTTP REMOVE START/,/CLONE-HTTP REMOVE END/d'
 fi
+
+echoTitle "Removing code examples and leftovers"
+find . -iname "*.bak" | xargs rm
+find . -iname "*fibonacci*" | xargs rm
+find . -iname "*getHealthcheck*" | xargs rm
+find . -iname "*gomsRepo*" | xargs rm
+find . -iname "*rofile*" | xargs rm
+find . -iname "*getUserData*" | xargs rm
+jq '.interactions=[.interactions[0]]' pact/pacts/goms.json > pact/pacts/goms_copy.json
+mv pact/pacts/goms_copy.json pact/pacts/goms.json
+
+echoTitle "Formating golang files"
+gofmt -s -w pkg/* pact/* cmd/*
+
 echo "${TEMPLATE}*" >> .gitignore
 
 echoTitle "Making first commit"

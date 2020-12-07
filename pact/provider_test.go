@@ -1,12 +1,16 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"testing"
+
+	// CLONE-HTTP REMOVE START
+	"encoding/json"
 	"reflect"
 	"strconv"
-	"testing"
+
+	// CLONE-HTTP REMOVE END
 
 	"github.com/pact-foundation/pact-go/dsl"
 	"github.com/pact-foundation/pact-go/types"
@@ -22,6 +26,7 @@ type PactConf struct {
 	PactPath     string `env:"PACTS_PATH" envDefault:"./pacts"`
 }
 
+// CLONE-HTTP REMOVE START
 // Detail has the consumer version details of a pact test
 type Detail struct {
 	Title string `json:"title"`
@@ -66,6 +71,8 @@ func (m *loggerMock) Success(format string, params ...interface{}) {
 	fmt.Sprintf(format, params...) // nolint: vet,megacheck
 }
 
+// CLONE-HTTP REMOVE END
+
 // Example Provider Pact: How to run me!
 // 1. Start the daemon with `./pact-go daemon`
 // 2. cd <pact-go>/examples
@@ -97,6 +104,20 @@ func TestProvider(t *testing.T) {
 		}
 	}
 }
+
+func IOReadDir(root string) ([]string, error) {
+	files := make([]string, 0)
+	fileInfo, err := ioutil.ReadDir(root)
+	if err != nil {
+		return files, err
+	}
+	for _, file := range fileInfo {
+		files = append(files, file.Name())
+	}
+	return files, nil
+}
+
+// CLONE-HTTP REMOVE START
 
 func TestSendBroker(*testing.T) {
 	pactPublisher := &dsl.Publisher{}
@@ -140,18 +161,6 @@ func TestSendBroker(*testing.T) {
 			return
 		}
 	}
-}
-
-func IOReadDir(root string) ([]string, error) {
-	files := make([]string, 0)
-	fileInfo, err := ioutil.ReadDir(root)
-	if err != nil {
-		return files, err
-	}
-	for _, file := range fileInfo {
-		files = append(files, file.Name())
-	}
-	return files, nil
 }
 
 func getContractInfo(url string) (interface{}, float64, error) {
@@ -202,3 +211,5 @@ func getJSONPactFile(conf PactConf) (interface{}, error) {
 	pactResponse := result.Interactions[1].(map[string]interface{})
 	return pactResponse, err
 }
+
+// CLONE-HTTP REMOVE END

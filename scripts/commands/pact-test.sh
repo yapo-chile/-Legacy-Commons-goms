@@ -17,19 +17,22 @@ export PACT_PROVIDER_HOST=http://localhost
 export PACT_PROVIDER_PORT=8080
 export PACTS_PATH=./pacts
 
+# CLONE REMOVE START
 # Profile service
 export PROFILE_MS_PORT=5555
 export PROFILE_HOST=http://localhost:${PROFILE_MS_PORT}
+# CLONE REMOVE END
 
 echoTitle "Building microservice pact test binary"
 go build -v -o ${MS_BINARY} ./${MS_MAIN_FILE}
 
-
+# CLONE REMOVE START
 echoTitle "Starting profile-ms mock in background"
 nohup ${PACT_BINARY}/pact-stub-service pact/mocks/profile-ms.json --port=${PROFILE_MS_PORT} > ${PACT_LOGS}/profile.out 2>&1  &
 PROFILE_PID=$!
 
 echo ${PROFILE_PID}
+# CLONE REMOVE END
 
 echoTitle "Starting ${MS_BINARY} in background"
 nohup  ./${MS_BINARY} > ${PACT_LOGS}/${MS_BINARY}.out 2> ${PACT_LOGS}/${MS_BINARY}.err &
@@ -42,12 +45,17 @@ cd pact
 go test -v -run TestProvider
 EXIT_CODE=$?
 
+# CLONE HTTP START
 if [[ -n "$TRAVIS" ]]; then
   go test -v -run TestSendBroker
 fi
+# CLONE HTTP END
 
 echoTitle "Killing daemons"
-kill -9 ${PROFILE_PID} ${MS_PID}
+# CLONE REMOVE START
+kill -9 ${PROFILE_PID}
+# CLONE REMOVE END
+kill -9 ${MS_PID}
 
 echoTitle "Done"
 exit ${EXIT_CODE}
