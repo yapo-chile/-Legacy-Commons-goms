@@ -85,46 +85,15 @@ Goms is the official golang microservice template for Yapo.
 ## Creating a new service
 
 * Create a repo for your new service on: https://github.mpi-internal.com/Yapo
-* Rename your goms dir to your service name:
-  ```
-  $ mv goms YourService
-  ```
-* Update origin: 
-  ```
-  # https://help.github.com/articles/changing-a-remote-s-url/
-  $ git remote set-url origin git@github.mpi-internal.com:Yapo/YourService.git
-  ```
 
-* Replace every goms reference to your service's name:
-  ```
-  $ git grep -l goms | xargs sed -i.bak 's/goms/yourservice/g'
-  $ find . -name "*.bak" | xargs rm
-  ```
+* Execute in the root path of goms
 
-* Go through the code examples and implement your service
   ```
-  $ git grep -il fibonacci
-  README.md
-  cmd/goms/main.go
-  pkg/domain/fibonacci.go
-  pkg/domain/fibonacci_test.go
-  pkg/interfaces/handlers/fibonacci.go
-  pkg/interfaces/handlers/fibonacci_test.go
-  pkg/interfaces/loggers/fibonacciInteractorLogger.go
-  pkg/interfaces/repository/fibonacci.go
-  pkg/interfaces/repository/fibonacci_test.go
-  pkg/usecases/getNthFibonacci.go
-  pkg/usecases/getNthFibonacci_test.go
+  $ make clone
   ```
-
-* Enable TravisCI
-  - Go to your service's github settings -> Hooks & Services -> Add Service -> Travis CI
-  - Fill in the form with the credentials you obtain from https://travis.mpi-internal.com/profile/
-  - Sync your repos and organizations on Travis
-  - Make a push on your service
-  - The push should trigger a build. If it didn't ensure that it is enabled on the travis service list
-  - Enjoy! This should automatically enable quality-gate reports and a few other goodies
-
+  
+* Follow the instructions to fill needed fields
+  
 ## Endpoints
 ### GET  /healthcheck
 Reports whether the service is up and ready to respond.
