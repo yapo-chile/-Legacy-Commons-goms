@@ -1,6 +1,6 @@
 ---
 variables:
-  GO_PROJECT: github.mpi-internal.com/Yapo/yapo-api-auth
+  GO_PROJECT: github.mpi-internal.com/Yapo/goms
   CHART_DIR: k8s/$CI_PROJECT_NAME
 
 include:
