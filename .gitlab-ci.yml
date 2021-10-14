@@ -1,0 +1,55 @@
+---
+variables:
+  GO_PROJECT: github.mpi-internal.com/Yapo/yapo-api-auth
+  CHART_DIR: k8s/$CI_PROJECT_NAME
+
+include:
+  - project: 'yapo_team/yotf/sre-team/sre-services/ci-templates/golang-pipeline-template'
+    ref: main
+    file: 'gitlab-ci.yml'
+  - project: 'yapo_team/yotf/sre-team/sre-services/ci-templates/docker-pipeline-template'
+    ref: main
+    file: 'gitlab-ci.yml'
+  - project: 'yapo_team/yotf/sre-team/sre-services/ci-templates/helm-pipeline-template'
+    ref: main
+    file: 'gitlab-ci.yml'
+
+stages:
+  - install
+  - test
+  - build
+  - build-docker
+  - helm
+  - update-chart
+  - deploy
+
+install:
+  extends: .install
+
+test:
+  extends: .test
+
+build:
+  extends: .build
+  only:
+    - pre
+
+docker:
+  extends: .docker-push-release
+  only:
+    - pre
+
+helm:
+  extends: .helm
+  only:
+    - pre
+
+update-chart-pre:
+  extends: .update-chart-pre
+  only:
+    - pre
+
+deploy-k8s-pre:
+  extends: .deploy-k8s-pre
+  only:
+    - pre
