@@ -33,24 +33,45 @@ test:
 build:
   extends: .build
   only:
+    - dev
     - pre
+    - main
 
 docker:
   extends: .docker-push-release
   only:
+    - dev
     - pre
+    - main
 
 helm:
   extends: .helm
   only:
+    - dev
     - pre
+    - main
+
+update-chart-dev:
+  extends: .update-chart-dev
+  only:
+    - dev
 
 update-chart-pre:
   extends: .update-chart-pre
   only:
     - pre
 
+update-chart-pro:
+  extends: .update-chart-prod
+  only:
+    - main
+
 deploy-k8s-pre:
   extends: .deploy-k8s-pre
   only:
     - pre
+
+deploy-k8s-pro:
+  extends: .deploy-k8s-prod
+  only:
+    - main
