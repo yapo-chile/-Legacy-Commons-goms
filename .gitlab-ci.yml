@@ -2,6 +2,7 @@
 variables:
   GO_PROJECT: github.mpi-internal.com/Yapo/goms
   CHART_DIR: k8s/$CI_PROJECT_NAME
+  CI_JOB_TIMESTAMP: "$(date +'%Y%m%d_%H%M%S')"
 
 include:
   - project: 'yapo_team/yotf/sre-team/sre-services/ci-templates/golang-pipeline-template'
