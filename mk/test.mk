@@ -2,7 +2,7 @@ export REPORT_ARTIFACTS ?= reports
 
 ## Run tests and generate quality reports
 test: 
-	@scripts/commands/test.sh
+	@scripts/commands/test.sh cli
 # build-test
 # 	${DOCKER} run -ti --rm \
 # 		-v $$(pwd)/${REPORT_ARTIFACTS}:/app/${REPORT_ARTIFACTS} \
