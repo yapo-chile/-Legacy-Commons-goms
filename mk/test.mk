@@ -1,21 +1,23 @@
 export REPORT_ARTIFACTS ?= reports
 
 ## Run tests and generate quality reports
-test: build-test
-	${DOCKER} run -ti --rm \
-		-v $$(pwd)/${REPORT_ARTIFACTS}:/app/${REPORT_ARTIFACTS} \
-		--env APPNAME \
-		--env BRANCH \
-		--name ${APPNAME}-test \
-		${DOCKER_IMAGE}:test ${TEST_CMD}
-	[[ "${TEST_CMD}" =~ coverhtml ]] && open ${REPORT_ARTIFACTS}/cover.html || true
+test: 
+	@scripts/commands/test.sh
+# build-test
+# 	${DOCKER} run -ti --rm \
+# 		-v $$(pwd)/${REPORT_ARTIFACTS}:/app/${REPORT_ARTIFACTS} \
+# 		--env APPNAME \
+# 		--env BRANCH \
+# 		--name ${APPNAME}-test \
+# 		${DOCKER_IMAGE}:test ${TEST_CMD}
+# 	[[ "${TEST_CMD}" =~ coverhtml ]] && open ${REPORT_ARTIFACTS}/cover.html || true
 
-## Build test docker image
-build-test:
-	${DOCKER} build \
-		-t ${DOCKER_IMAGE}:test \
-		-f docker/dockerfile.test \
-		.
+# ## Build test docker image
+# build-test:
+# 	${DOCKER} build \
+# 		-t ${DOCKER_IMAGE}:test \
+# 		-f docker/dockerfile.test \
+# 		.
 
 ## Run tests and output coverage reports
 cover: test-cover-int
